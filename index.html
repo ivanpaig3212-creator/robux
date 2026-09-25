@@ -26,7 +26,9 @@ button,input{font:inherit}.topbar{position:fixed;top:0;left:0;right:0;height:48p
 .quick-amounts button{display:flex;align-items:center;justify-content:center;gap:6px}.quick-icon{width:16px;height:16px;object-fit:contain;filter:brightness(0) invert(1)}.quick-amounts{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:2px}.quick-amounts button{height:43px;border:1px solid #363b46;background:#272b34;color:#e8eaf0;border-radius:9px;font-size:12px;font-weight:800;cursor:pointer}.quick-amounts button:hover,.quick-amounts button.active{background:#303541;border-color:#464d5a}
 .amount-display-wrap{height:54px;display:flex;align-items:center;justify-content:center;gap:8px;margin:7px 0 8px}.big-robux-icon{width:39px;height:39px;object-fit:contain;filter:brightness(0) invert(1);flex:none}.modern-amount-input{width:112px;border:0;background:transparent;color:#fff;text-align:left;font-size:30px;font-weight:800;outline:0;padding:0}.modern-amount-input::-webkit-outer-spin-button,.modern-amount-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}.modern-amount-input[type=number]{-moz-appearance:textfield}
 .modern-next{width:100%;height:49px;border:0;border-radius:10px;background:#3d61d3;color:#fff;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 3px 8px rgba(0,0,0,.25)}.modern-next:hover{background:#496fe8}.modern-note{text-align:center;margin-top:15px;color:#888d97;font-size:12px;font-weight:500}
-.send-review{display:none;text-align:center}.send-review.show{display:block}.review-avatar-wrap img{width:76px;height:76px;border-radius:50%;object-fit:cover;border:2px solid #2c303a}.review-name{margin-top:10px;font-size:18px;font-weight:800}.review-username{margin-top:3px;color:#858a94;font-size:12px}.review-amount{margin-top:24px;display:flex;justify-content:center;align-items:center;gap:8px;font-size:34px;font-weight:900}.review-amount img{width:34px;height:37px;object-fit:contain;filter:brightness(0) invert(1)}.review-label{color:#888d97;font-size:12px;margin-top:2px}.review-actions{display:flex;gap:9px;margin-top:24px}.review-actions button{flex:1;height:46px;border:0;border-radius:9px;font-weight:800;cursor:pointer}.review-back{background:#292d35;color:#fff}.review-send{background:#3d61d3;color:#fff}.review-send:hover{background:#496fe8}@media(max-width:500px){.send-modern-body{padding-left:24px;padding-right:24px}.quick-amounts{gap:7px}}
+.send-review{display:none;text-align:center}.send-review.show{display:block}.review-avatar-wrap img{width:76px;height:76px;border-radius:50%;object-fit:cover;border:2px solid #2c303a}.review-name{margin-top:10px;font-size:18px;font-weight:800}.review-username{margin-top:3px;color:#858a94;font-size:12px}.review-amount{margin-top:24px;display:flex;justify-content:center;align-items:center;gap:8px;font-size:34px;font-weight:900}.review-amount img{width:34px;height:37px;object-fit:contain;filter:brightness(0) invert(1)}.review-label{color:#888d97;font-size:12px;margin-top:2px}.review-actions{display:flex;gap:9px;margin-top:24px}.review-actions button{flex:1;height:46px;border:0;border-radius:9px;font-weight:800;cursor:pointer}.review-back{background:#292d35;color:#fff}.review-send{background:#3d61d3;color:#fff}.review-send:hover{background:#496fe8}
+.send-complete{display:none;text-align:center;padding:34px 18px 28px}.send-complete.show{display:block}.complete-check{width:54px;height:54px;margin:0 auto 13px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#3d61d3;color:#fff;font-size:31px;font-weight:900}.complete-title{font-size:22px;font-weight:900;margin-bottom:18px}.complete-avatar-wrap img{width:76px;height:76px;border-radius:50%;object-fit:cover;border:2px solid #2c303a}.complete-name{margin-top:10px;font-size:18px;font-weight:800}.complete-username{margin-top:3px;color:#858a94;font-size:12px}.complete-amount{margin-top:22px;display:flex;justify-content:center;align-items:center;gap:8px;font-size:34px;font-weight:900}.complete-amount img{width:34px;height:37px;object-fit:contain}.complete-label{color:#888d97;font-size:12px;margin-top:3px}.complete-done{width:100%;height:46px;margin-top:24px;border:0;border-radius:9px;background:#3d61d3;color:#fff;font-weight:800;font-size:15px;cursor:pointer}.complete-done:hover{background:#496fe8}
+@media(max-width:500px){.send-modern-body{padding-left:24px;padding-right:24px}.quick-amounts{gap:7px}}
 </style>
 
 </head>
@@ -491,9 +493,9 @@ button,input{font:inherit}.topbar{position:fixed;top:0;left:0;right:0;height:48p
   <div class="send-modal send-modern">
     <div class="send-modern-header">
       <button class="send-back" id="backSend" aria-label="Back">←</button>
-      <div class="send-title-wrap"><img class="send-title-icon" src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Robux_2019_Logo_white.svg" alt="" aria-hidden="true"><span>Send Robux</span></div>
+      <div class="send-title-wrap"><img class="send-title-icon" src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20512%20557%22%3E%3Cpath%20fill%3D%22white%22%20d%3D%22M148%200h216l148%20148v261L364%20557H148L0%20409V148L148%200Zm-28%2092L92%20120v317l28%2028h244l56-56V148l-56-56H120Zm93%2082h82l55%2055v92l-55%2055h-82l-55-55v-92l55-55Zm22%2048-29%2029v48l29%2029h42l29-29v-48l-29-29h-42Z%22%2F%3E%3C%2Fsvg%3E" alt="" aria-hidden="true"><span>Send Robux</span></div>
       <div class="send-modern-balance">
-        <img class="robux-icon" src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Robux_2019_Logo_white.svg" alt="Robux">
+        <img class="robux-icon" src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20512%20557%22%3E%3Cpath%20fill%3D%22white%22%20d%3D%22M148%200h216l148%20148v261L364%20557H148L0%20409V148L148%200Zm-28%2092L92%20120v317l28%2028h244l56-56V148l-56-56H120Zm93%2082h82l55%2055v92l-55%2055h-82l-55-55v-92l55-55Zm22%2048-29%2029v48l29%2029h42l29-29v-48l-29-29h-42Z%22%2F%3E%3C%2Fsvg%3E" alt="Robux">
         <span id="modalBalance">11</span>
       </div>
       <button class="send-close" id="closeSend" aria-label="Close">×</button>
@@ -512,29 +514,28 @@ button,input{font:inherit}.topbar{position:fixed;top:0;left:0;right:0;height:48p
           <div class="username" id="selectedUsername"></div>
         </div>
         <div class="quick-amounts">
-          <button type="button" data-amount="25"><img class="quick-icon" src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Robux_2019_Logo_white.svg" alt=""> <span>25</span></button>
-          <button type="button" data-amount="50"><img class="quick-icon" src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Robux_2019_Logo_white.svg" alt=""> <span>50</span></button>
-          <button type="button" data-amount="100"><img class="quick-icon" src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Robux_2019_Logo_white.svg" alt=""> <span>100</span></button>
-          <button type="button" data-amount="200"><img class="quick-icon" src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Robux_2019_Logo_white.svg" alt=""> <span>200</span></button>
+          <button type="button" data-amount="25"><img class="quick-icon" src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20512%20557%22%3E%3Cpath%20fill%3D%22white%22%20d%3D%22M148%200h216l148%20148v261L364%20557H148L0%20409V148L148%200Zm-28%2092L92%20120v317l28%2028h244l56-56V148l-56-56H120Zm93%2082h82l55%2055v92l-55%2055h-82l-55-55v-92l55-55Zm22%2048-29%2029v48l29%2029h42l29-29v-48l-29-29h-42Z%22%2F%3E%3C%2Fsvg%3E" alt=""> <span>25</span></button>
+          <button type="button" data-amount="50"><img class="quick-icon" src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20512%20557%22%3E%3Cpath%20fill%3D%22white%22%20d%3D%22M148%200h216l148%20148v261L364%20557H148L0%20409V148L148%200Zm-28%2092L92%20120v317l28%2028h244l56-56V148l-56-56H120Zm93%2082h82l55%2055v92l-55%2055h-82l-55-55v-92l55-55Zm22%2048-29%2029v48l29%2029h42l29-29v-48l-29-29h-42Z%22%2F%3E%3C%2Fsvg%3E" alt=""> <span>50</span></button>
+          <button type="button" data-amount="100"><img class="quick-icon" src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20512%20557%22%3E%3Cpath%20fill%3D%22white%22%20d%3D%22M148%200h216l148%20148v261L364%20557H148L0%20409V148L148%200Zm-28%2092L92%20120v317l28%2028h244l56-56V148l-56-56H120Zm93%2082h82l55%2055v92l-55%2055h-82l-55-55v-92l55-55Zm22%2048-29%2029v48l29%2029h42l29-29v-48l-29-29h-42Z%22%2F%3E%3C%2Fsvg%3E" alt=""> <span>100</span></button>
+          <button type="button" data-amount="200"><img class="quick-icon" src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20512%20557%22%3E%3Cpath%20fill%3D%22white%22%20d%3D%22M148%200h216l148%20148v261L364%20557H148L0%20409V148L148%200Zm-28%2092L92%20120v317l28%2028h244l56-56V148l-56-56H120Zm93%2082h82l55%2055v92l-55%2055h-82l-55-55v-92l55-55Zm22%2048-29%2029v48l29%2029h42l29-29v-48l-29-29h-42Z%22%2F%3E%3C%2Fsvg%3E" alt=""> <span>200</span></button>
         </div>
         <div class="amount-display-wrap">
-          <img class="big-robux-icon" src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Robux_2019_Logo_white.svg" alt="Robux">
+          <img class="big-robux-icon" src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20512%20557%22%3E%3Cpath%20fill%3D%22white%22%20d%3D%22M148%200h216l148%20148v261L364%20557H148L0%20409V148L148%200Zm-28%2092L92%20120v317l28%2028h244l56-56V148l-56-56H120Zm93%2082h82l55%2055v92l-55%2055h-82l-55-55v-92l55-55Zm22%2048-29%2029v48l29%2029h42l29-29v-48l-29-29h-42Z%22%2F%3E%3C%2Fsvg%3E" alt="Robux">
           <input type="number" id="amountInput" class="modern-amount-input" min="1" value="0" aria-label="Robux amount">
         </div>
         <button class="modern-next" id="confirmSend">Next</button>
         <div class="modern-note">Robux are sent instantly with no fees</div>
       </div>
 
-      <div class="send-review" id="sendReview">
-        <div class="review-avatar-wrap"><img id="reviewAvatar" src="" alt=""></div>
-        <div class="review-name" id="reviewDisplay"></div>
-        <div class="review-username" id="reviewUsername"></div>
-        <div class="review-amount"><img src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Robux_2019_Logo_white.svg" alt="Robux"><span id="reviewAmount">0</span></div>
-        <div class="review-label">Robux</div>
-        <div class="review-actions">
-          <button type="button" class="review-back" id="reviewBack">Back</button>
-          <button type="button" class="review-send" id="reviewSend">Send</button>
-        </div>
+      <div class="send-complete" id="sendComplete">
+        <div class="complete-check">✓</div>
+        <div class="complete-title">Robux Sent!</div>
+        <div class="complete-avatar-wrap"><img id="completeAvatar" src="" alt=""></div>
+        <div class="complete-name" id="completeDisplay"></div>
+        <div class="complete-username" id="completeUsername"></div>
+        <div class="complete-amount"><img src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20512%20557%22%3E%3Cpath%20fill%3D%22white%22%20d%3D%22M148%200h216l148%20148v261L364%20557H148L0%20409V148L148%200Zm-28%2092L92%20120v317l28%2028h244l56-56V148l-56-56H120Zm93%2082h82l55%2055v92l-55%2055h-82l-55-55v-92l55-55Zm22%2048-29%2029v48l29%2029h42l29-29v-48l-29-29h-42Z%22%2F%3E%3C%2Fsvg%3E" alt="Robux"><span id="completeAmount">0</span></div>
+        <div class="complete-label">Robux sent successfully</div>
+        <button type="button" class="complete-done" id="completeDone">Done</button>
       </div>
     </div>
   </div>
@@ -921,15 +922,23 @@ document.getElementById("editUser")
    CONFIRM DEMO SEND
 ===================================================== */
 
-const sendReview = document.getElementById("sendReview");
-const reviewAvatar = document.getElementById("reviewAvatar");
-const reviewDisplay = document.getElementById("reviewDisplay");
-const reviewUsername = document.getElementById("reviewUsername");
-const reviewAmount = document.getElementById("reviewAmount");
+const sendComplete = document.getElementById("sendComplete");
+const completeAvatar = document.getElementById("completeAvatar");
+const completeDisplay = document.getElementById("completeDisplay");
+const completeUsername = document.getElementById("completeUsername");
+const completeAmount = document.getElementById("completeAmount");
+
+function showSendComplete(amount){
+    completeAvatar.src = selectedUser.avatar;
+    completeDisplay.textContent = selectedUser.displayName;
+    completeUsername.textContent = "@" + selectedUser.name;
+    completeAmount.textContent = amount.toLocaleString();
+    document.getElementById("selectedStep").classList.remove("show");
+    sendComplete.classList.add("show");
+}
 
 document.getElementById("confirmSend")
 .addEventListener("click",()=>{
-
     if(!selectedUser){
         showToast("Select a Roblox user first.");
         return;
@@ -942,39 +951,20 @@ document.getElementById("confirmSend")
         return;
     }
 
-    reviewAvatar.src = selectedUser.avatar;
-    reviewDisplay.textContent = selectedUser.displayName;
-    reviewUsername.textContent = "@" + selectedUser.name;
-    reviewAmount.textContent = amount.toLocaleString();
-
-    document.getElementById("selectedStep").classList.remove("show");
-    sendReview.classList.add("show");
-});
-
-document.getElementById("reviewBack").addEventListener("click",()=>{
-    sendReview.classList.remove("show");
-    document.getElementById("selectedStep").classList.add("show");
-});
-
-document.getElementById("reviewSend").addEventListener("click",()=>{
-    const amount = Number(document.getElementById("amountInput").value);
-
-    if(!selectedUser || !Number.isInteger(amount) || amount <= 0){
-        showToast("Enter a valid Robux amount.");
-        return;
-    }
-
     if(amount > demoBalance){
         showToast("You only have " + demoBalance.toLocaleString() + " demo Robux.");
         return;
     }
 
+    /* Local simulation only: Next completes the simulated send. */
     demoBalance -= amount;
     updateBalance();
-    sendReview.classList.remove("show");
-    closeModal();
+    showSendComplete(amount);
+});
 
-    showToast("Demo: " + amount.toLocaleString() + " Robux sent to @" + selectedUser.name);
+document.getElementById("completeDone").addEventListener("click",()=>{
+    sendComplete.classList.remove("show");
+    closeModal();
 });
 
 

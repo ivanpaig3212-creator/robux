@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Robux Demo</title>
 
 <style>
@@ -13,765 +12,977 @@
     padding:0;
 }
 
-body{
-    font-family:Arial,Helvetica,sans-serif;
-    background:#f3f3f3;
-    color:#181818;
+:root{
+    --text:#202124;
+    --muted:#70757d;
+    --border:#e5e7eb;
+    --soft:#f5f5f7;
+    --blue:#315df5;
+    --sidebar:255px;
+    --top:46px;
 }
 
-/* TOP BAR */
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    color:var(--text);
+    background:#fff;
+    overflow:hidden;
+}
+
+/* =========================
+   TOP NAVIGATION
+========================= */
 
 .topbar{
     position:fixed;
     top:0;
     left:0;
     right:0;
-    height:50px;
-    background:#fff;
-    border-bottom:1px solid #ddd;
+    height:46px;
+    background:#f7f7f8;
+    border-bottom:1px solid #dddfe3;
     display:flex;
     align-items:center;
-    padding:0 18px;
-    z-index:100;
+    z-index:1000;
 }
 
 .logo{
-    font-size:21px;
+    width:178px;
+    padding-left:18px;
+    font-size:25px;
+    font-weight:1000;
+    letter-spacing:-2px;
+}
+
+.logo span{
     font-weight:900;
-    letter-spacing:-1px;
 }
 
-.demo{
-    font-size:9px;
-    background:#eee;
-    padding:3px 5px;
-    border-radius:4px;
-    margin-left:5px;
-}
-
-.nav{
+.toplinks{
     display:flex;
-    gap:25px;
-    margin-left:35px;
-    font-size:14px;
-    font-weight:bold;
+    height:100%;
+    align-items:center;
+    gap:66px;
+    font-size:15px;
+    font-weight:600;
+}
+
+.toplinks div{
+    cursor:pointer;
+    white-space:nowrap;
 }
 
 .search-top{
-    margin-left:auto;
-    width:220px;
-    height:32px;
-    background:#f2f2f2;
+    margin-left:30px;
+    width:min(445px,32vw);
+    height:29px;
+    background:#eceef1;
+    border:1px solid #d1d5db;
     border-radius:8px;
-    padding:8px 12px;
-    color:#777;
-    font-size:13px;
+    display:flex;
+    align-items:center;
+    padding:0 10px;
+    color:#555;
+}
+
+.search-top svg{
+    width:19px;
+    margin-right:7px;
+}
+
+.search-top input{
+    width:100%;
+    border:0;
+    outline:0;
+    background:transparent;
+    font-size:14px;
 }
 
 .top-right{
+    margin-left:auto;
     display:flex;
     align-items:center;
-    gap:15px;
-    margin-left:15px;
-}
-
-.robux-icon{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    width:18px;
-    height:18px;
-    background:#111;
-    color:white;
-    border-radius:4px;
-    font-size:10px;
-    font-weight:bold;
+    height:100%;
+    gap:17px;
+    padding-right:12px;
 }
 
 .top-avatar{
-    width:30px;
-    height:30px;
+    width:28px;
+    height:28px;
     border-radius:50%;
     object-fit:cover;
     background:#ddd;
 }
 
-/* SIDEBAR */
-
-.sidebar{
-    position:fixed;
-    top:50px;
-    bottom:0;
-    left:0;
-    width:250px;
-    background:#fff;
-    border-right:1px solid #ddd;
-    padding:15px 11px;
-    overflow-y:auto;
-}
-
-.profile{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    padding:7px 11px 17px;
-}
-
-.profile img{
-    width:42px;
-    height:42px;
-    border-radius:50%;
-    object-fit:cover;
-}
-
-.profile-name{
-    font-weight:bold;
-    font-size:14px;
-}
-
-.sidebar-item{
-    height:39px;
-    display:flex;
-    align-items:center;
-    gap:8px;
-    padding:0 12px;
-    border-radius:8px;
-    margin:2px 0;
-    font-size:14px;
-}
-
-.sidebar-item:hover{
-    background:#eee;
-}
-
-.sidebar-icon{
-    width:23px;
-    text-align:center;
-}
-
-.badge{
-    margin-left:auto;
-    background:#eee;
-    border-radius:10px;
-    padding:2px 7px;
-    font-size:11px;
-}
-
-.plus-card{
-    margin:20px 6px;
-    padding:14px;
-    background:#f4f4f4;
-    border:1px solid #ddd;
-    border-radius:12px;
-}
-
-.plus-card b{
-    font-size:14px;
-}
-
-.plus-card p{
-    color:#666;
+.top-name{
     font-size:12px;
-    line-height:1.4;
-    margin:7px 0;
+    font-weight:600;
+    margin-left:-11px;
 }
 
-.plus-card button{
-    width:100%;
-    height:34px;
-    border:0;
-    border-radius:7px;
-    background:#111;
-    color:#fff;
+.bell{
+    position:relative;
+    width:25px;
+}
+
+.notification{
+    position:absolute;
+    right:-5px;
+    top:-6px;
+    background:#e53935;
+    color:white;
+    font-size:10px;
     font-weight:bold;
-}
-
-/* MAIN */
-
-main{
-    margin-left:250px;
-    padding-top:50px;
-    min-height:100vh;
-    background:
-        radial-gradient(
-            circle at 30% 0,
-            #fff,
-            rgba(255,255,255,.6) 25%,
-            transparent 50%
-        ),
-        #f2f2f2;
-}
-
-.content{
-    max-width:1060px;
-    margin:auto;
-    padding:25px 34px 70px;
-}
-
-.balance-bar{
+    width:17px;
+    height:17px;
     display:flex;
-    justify-content:flex-end;
+    justify-content:center;
     align-items:center;
-    gap:13px;
+    border-radius:50%;
 }
 
-.balance{
-    font-weight:bold;
-    font-size:14px;
+.balance-mini{
     display:flex;
     align-items:center;
     gap:6px;
+    font-weight:700;
+    font-size:14px;
+}
+
+.robux-icon{
+    width:21px;
+    height:21px;
+    flex:none;
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+
+.sidebar{
+    position:fixed;
+    top:46px;
+    bottom:0;
+    left:0;
+    width:255px;
+    background:white;
+    border-right:1px solid #dedfe2;
+    overflow-y:auto;
+    padding:10px 14px 16px;
+    z-index:900;
+}
+
+.sidebar::-webkit-scrollbar{
+    width:8px;
+}
+
+.sidebar::-webkit-scrollbar-thumb{
+    background:#858585;
+    border-radius:10px;
+}
+
+.profile-row{
+    height:48px;
+    display:flex;
+    align-items:center;
+    padding:0 13px;
+    gap:13px;
+    font-size:15px;
+    font-weight:700;
+}
+
+.profile-row img{
+    width:25px;
+    height:25px;
+    object-fit:cover;
+    border-radius:50%;
+}
+
+.side-item{
+    height:45px;
+    display:flex;
+    align-items:center;
+    gap:15px;
+    padding:0 11px;
+    border-radius:8px;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+}
+
+.side-item:hover{
+    background:#f1f2f4;
+}
+
+.side-item svg{
+    width:21px;
+    height:21px;
+    stroke:#25282d;
+    flex:none;
+}
+
+.friend-count{
+    margin-left:auto;
+    background:#292d32;
+    color:white;
+    border-radius:20px;
+    padding:4px 9px;
+    font-size:11px;
+}
+
+.sidebar-card{
+    margin-top:8px;
+    border:1px solid #d9dce2;
+    border-radius:7px;
+    padding:13px 11px 12px;
+    font-size:13px;
+    line-height:1.45;
+}
+
+.sidebar-card .card-icon{
+    margin-bottom:8px;
+}
+
+.sidebar-card a{
+    display:block;
+    margin-top:7px;
+    text-decoration:underline;
+    color:#222;
+}
+
+/* =========================
+   MAIN CONTENT
+========================= */
+
+.main{
+    position:fixed;
+    top:46px;
+    left:255px;
+    right:0;
+    bottom:0;
+    overflow-y:auto;
+    background:#fff;
+}
+
+.main::-webkit-scrollbar{
+    width:9px;
+}
+
+.main::-webkit-scrollbar-thumb{
+    background:#777;
+    border-radius:8px;
+}
+
+.page{
+    min-height:1100px;
+    position:relative;
+    padding-top:1px;
+    background:
+        radial-gradient(
+            ellipse at 50% 5%,
+            rgba(225,228,232,.65),
+            rgba(255,255,255,0) 42%
+        );
+}
+
+/* subtle Roblox-style warped background */
+
+.page::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:15%;
+    right:8%;
+    height:330px;
+    opacity:.34;
+    pointer-events:none;
+    background-image:
+        linear-gradient(105deg,transparent 46%,#e6e8eb 47%,transparent 48%),
+        linear-gradient(75deg,transparent 46%,#e6e8eb 47%,transparent 48%),
+        linear-gradient(90deg,transparent 48%,#e6e8eb 49%,transparent 50%);
+    background-size:70px 45px,90px 45px,110px 45px;
+    transform:perspective(450px) rotateX(5deg);
+    mask-image:linear-gradient(to bottom,#000,transparent);
+}
+
+/* =========================
+   BALANCE
+========================= */
+
+.balance-area{
+    position:relative;
+    z-index:2;
+    display:flex;
+    justify-content:flex-end;
+    padding:15px 145px 0 30px;
+}
+
+.balance-pill{
+    height:42px;
+    background:#f6f7f9;
+    border-radius:24px;
+    display:flex;
+    align-items:center;
+    padding:0 9px 0 14px;
+    gap:8px;
+    box-shadow:0 1px 2px rgba(0,0,0,.04);
+}
+
+.balance-number{
+    display:flex;
+    align-items:center;
+    gap:5px;
+    font-size:22px;
+    font-weight:800;
 }
 
 .send-button{
-    height:35px;
-    padding:0 18px;
-    border:1px solid #ccc;
-    background:#fff;
-    border-radius:7px;
-    font-weight:bold;
+    border:0;
+    background:#dddfe5;
+    border-radius:8px;
+    height:32px;
+    padding:0 12px;
+    font-weight:700;
     cursor:pointer;
 }
 
 .send-button:hover{
-    background:#eee;
+    background:#d2d4db;
 }
 
+/* =========================
+   HERO
+========================= */
+
 .hero{
+    position:relative;
+    z-index:2;
+    width:min(800px,75%);
+    margin:67px auto 0;
     text-align:center;
-    padding:17px 0 23px;
 }
 
 .hero h1{
-    font-size:29px;
-    margin-bottom:6px;
+    font-size:54px;
+    line-height:1.03;
+    letter-spacing:-2.5px;
+    font-weight:800;
+    max-width:620px;
+    margin:auto;
 }
 
-.hero p{
-    color:#666;
-    font-size:14px;
-}
+/* =========================
+   BONUS SECTION
+========================= */
 
-.section-label{
-    font-size:15px;
-    font-weight:bold;
-    margin-bottom:9px;
-}
-
-/* BANNER */
-
-.bonus-banner{
-    height:165px;
-    border-radius:12px;
-    background:
-        radial-gradient(
-            circle at 78% 45%,
-            #666,
-            #252525 35%,
-            #111 72%
-        );
-    color:#fff;
-    padding:28px 31px;
-    margin-bottom:28px;
+.bonus{
     position:relative;
-    overflow:hidden;
+    z-index:2;
+    width:min(704px,78%);
+    margin:63px auto 0;
 }
 
-.bonus-banner h2{
-    font-size:28px;
-    margin:7px 0;
-}
-
-.bonus-banner p{
-    font-size:13px;
-    opacity:.8;
-}
-
-.packages-title{
-    font-size:21px;
+.bonus-title{
+    font-size:26px;
+    font-weight:800;
     margin-bottom:12px;
 }
 
-.packages{
+.banner{
+    height:105px;
+    border-radius:13px 13px 0 0;
+    overflow:hidden;
+    position:relative;
+    background:
+        linear-gradient(90deg,#15282d,#111419 47%,#555a65);
+}
+
+.banner::before{
+    content:"";
+    position:absolute;
+    width:230px;
+    height:230px;
+    right:90px;
+    top:-80px;
+    background:#080a0d;
+    transform:rotate(12deg);
+    opacity:.9;
+}
+
+.banner::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+        linear-gradient(120deg,transparent 30%,rgba(0,0,0,.45),transparent 70%);
+}
+
+.banner-content{
+    position:relative;
+    z-index:3;
     display:flex;
-    flex-direction:column;
-    gap:9px;
+    align-items:center;
+    height:100%;
+    padding:13px 18px;
+    gap:16px;
+}
+
+.banner-icon{
+    width:65px;
+    height:65px;
+    border-radius:50%;
+    background:radial-gradient(circle,#ffd76a,#9a4f00);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:33px;
+    box-shadow:0 0 15px rgba(255,177,46,.35);
+}
+
+.banner-text{
+    color:white;
+}
+
+.banner-text strong{
+    font-size:15px;
+}
+
+.banner-text div{
+    margin-top:5px;
+    font-size:14px;
+}
+
+/* =========================
+   PACKAGES
+========================= */
+
+.package-box{
+    background:#f5f5f7;
+    border-radius:0 0 14px 14px;
+    padding:3px 18px 9px;
 }
 
 .package{
-    background:#fff;
-    border:1px solid #ddd;
-    border-radius:9px;
-    min-height:82px;
-    display:flex;
+    height:56px;
+    display:grid;
+    grid-template-columns:220px 1fr 187px;
     align-items:center;
-    padding:13px 17px;
-}
-
-.package:hover{
-    border-color:#aaa;
-    box-shadow:0 3px 12px rgba(0,0,0,.05);
+    column-gap:10px;
 }
 
 .amount{
-    width:235px;
-    font-size:19px;
+    display:flex;
+    align-items:center;
+    gap:7px;
+    font-size:27px;
     font-weight:800;
 }
 
-.old{
-    font-size:12px;
-    color:#999;
+.amount .old{
+    font-size:17px;
+    color:#727780;
     text-decoration:line-through;
+    font-weight:600;
+}
+
+.bonus-label{
+    display:inline-flex;
+    align-items:center;
+    background:#e4e6eb;
+    padding:6px 10px;
+    border-radius:15px;
+    font-size:11px;
+    font-weight:700;
+    width:max-content;
+}
+
+.for-you{
+    display:inline-flex;
     margin-left:7px;
-    font-weight:normal;
-}
-
-.more{
-    font-size:12px;
-    color:#159447;
-    margin-left:5px;
-}
-
-.package-note{
-    flex:1;
-    color:#666;
-    font-size:13px;
+    background:#e7e8eb;
+    border-radius:15px;
+    padding:6px 9px;
+    font-size:11px;
+    font-weight:700;
 }
 
 .price{
-    width:115px;
-    text-align:right;
-    font-weight:bold;
-}
-
-.buy{
-    width:110px;
-    height:39px;
-    margin-left:17px;
-    border:1px solid #ccc;
-    background:#fff;
+    height:38px;
+    border:0;
+    background:#dedfe5;
     border-radius:7px;
-    font-weight:bold;
+    font-size:13px;
+    font-weight:700;
+    cursor:pointer;
 }
 
-.buy.featured{
-    background:#1473e6;
-    color:#fff;
-    border-color:#1473e6;
+.price:hover{
+    background:#d5d7dd;
 }
 
-/* CHAT */
+.price.highlight{
+    background:#315df5;
+    color:white;
+}
+
+.price.highlight:hover{
+    background:#264fe4;
+}
+
+/* =========================
+   SECOND HEADING
+========================= */
+
+.packages-heading{
+    width:min(704px,78%);
+    margin:36px auto 50px;
+    font-size:26px;
+    font-weight:800;
+}
+
+/* =========================
+   CHAT
+========================= */
 
 .chat{
     position:fixed;
-    right:20px;
-    bottom:20px;
-    width:51px;
-    height:51px;
-    border-radius:50%;
-    background:#111;
-    color:#fff;
+    bottom:0;
+    right:22px;
+    width:268px;
+    height:47px;
+    background:white;
+    border:1px solid #e2e3e7;
+    border-radius:15px 15px 0 0;
+    box-shadow:0 -2px 12px rgba(0,0,0,.08);
     display:flex;
-    justify-content:center;
     align-items:center;
+    justify-content:space-between;
+    padding:0 13px;
+    z-index:950;
+    font-size:13px;
+    font-weight:700;
 }
 
-/* SEND MODAL */
+/* =========================
+   SEND MODAL
+========================= */
 
 .overlay{
     position:fixed;
     inset:0;
-    background:rgba(0,0,0,.55);
+    background:rgba(0,0,0,.38);
+    backdrop-filter:blur(2px);
     display:none;
     align-items:center;
     justify-content:center;
-    padding:16px;
-    z-index:500;
+    z-index:3000;
 }
 
 .overlay.show{
     display:flex;
 }
 
-.modal{
-    width:475px;
-    max-width:100%;
-    max-height:92vh;
-    overflow:auto;
+.send-modal{
+    width:440px;
+    max-width:calc(100vw - 30px);
     background:#fff;
-    border-radius:13px;
+    border-radius:14px;
     box-shadow:0 20px 70px rgba(0,0,0,.3);
+    overflow:hidden;
+    animation:pop .18s ease;
+}
+
+@keyframes pop{
+    from{transform:scale(.96);opacity:0}
+    to{transform:scale(1);opacity:1}
 }
 
 .modal-header{
-    height:58px;
-    border-bottom:1px solid #ddd;
+    height:55px;
     display:flex;
     align-items:center;
-    justify-content:space-between;
-    padding:0 19px;
+    padding:0 17px;
+    border-bottom:1px solid #e6e7ea;
+    font-size:16px;
+    font-weight:800;
 }
 
-.modal-header h2{
-    font-size:19px;
-}
-
-.close{
-    width:31px;
-    height:31px;
+.modal-header .close{
+    margin-left:auto;
+    width:30px;
+    height:30px;
     border:0;
-    border-radius:50%;
-    background:#eee;
-    font-size:18px;
+    background:transparent;
+    font-size:21px;
     cursor:pointer;
+    color:#666;
 }
 
 .modal-body{
     padding:20px;
 }
 
-.notice{
-    background:#fff5d9;
-    border:1px solid #ecd27c;
-    color:#6e5600;
-    border-radius:8px;
+.demo-warning{
+    background:#f1f4ff;
+    border:1px solid #cbd6ff;
+    color:#34499a;
     padding:10px 12px;
+    border-radius:8px;
     font-size:12px;
     line-height:1.4;
-    margin-bottom:16px;
+    margin-bottom:15px;
 }
 
-.field-label{
-    display:block;
+.modal-balance{
+    position:absolute;
+    right:65px;
+    top:18px;
+    display:flex;
+    align-items:center;
+    gap:4px;
     font-size:13px;
-    font-weight:bold;
-    margin-bottom:7px;
 }
 
-.search-box{
-    position:relative;
-}
-
-.search-box input{
+.user-search{
     width:100%;
-    height:44px;
-    border:1px solid #ccc;
-    border-radius:8px;
-    padding:0 40px 0 13px;
+    height:43px;
+    border:1px solid #c9ced8;
+    border-radius:9px;
+    padding:0 13px;
+    font-size:14px;
     outline:none;
 }
 
-.search-box input:focus{
-    border-color:#777;
+.user-search:focus{
+    border-color:#315df5;
+    box-shadow:0 0 0 2px rgba(49,93,245,.1);
 }
 
-.clear-button{
-    position:absolute;
-    right:9px;
-    top:9px;
-    width:25px;
-    height:25px;
-    border:0;
-    border-radius:50%;
-    background:#eee;
-    cursor:pointer;
-    display:none;
+.search-status{
+    min-height:25px;
+    padding-top:7px;
+    color:#777;
+    font-size:12px;
 }
-
-/* SEARCH RESULTS */
 
 .results{
-    margin-top:8px;
-    border:1px solid #ddd;
-    border-radius:9px;
-    overflow:hidden;
-    display:none;
+    max-height:180px;
+    overflow:auto;
 }
 
-.results.show{
-    display:block;
-}
-
-.results-header{
-    padding:9px 12px;
-    background:#f7f7f7;
-    color:#666;
-    font-size:12px;
-    font-weight:bold;
-}
-
-.user-result{
+.result{
+    height:60px;
     display:flex;
     align-items:center;
     gap:11px;
-    padding:10px 12px;
-    border-top:1px solid #eee;
+    padding:8px;
+    border-radius:8px;
     cursor:pointer;
 }
 
-.user-result:hover{
-    background:#f4f4f4;
+.result:hover{
+    background:#f1f2f4;
 }
 
-.user-avatar{
-    width:46px;
-    height:46px;
-    border-radius:8px;
+.result img{
+    width:43px;
+    height:43px;
+    border-radius:50%;
     object-fit:cover;
-    background:#eee;
 }
 
-.user-info{
-    min-width:0;
-}
-
-.display-name{
-    font-weight:bold;
+.result-name{
     font-size:14px;
+    font-weight:700;
 }
 
-.username{
-    color:#777;
+.result-user{
     font-size:12px;
+    color:#777;
     margin-top:3px;
 }
 
-/* SELECTED USER */
-
-.selected-user{
+.selected{
     display:none;
-    margin-top:15px;
-    border:1px solid #ddd;
-    border-radius:10px;
-    padding:12px;
-    align-items:center;
-    gap:11px;
 }
 
-.selected-user.show{
-    display:flex;
+.selected.show{
+    display:block;
+}
+
+.selected-user{
+    text-align:center;
+    padding:7px 0 15px;
 }
 
 .selected-user img{
-    width:60px;
-    height:60px;
-    border-radius:9px;
+    width:70px;
+    height:70px;
+    border-radius:50%;
     object-fit:cover;
 }
 
-.selected-info{
-    flex:1;
+.selected-user .display{
+    margin-top:7px;
+    font-size:17px;
+    font-weight:800;
 }
 
-.selected-info b{
-    font-size:15px;
-}
-
-.selected-info small{
-    display:block;
-    color:#777;
+.selected-user .username{
     margin-top:3px;
-}
-
-.change-button{
-    border:1px solid #ccc;
-    background:#fff;
-    border-radius:7px;
-    padding:7px 10px;
+    color:#777;
     font-size:12px;
-    cursor:pointer;
 }
 
-/* AMOUNT */
-
-.amount-area{
-    margin-top:18px;
+.amount-label{
+    font-size:12px;
+    color:#666;
+    font-weight:600;
+    margin-bottom:6px;
 }
 
-.amount-box{
-    position:relative;
-}
-
-.amount-box .robux-icon{
-    position:absolute;
-    left:11px;
-    top:13px;
-}
-
-.amount-box input{
-    width:100%;
-    height:44px;
-    border:1px solid #ccc;
-    border-radius:8px;
-    padding:0 12px 0 38px;
-    outline:none;
-}
-
-/* SEND */
-
-.confirm-button{
+.amount-input{
     width:100%;
     height:45px;
-    margin-top:18px;
-    border:0;
+    border:1px solid #c9ced8;
     border-radius:8px;
-    background:#1473e6;
-    color:#fff;
-    font-weight:bold;
+    padding:0 13px;
+    font-size:17px;
+    outline:0;
+}
+
+.amount-input:focus{
+    border-color:#315df5;
+}
+
+.action-row{
+    display:flex;
+    gap:10px;
+    margin-top:16px;
+}
+
+.action-row button{
+    flex:1;
+    height:43px;
+    border-radius:8px;
+    border:0;
+    font-weight:700;
     cursor:pointer;
 }
 
-.confirm-button:disabled{
-    opacity:.45;
-    cursor:not-allowed;
+.send-confirm{
+    background:#315df5;
+    color:white;
 }
 
-.status{
+.send-confirm:hover{
+    background:#264fe4;
+}
+
+.edit-btn{
+    background:#e5e6ea;
+}
+
+.small-note{
+    margin-top:13px;
     text-align:center;
-    color:#666;
-    font-size:12px;
-    margin-top:10px;
+    font-size:11px;
+    color:#777;
+    line-height:1.4;
 }
 
-/* SUCCESS */
+/* =========================
+   TOAST
+========================= */
 
-.success{
-    display:none;
-    text-align:center;
-    padding:30px 20px;
-}
-
-.success.show{
-    display:block;
-}
-
-.check{
-    width:62px;
-    height:62px;
-    border-radius:50%;
-    background:#e9f8ef;
-    color:#168548;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    font-size:31px;
-    margin:0 auto 12px;
-}
-
-.success h3{
-    font-size:21px;
-    margin-bottom:7px;
-}
-
-.success p{
-    color:#666;
+.toast{
+    position:fixed;
+    left:50%;
+    bottom:30px;
+    transform:translate(-50%,20px);
+    background:#22262b;
+    color:white;
+    padding:12px 18px;
+    border-radius:8px;
     font-size:13px;
-    line-height:1.5;
+    opacity:0;
+    pointer-events:none;
+    transition:.2s;
+    z-index:5000;
 }
 
-.again{
-    margin-top:16px;
-    height:40px;
-    padding:0 20px;
-    border:1px solid #ccc;
-    background:#fff;
-    border-radius:7px;
-    font-weight:bold;
+.toast.show{
+    opacity:1;
+    transform:translate(-50%,0);
 }
 
-/* MOBILE */
+/* =========================
+   MOBILE
+========================= */
 
 @media(max-width:900px){
 
-    .nav{
-        display:none;
+    body{
+        overflow:auto;
+        background:#0e1014;
+    }
+
+    .topbar{
+        background:#101217;
+        color:white;
+        border-color:#252831;
+    }
+
+    .logo{
+        width:95px;
+        font-size:17px;
+    }
+
+    .toplinks{
+        gap:15px;
+        font-size:11px;
     }
 
     .search-top{
+        width:120px;
+        margin-left:10px;
+        background:#20232b;
+        border-color:#343842;
+    }
+
+    .top-right{
+        gap:8px;
+    }
+
+    .top-name{
         display:none;
     }
 
     .sidebar{
-        width:70px;
-    }
-
-    .profile{
-        justify-content:center;
-    }
-
-    .profile-name,
-    .sidebar-item span:not(.sidebar-icon),
-    .plus-card{
         display:none;
     }
 
-    .sidebar-item{
-        justify-content:center;
-        padding:0;
-    }
-
-    .badge{
-        display:none;
-    }
-
-    main{
-        margin-left:70px;
-    }
-
-    .content{
-        padding:20px 14px;
-    }
-
-    .package{
-        flex-wrap:wrap;
-        gap:8px;
-    }
-
-    .amount{
+    .main{
+        position:relative;
+        top:46px;
+        left:0;
+        right:auto;
+        bottom:auto;
         width:100%;
+        min-height:calc(100vh - 46px);
+        background:#0e1014;
     }
 
-    .package-note{
-        display:none;
+    .page{
+        min-height:1200px;
+        background:#0e1014;
+        color:white;
     }
 
-    .price{
-        margin-left:auto;
-        width:auto;
+    .page::before{
+        opacity:.08;
     }
 
-    .buy{
-        margin-left:0;
-    }
-}
-
-@media(max-width:560px){
-
-    .topbar{
-        padding:0 10px;
+    .balance-area{
+        padding:14px 14px 0;
     }
 
-    .top-right{
-        margin-left:auto;
-        gap:8px;
+    .balance-pill{
+        background:#181b22;
+        color:white;
+    }
+
+    .send-button{
+        background:#242832;
+        color:white;
+    }
+
+    .hero{
+        width:90%;
+        margin-top:65px;
     }
 
     .hero h1{
-        font-size:23px;
+        font-size:37px;
+        letter-spacing:-1px;
     }
 
-    .bonus-banner{
-        height:140px;
-        padding:22px;
+    .bonus{
+        width:88%;
+        margin-top:55px;
     }
 
-    .bonus-banner h2{
-        font-size:23px;
+    .bonus-title{
+        font-size:18px;
+    }
+
+    .banner{
+        height:95px;
+    }
+
+    .package-box{
+        background:#171a20;
+    }
+
+    .package{
+        grid-template-columns:145px 1fr 105px;
+    }
+
+    .amount{
+        font-size:18px;
+    }
+
+    .amount .old{
+        display:none;
+    }
+
+    .bonus-label{
+        font-size:9px;
+        padding:5px 7px;
+    }
+
+    .price{
+        color:white;
+        background:#292d35;
+        font-size:11px;
+    }
+
+    .packages-heading{
+        width:88%;
+        font-size:20px;
+    }
+
+    .chat{
+        display:none;
+    }
+}
+
+@media(max-width:550px){
+
+    .toplinks{
+        display:none;
+    }
+
+    .search-top{
+        margin-left:5px;
+        width:150px;
+    }
+
+    .hero h1{
+        font-size:34px;
+    }
+
+    .package{
+        grid-template-columns:125px 1fr 90px;
     }
 
     .amount{
         font-size:16px;
+    }
+
+    .for-you{
+        display:none;
     }
 }
 </style>
@@ -779,190 +990,234 @@ main{
 
 <body>
 
-<!-- =========================
-     TOP BAR
-========================= -->
+<!-- ================= TOP BAR ================= -->
 
 <header class="topbar">
 
-    <div class="logo">
-        ROBLOX
-        <span class="demo">DEMO</span>
-    </div>
+    <div class="logo">ROBLOX</div>
 
-    <div class="nav">
-        <span>Charts</span>
-        <span>Marketplace</span>
-        <span>Create</span>
-        <span>Robux</span>
-    </div>
+    <nav class="toplinks">
+        <div>Charts</div>
+        <div>Marketplace</div>
+        <div>Create</div>
+        <div>Robux</div>
+    </nav>
 
     <div class="search-top">
-        🔍 Search
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="m20 20-4-4"></path>
+        </svg>
+        <input placeholder="Search">
     </div>
 
     <div class="top-right">
 
-        <span>🔔</span>
+        <img id="topAvatar"
+             class="top-avatar"
+             src="https://tr.rbxcdn.com/30DAY-AvatarHeadshot-420A12D3E8F77B3F2E3D9C2A9A3A7B1D-Png/150/150/AvatarHeadshot/Webp/noFilter">
 
-        <span>
-            <span class="robux-icon">R</span>
-            <b id="topBalance">11</b>
-        </span>
+        <span class="top-name">Ashlely</span>
 
-        <img
-            id="topAvatar"
-            class="top-avatar"
-            src=""
-            alt=""
-        >
+        <div class="bell">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+                <path d="M10 21h4"></path>
+            </svg>
+            <span class="notification">7</span>
+        </div>
 
-        <span>⚙</span>
+        <div class="balance-mini">
+            <svg class="robux-icon" viewBox="0 0 24 24">
+                <path fill="none" stroke="currentColor" stroke-width="2" d="M7 3h10l4 4v10l-4 4H7l-4-4V7l4-4z"/>
+                <path fill="none" stroke="currentColor" stroke-width="2" d="m9 8 6 1v6l-6 1V8z"/>
+            </svg>
+            <span id="topBalance">11</span>
+        </div>
+
+        <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2 2-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21h-3v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1-2-2 .1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H4v-3h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1 2-2 .1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.5V4h3v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1 2 2-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.5 1h.1v3h-.1a1.7 1.7 0 0 0-1.5 1z"/>
+        </svg>
 
     </div>
-
 </header>
 
 
-<!-- =========================
-     SIDEBAR
-========================= -->
+<!-- ================= SIDEBAR ================= -->
 
 <aside class="sidebar">
 
-    <div class="profile">
+    <div class="profile-row">
+        <img id="sideAvatar"
+             src="https://tr.rbxcdn.com/30DAY-AvatarHeadshot-420A12D3E8F77B3F2E3D9C2A9A3A7B1D-Png/150/150/AvatarHeadshot/Webp/noFilter">
+        <span>Ashlely</span>
+    </div>
 
-        <img
-            id="sideAvatar"
-            src=""
-            alt=""
-        >
+    <div class="side-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <path d="M3 11 12 3l9 8"></path>
+            <path d="M5 10v10h14V10"></path>
+        </svg>
+        Home
+    </div>
 
-        <div class="profile-name">
-            Guest
+    <div class="side-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <circle cx="12" cy="8" r="3"></circle>
+            <path d="M5 21c.7-4 3-6 7-6s6.3 2 7 6"></path>
+        </svg>
+        Profile
+    </div>
+
+    <div class="side-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <path d="M12 2 20 6v12l-8 4-8-4V6z"></path>
+            <path d="m12 7 4 2v6l-4 2-4-2V9z"></path>
+        </svg>
+        Roblox Plus
+    </div>
+
+    <div class="side-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <path d="M4 5h16v11H7l-3 3z"></path>
+            <path d="M8 9h8M8 12h5"></path>
+        </svg>
+        Messages
+    </div>
+
+    <div class="side-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <circle cx="8" cy="8" r="3"></circle>
+            <circle cx="16" cy="9" r="3"></circle>
+            <path d="M2 20c.5-4 2.5-6 6-6s5.5 2 6 6"></path>
+            <path d="M13 15c4 0 6 2 7 5"></path>
+        </svg>
+        Friends
+        <span class="friend-count">500</span>
+    </div>
+
+    <div class="side-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <circle cx="12" cy="8" r="3"></circle>
+            <path d="M6 21c0-5 2-8 6-8s6 3 6 8"></path>
+        </svg>
+        Avatar
+    </div>
+
+    <div class="side-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <rect x="5" y="3" width="14" height="18" rx="2"></rect>
+            <path d="M8 8h8M8 12h8M8 16h5"></path>
+        </svg>
+        Inventory
+    </div>
+
+    <div class="side-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <path d="M12 2 4 7v10l8 5 8-5V7z"></path>
+            <path d="M8 9h8v6H8z"></path>
+        </svg>
+        Sandbox
+    </div>
+
+    <div class="side-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <path d="M4 8h14"></path>
+            <path d="m14 4 5 4-5 4"></path>
+            <path d="M20 16H6"></path>
+            <path d="m10 12-5 4 5 4"></path>
+        </svg>
+        Trade
+    </div>
+
+    <div class="side-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <circle cx="8" cy="8" r="3"></circle>
+            <circle cx="16" cy="8" r="3"></circle>
+            <circle cx="12" cy="16" r="3"></circle>
+            <path d="M4 21c0-3 2-5 4-5"></path>
+            <path d="M20 21c0-3-2-5-4-5"></path>
+        </svg>
+        Communities
+    </div>
+
+    <div class="side-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <path d="m12 3 2.2 5.2L20 10l-5.8 2.3L12 18l-2.2-5.7L4 10l5.8-1.8z"></path>
+        </svg>
+        Themes
+    </div>
+
+    <div class="side-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <path d="M4 5h16v14H4z"></path>
+            <path d="M7 9h10M7 13h7"></path>
+        </svg>
+        Newsroom
+    </div>
+
+    <div class="side-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <path d="M4 10h16l-2-5H6z"></path>
+            <path d="M5 10v9h14v-9"></path>
+            <path d="M9 19v-5h6v5"></path>
+        </svg>
+        Official Store
+    </div>
+
+    <div class="side-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <rect x="4" y="5" width="16" height="14" rx="2"></rect>
+            <path d="M8 9h8M8 13h5"></path>
+        </svg>
+        Buy Gift Cards
+    </div>
+
+    <div class="sidebar-card">
+
+        <div class="card-icon">
+            ◇
         </div>
 
-    </div>
+        <div>More fun for less Robux.</div>
+        <div>Subscribe to Roblox Plus.</div>
 
-
-    <div class="sidebar-item">
-        <span class="sidebar-icon">⌂</span>
-        <span>Home</span>
-    </div>
-
-    <div class="sidebar-item">
-        <span class="sidebar-icon">◉</span>
-        <span>Profile</span>
-    </div>
-
-    <div class="sidebar-item">
-        <span class="sidebar-icon">✦</span>
-        <span>Roblox Plus</span>
-    </div>
-
-    <div class="sidebar-item">
-        <span class="sidebar-icon">✉</span>
-        <span>Messages</span>
-    </div>
-
-    <div class="sidebar-item">
-        <span class="sidebar-icon">♟</span>
-        <span>Friends</span>
-        <span class="badge">500</span>
-    </div>
-
-    <div class="sidebar-item">
-        <span class="sidebar-icon">◉</span>
-        <span>Avatar</span>
-    </div>
-
-    <div class="sidebar-item">
-        <span class="sidebar-icon">▦</span>
-        <span>Inventory</span>
-    </div>
-
-    <div class="sidebar-item">
-        <span class="sidebar-icon">◇</span>
-        <span>Sandbox</span>
-    </div>
-
-    <div class="sidebar-item">
-        <span class="sidebar-icon">⇄</span>
-        <span>Trade</span>
-    </div>
-
-    <div class="sidebar-item">
-        <span class="sidebar-icon">♙</span>
-        <span>Communities</span>
-    </div>
-
-    <div class="sidebar-item">
-        <span class="sidebar-icon">🎨</span>
-        <span>Themes</span>
-    </div>
-
-    <div class="sidebar-item">
-        <span class="sidebar-icon">▤</span>
-        <span>Newsroom</span>
-    </div>
-
-    <div class="sidebar-item">
-        <span class="sidebar-icon">▣</span>
-        <span>Official Store</span>
-    </div>
-
-    <div class="sidebar-item">
-        <span class="sidebar-icon">🎁</span>
-        <span>Buy Gift Cards</span>
-    </div>
-
-
-    <div class="plus-card">
-
-        <b>Roblox Plus</b>
-
-        <p>
-            More benefits and exclusive features.
-        </p>
-
-        <button>
-            Learn More
-        </button>
+        <a href="#" onclick="return false;">Subscribe</a>
 
     </div>
 
 </aside>
 
 
-<!-- =========================
-     MAIN
-========================= -->
+<!-- ================= MAIN ================= -->
 
-<main>
+<main class="main">
 
-<div class="content">
+<div class="page">
 
-    <div class="balance-bar">
+    <div class="balance-area">
 
-        <div class="balance">
+        <div class="balance-pill">
 
-            <span class="robux-icon">R</span>
+            <div class="balance-number">
 
-            <span id="mainBalance">
-                11
-            </span>
+                <svg class="robux-icon" viewBox="0 0 24 24">
+                    <path fill="none" stroke="currentColor" stroke-width="2"
+                          d="M7 3h10l4 4v10l-4 4H7l-4-4V7l4-4z"/>
+                    <path fill="none" stroke="currentColor" stroke-width="2"
+                          d="m9 8 6 1v6l-6 1V8z"/>
+                </svg>
 
-            Robux
+                <span id="balance">11</span>
+
+            </div>
+
+            <button class="send-button" id="openSend">
+                ↑ &nbsp;Send
+            </button>
 
         </div>
-
-
-        <button
-            class="send-button"
-            id="openSend"
-        >
-            Send
-        </button>
 
     </div>
 
@@ -970,200 +1225,154 @@ main{
     <section class="hero">
 
         <h1>
-            Enjoy up to 25% more Robux
+            Enjoy up to 25%<br>
+            more Robux
         </h1>
-
-        <p>
-            Get more Robux with select purchase options.
-        </p>
 
     </section>
 
 
-    <div class="section-label">
-        Bonus item we picked for you
-    </div>
+    <section class="bonus">
+
+        <div class="bonus-title">
+            Bonus item we picked for you
+        </div>
+
+        <div class="banner">
+
+            <div class="banner-content">
+
+                <div class="banner-icon">⚔</div>
+
+                <div class="banner-text">
+                    <strong>[ 🏆 ] RIVALS ⓘ</strong>
+                    <div>RPG Bundle!</div>
+                </div>
+
+            </div>
+
+        </div>
 
 
-    <div class="bonus-banner">
+        <div class="package-box">
 
-        <small>
-            🏆 RIVALS
-        </small>
+            <div class="package">
 
-        <h2>
-            RPG Bundle!
-        </h2>
+                <div class="amount">
+                    <svg class="robux-icon" viewBox="0 0 24 24">
+                        <path fill="none" stroke="currentColor" stroke-width="2"
+                              d="M7 3h10l4 4v10l-4 4H7l-4-4V7l4-4z"/>
+                        <path fill="none" stroke="currentColor" stroke-width="2"
+                              d="m9 8 6 1v6l-6 1V8z"/>
+                    </svg>
+                    24,000
+                    <span class="old">22,500</span>
+                </div>
 
-        <p>
-            Claim your bonus item with your purchase.
-        </p>
+                <div>
+                    <span class="bonus-label">+ 1,500 more</span>
+                </div>
 
-    </div>
+                <button class="price">₱13.6K</button>
+
+            </div>
 
 
-    <h2 class="packages-title">
+            <div class="package">
+
+                <div class="amount">
+                    <svg class="robux-icon" viewBox="0 0 24 24">
+                        <path fill="none" stroke="currentColor" stroke-width="2"
+                              d="M7 3h10l4 4v10l-4 4H7l-4-4V7l4-4z"/>
+                        <path fill="none" stroke="currentColor" stroke-width="2"
+                              d="m9 8 6 1v6l-6 1V8z"/>
+                    </svg>
+                    11,000
+                    <span class="old">10,000</span>
+                </div>
+
+                <div>
+                    <span class="bonus-label">+ 1,000 more</span>
+                </div>
+
+                <button class="price">₱6,800.00</button>
+
+            </div>
+
+
+            <div class="package">
+
+                <div class="amount">
+                    <svg class="robux-icon" viewBox="0 0 24 24">
+                        <path fill="none" stroke="currentColor" stroke-width="2"
+                              d="M7 3h10l4 4v10l-4 4H7l-4-4V7l4-4z"/>
+                        <path fill="none" stroke="currentColor" stroke-width="2"
+                              d="m9 8 6 1v6l-6 1V8z"/>
+                    </svg>
+                    5,250
+                    <span class="old">4,500</span>
+                </div>
+
+                <div>
+                    <span class="bonus-label">+ 750 more</span>
+                </div>
+
+                <button class="price">₱3,400.00</button>
+
+            </div>
+
+
+            <div class="package">
+
+                <div class="amount">
+                    <svg class="robux-icon" viewBox="0 0 24 24">
+                        <path fill="none" stroke="currentColor" stroke-width="2"
+                              d="M7 3h10l4 4v10l-4 4H7l-4-4V7l4-4z"/>
+                        <path fill="none" stroke="currentColor" stroke-width="2"
+                              d="m9 8 6 1v6l-6 1V8z"/>
+                    </svg>
+                    3,625
+                    <span class="old">3,150</span>
+                </div>
+
+                <div>
+                    <span class="bonus-label">+ 475 more</span>
+                    <span class="for-you">◉ For you</span>
+                </div>
+
+                <button class="price highlight">₱1,990.00</button>
+
+            </div>
+
+
+            <div class="package">
+
+                <div class="amount">
+                    <svg class="robux-icon" viewBox="0 0 24 24">
+                        <path fill="none" stroke="currentColor" stroke-width="2"
+                              d="M7 3h10l4 4v10l-4 4H7l-4-4V7l4-4z"/>
+                        <path fill="none" stroke="currentColor" stroke-width="2"
+                              d="m9 8 6 1v6l-6 1V8z"/>
+                    </svg>
+                    2,000
+                    <span class="old">1,700</span>
+                </div>
+
+                <div>
+                    <span class="bonus-label">+ 300 more</span>
+                </div>
+
+                <button class="price">₱1,360.00</button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <div class="packages-heading">
         Robux packages
-    </h2>
-
-
-    <div class="packages">
-
-
-        <div class="package">
-
-            <div class="amount">
-
-                24,000
-
-                <span class="old">
-                    22,500
-                </span>
-
-                <span class="more">
-                    +1,500
-                </span>
-
-            </div>
-
-            <div class="package-note">
-                1,500 more Robux
-            </div>
-
-            <div class="price">
-                ₱13,600
-            </div>
-
-            <button class="buy">
-                Buy
-            </button>
-
-        </div>
-
-
-        <div class="package">
-
-            <div class="amount">
-
-                11,000
-
-                <span class="old">
-                    10,000
-                </span>
-
-                <span class="more">
-                    +1,000
-                </span>
-
-            </div>
-
-            <div class="package-note">
-                1,000 more Robux
-            </div>
-
-            <div class="price">
-                ₱6,800
-            </div>
-
-            <button class="buy">
-                Buy
-            </button>
-
-        </div>
-
-
-        <div class="package">
-
-            <div class="amount">
-
-                5,250
-
-                <span class="old">
-                    4,500
-                </span>
-
-                <span class="more">
-                    +750
-                </span>
-
-            </div>
-
-            <div class="package-note">
-                750 more Robux
-            </div>
-
-            <div class="price">
-                ₱3,400
-            </div>
-
-            <button class="buy">
-                Buy
-            </button>
-
-        </div>
-
-
-        <div class="package">
-
-            <div class="amount">
-
-                3,625
-
-                <span class="old">
-                    3,150
-                </span>
-
-                <span class="more">
-                    +475
-                </span>
-
-            </div>
-
-            <div class="package-note">
-                For you
-            </div>
-
-            <div class="price">
-                ₱1,990
-            </div>
-
-            <button class="buy featured">
-                Buy
-            </button>
-
-        </div>
-
-
-        <div class="package">
-
-            <div class="amount">
-
-                2,000
-
-                <span class="old">
-                    1,700
-                </span>
-
-                <span class="more">
-                    +300
-                </span>
-
-            </div>
-
-            <div class="package-note">
-                300 more Robux
-            </div>
-
-            <div class="price">
-                ₱1,360
-            </div>
-
-            <button class="buy">
-                Buy
-            </button>
-
-        </div>
-
     </div>
 
 </div>
@@ -1171,775 +1380,485 @@ main{
 </main>
 
 
-<!-- CHAT -->
+<!-- ================= SEND MODAL ================= -->
 
-<div class="chat">
-    💬
-</div>
+<div class="overlay" id="overlay">
 
+    <div class="send-modal">
 
-<!-- =========================
-     SEND MODAL
-========================= -->
+        <div class="modal-header">
 
-<div
-    class="overlay"
-    id="overlay"
->
+            <span id="modalTitle">Send Robux</span>
 
-<div class="modal">
+            <div class="modal-balance">
+                <svg class="robux-icon" viewBox="0 0 24 24">
+                    <path fill="none" stroke="currentColor" stroke-width="2"
+                          d="M7 3h10l4 4v10l-4 4H7l-4-4V7l4-4z"/>
+                    <path fill="none" stroke="currentColor" stroke-width="2"
+                          d="m9 8 6 1v6l-6 1V8z"/>
+                </svg>
+                <span id="modalBalance">11</span>
+            </div>
 
-
-    <div class="modal-header">
-
-        <h2>
-            Send Robux
-        </h2>
-
-        <button
-            class="close"
-            id="close"
-        >
-            ×
-        </button>
-
-    </div>
-
-
-    <div
-        class="modal-body"
-        id="form"
-    >
-
-
-        <div class="notice">
-
-            <b>DEMO MODE</b>
-
-            <br>
-
-            This demo can search real public Roblox
-            users and avatars. It does not request
-            passwords or cookies and does not transfer
-            real Robux.
+            <button class="close" id="closeSend">×</button>
 
         </div>
 
 
-        <label class="field-label">
-            Search Roblox players
-        </label>
+        <div class="modal-body">
 
-
-        <div class="search-box">
-
-            <input
-                id="userSearch"
-                type="text"
-                placeholder="Enter a username"
-                autocomplete="off"
-            >
-
-            <button
-                class="clear-button"
-                id="clear"
-            >
-                ×
-            </button>
-
-        </div>
-
-
-        <!-- SEARCH RESULTS -->
-
-        <div
-            class="results"
-            id="results"
-        ></div>
-
-
-        <!-- SELECTED PLAYER -->
-
-        <div
-            class="selected-user"
-            id="selectedUser"
-        >
-
-            <img
-                id="selectedAvatar"
-                src=""
-                alt=""
-            >
-
-            <div class="selected-info">
-
-                <b id="selectedDisplay">
-                </b>
-
-                <small id="selectedUsername">
-                </small>
-
+            <div class="demo-warning">
+                <b>DEMO MODE</b><br>
+                This page simulates the Roblox Send Robux interface.
+                No real Robux are transferred and no Roblox login information is requested.
             </div>
 
 
-            <button
-                class="change-button"
-                id="change"
-            >
-                Change
-            </button>
+            <!-- SEARCH STEP -->
 
-        </div>
-
-
-        <!-- AMOUNT -->
-
-        <div class="amount-area">
-
-            <label class="field-label">
-                Robux amount
-            </label>
-
-
-            <div class="amount-box">
-
-                <span class="robux-icon">
-                    R
-                </span>
+            <div id="searchStep">
 
                 <input
-                    id="amount"
+                    id="usernameInput"
+                    class="user-search"
+                    placeholder="Search Roblox username..."
+                    autocomplete="off"
+                >
+
+                <div class="search-status" id="searchStatus"></div>
+
+                <div class="results" id="results"></div>
+
+            </div>
+
+
+            <!-- SELECTED USER STEP -->
+
+            <div class="selected" id="selectedStep">
+
+                <div class="selected-user">
+
+                    <img id="selectedAvatar">
+
+                    <div class="display" id="selectedDisplay"></div>
+
+                    <div class="username" id="selectedUsername"></div>
+
+                </div>
+
+
+                <div class="amount-label">
+                    Amount of Robux
+                </div>
+
+                <input
                     type="number"
+                    id="amountInput"
+                    class="amount-input"
                     min="1"
                     placeholder="Enter amount"
-                    disabled
                 >
+
+
+                <div class="action-row">
+
+                    <button class="send-confirm" id="confirmSend">
+                        Send Robux
+                    </button>
+
+                    <button class="edit-btn" id="editUser">
+                        Edit
+                    </button>
+
+                </div>
+
+
+                <div class="small-note">
+                    This is a simulated transfer for your website demo.
+                    Real Roblox accounts are not modified.
+                </div>
 
             </div>
 
         </div>
 
-
-        <button
-            class="confirm-button"
-            id="confirm"
-            disabled
-        >
-            Send Robux
-        </button>
-
-
-        <div
-            class="status"
-            id="status"
-        ></div>
-
-
     </div>
-
-
-    <!-- SUCCESS -->
-
-    <div
-        class="success"
-        id="success"
-    >
-
-        <div class="check">
-            ✓
-        </div>
-
-        <h3>
-            Demo transfer complete
-        </h3>
-
-        <p id="successText">
-        </p>
-
-
-        <button
-            class="again"
-            id="again"
-        >
-            Send another
-        </button>
-
-    </div>
-
 
 </div>
 
-</div>
+
+<div class="toast" id="toast"></div>
 
 
 <script>
 
-/* =========================================
-   SETTINGS
-========================================= */
+/* =====================================================
+   DEMO BALANCE
+===================================================== */
 
-const USER_API =
+let demoBalance = Number(localStorage.getItem("demoRobuxBalance"));
+
+if(!Number.isFinite(demoBalance)){
+    demoBalance = 11;
+}
+
+const balanceElements = [
+    document.getElementById("balance"),
+    document.getElementById("topBalance"),
+    document.getElementById("modalBalance")
+];
+
+function updateBalance(){
+
+    balanceElements.forEach(el=>{
+        if(el) el.textContent = demoBalance.toLocaleString();
+    });
+
+    localStorage.setItem("demoRobuxBalance", demoBalance);
+}
+
+updateBalance();
+
+
+/* =====================================================
+   MODAL
+===================================================== */
+
+const overlay = document.getElementById("overlay");
+const openSend = document.getElementById("openSend");
+const closeSend = document.getElementById("closeSend");
+
+function openModal(){
+
+    overlay.classList.add("show");
+
+    document.getElementById("usernameInput").value="";
+    document.getElementById("results").innerHTML="";
+    document.getElementById("searchStatus").textContent="";
+
+    document.getElementById("searchStep").style.display="block";
+    document.getElementById("selectedStep").classList.remove("show");
+
+    setTimeout(()=>{
+        document.getElementById("usernameInput").focus();
+    },100);
+
+}
+
+function closeModal(){
+    overlay.classList.remove("show");
+}
+
+openSend.addEventListener("click",openModal);
+closeSend.addEventListener("click",closeModal);
+
+overlay.addEventListener("click",(e)=>{
+    if(e.target===overlay){
+        closeModal();
+    }
+});
+
+
+/* =====================================================
+   ROBLOX API
+===================================================== */
+
+const USER_SEARCH_API =
     "https://users.roblox.com/v1/users/search";
+
+const USERNAME_API =
+    "https://users.roblox.com/v1/usernames/users";
 
 const AVATAR_API =
     "https://thumbnails.roblox.com/v1/users/avatar-headshot";
 
 
-/* =========================================
-   VARIABLES
-========================================= */
-
-let balance =
-    Number(
-        localStorage.getItem("demoRobuxBalance") || 11
-    );
-
 let selectedUser = null;
-
 let searchTimer = null;
 
 
-/* =========================================
-   SHORTCUT
-========================================= */
+/* =====================================================
+   SEARCH USER
+===================================================== */
 
-function $(id){
-    return document.getElementById(id);
-}
+const usernameInput =
+    document.getElementById("usernameInput");
 
+usernameInput.addEventListener("input",()=>{
 
-/* =========================================
-   BALANCE
-========================================= */
+    clearTimeout(searchTimer);
 
-function updateBalance(){
+    const value =
+        usernameInput.value.trim();
 
-    $("topBalance").textContent =
-        balance.toLocaleString();
+    document.getElementById("results").innerHTML="";
+    document.getElementById("searchStatus").textContent="";
 
-    $("mainBalance").textContent =
-        balance.toLocaleString();
-
-    localStorage.setItem(
-        "demoRobuxBalance",
-        balance
-    );
-}
-
-
-/* =========================================
-   OPEN SEND
-========================================= */
-
-$("openSend").onclick = function(){
-
-    $("overlay").classList.add("show");
-
-    resetForm();
-
-    $("userSearch").focus();
-
-};
-
-
-/* =========================================
-   CLOSE
-========================================= */
-
-$("close").onclick = function(){
-
-    $("overlay").classList.remove("show");
-
-};
-
-
-$("overlay").onclick = function(event){
-
-    if(
-        event.target ===
-        event.currentTarget
-    ){
-
-        $("overlay").classList.remove("show");
-
-    }
-
-};
-
-
-/* =========================================
-   RESET
-========================================= */
-
-function resetForm(){
-
-    selectedUser = null;
-
-    $("userSearch").value = "";
-
-    $("results").innerHTML = "";
-
-    $("results").classList.remove("show");
-
-    $("selectedUser").classList.remove("show");
-
-    $("amount").value = "";
-
-    $("amount").disabled = true;
-
-    $("confirm").disabled = true;
-
-    $("status").textContent = "";
-
-    $("clear").style.display = "none";
-
-}
-
-
-/* =========================================
-   ESCAPE HTML
-========================================= */
-
-function escapeHTML(text){
-
-    return String(text).replace(
-        /[&<>"']/g,
-        function(char){
-
-            return {
-                "&":"&amp;",
-                "<":"&lt;",
-                ">":"&gt;",
-                '"':"&quot;",
-                "'":"&#39;"
-
-            }[char];
-
-        }
-    );
-
-}
-
-
-/* =========================================
-   AVATAR URL
-========================================= */
-
-function getAvatarURL(id){
-
-    return (
-        AVATAR_API +
-        "?userIds=" +
-        encodeURIComponent(id) +
-        "&size=150x150" +
-        "&format=Png" +
-        "&isCircular=false"
-    );
-
-}
-
-
-/* =========================================
-   SEARCH USERS
-========================================= */
-
-async function searchUsers(keyword){
-
-    keyword = keyword.trim();
-
-
-    if(!keyword){
-
-        $("results").classList.remove("show");
-
+    if(value.length < 2){
         return;
-
     }
 
+    document.getElementById("searchStatus").textContent =
+        "Searching Roblox...";
 
-    $("results").classList.add("show");
+    searchTimer = setTimeout(()=>{
+        searchRoblox(value);
+    },500);
 
-    $("results").innerHTML =
-        '<div class="results-header">' +
-        'Searching Roblox players...' +
-        '</div>';
+});
 
+
+async function searchRoblox(username){
 
     try{
 
+        /*
+         First try the public Roblox user search endpoint.
+        */
+
         const url =
-            USER_API +
+            USER_SEARCH_API +
             "?keyword=" +
-            encodeURIComponent(keyword) +
+            encodeURIComponent(username) +
             "&limit=10";
 
-
-        const response =
-            await fetch(url);
-
+        const response = await fetch(url);
 
         if(!response.ok){
-
-            throw new Error(
-                "Roblox API error"
-            );
-
+            throw new Error("Roblox search request failed.");
         }
 
+        const data = await response.json();
 
-        const data =
-            await response.json();
+        let users = data.data || [];
 
+        /*
+         If search returned nothing, try exact username lookup.
+        */
 
-        const users =
-            data.data || [];
+        if(users.length === 0){
+
+            const exactResponse =
+                await fetch(USERNAME_API,{
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({
+                        usernames:[username],
+                        excludeBannedUsers:false
+                    })
+                });
+
+            if(exactResponse.ok){
+
+                const exactData =
+                    await exactResponse.json();
+
+                users = exactData.data || [];
+
+            }
+
+        }
 
 
         if(users.length === 0){
 
-            $("results").innerHTML =
-                '<div class="results-header">' +
-                'No Roblox players found' +
-                '</div>';
+            document.getElementById("searchStatus").textContent =
+                "No Roblox users found.";
 
             return;
-
         }
 
 
-        let html =
-            '<div class="results-header">' +
-            'Roblox Players (' +
-            users.length +
-            ')' +
-            '</div>';
+        document.getElementById("searchStatus").textContent =
+            "Select a Roblox user:";
 
 
-        users.forEach(function(user,index){
+        await displayUsers(users);
 
-            html += `
-
-                <div
-                    class="user-result"
-                    data-index="${index}"
-                >
-
-                    <img
-                        class="user-avatar"
-                        id="avatar-${index}"
-                        src=""
-                        alt=""
-                    >
-
-                    <div class="user-info">
-
-                        <div class="display-name">
-                            ${escapeHTML(
-                                user.displayName
-                            )}
-                        </div>
-
-                        <div class="username">
-                            @${escapeHTML(
-                                user.name
-                            )}
-                        </div>
-
-                    </div>
-
-                </div>
-
-            `;
-
-        });
-
-
-        $("results").innerHTML = html;
-
-
-        /* Get avatars */
-
-        users.forEach(
-            async function(user,index){
-
-                try{
-
-                    const avatarResponse =
-                        await fetch(
-                            getAvatarURL(
-                                user.id
-                            )
-                        );
-
-
-                    const avatarData =
-                        await avatarResponse.json();
-
-
-                    if(
-                        avatarData.data &&
-                        avatarData.data.length
-                    ){
-
-                        const image =
-                            avatarData.data[0]
-                                .imageUrl;
-
-
-                        $("avatar-" + index)
-                            .src = image;
-
-                    }
-
-                }catch(error){
-
-                    console.log(
-                        "Avatar error",
-                        error
-                    );
-
-                }
-
-            }
-        );
-
-
-        /* Click users */
-
-        document
-        .querySelectorAll(".user-result")
-        .forEach(function(row){
-
-            row.onclick = function(){
-
-                const index =
-                    Number(
-                        row.dataset.index
-                    );
-
-                selectUser(
-                    users[index]
-                );
-
-            };
-
-        });
-
-
-    }catch(error){
+    }
+    catch(error){
 
         console.error(error);
 
-
-        $("results").innerHTML =
-            '<div class="results-header">' +
-            'Roblox search could not be reached. ' +
-            'Try again.' +
-            '</div>';
+        document.getElementById("searchStatus").innerHTML =
+            "Couldn't connect to Roblox right now.<br>" +
+            "<small>" + escapeHtml(error.message) + "</small>";
 
     }
 
 }
 
 
-/* =========================================
-   SELECT USER
-========================================= */
+/* =====================================================
+   DISPLAY RESULTS
+===================================================== */
 
-async function selectUser(user){
+async function displayUsers(users){
 
-    selectedUser = user;
+    const results =
+        document.getElementById("results");
+
+    results.innerHTML="";
+
+    for(const user of users){
+
+        const avatar =
+            await getAvatar(user.id);
+
+        const row =
+            document.createElement("div");
+
+        row.className="result";
+
+        row.innerHTML=`
+            <img
+                src="${avatar}"
+                alt=""
+                onerror="this.style.opacity='.4'"
+            >
+
+            <div>
+                <div class="result-name">
+                    ${escapeHtml(user.displayName || user.name)}
+                </div>
+
+                <div class="result-user">
+                    @${escapeHtml(user.name)}
+                </div>
+            </div>
+        `;
+
+        row.addEventListener("click",()=>{
+            selectUser(user,avatar);
+        });
+
+        results.appendChild(row);
+
+    }
+
+}
 
 
-    $("userSearch").value =
-        user.name;
+/* =====================================================
+   AVATAR
+===================================================== */
 
-    $("clear").style.display =
-        "block";
+async function getAvatar(userId){
 
-
-    $("results").classList.remove(
-        "show"
-    );
-
-
-    $("selectedDisplay").textContent =
-        user.displayName;
-
-
-    $("selectedUsername").textContent =
-        "@" + user.name;
-
-
-    $("selectedUser").classList.add(
-        "show"
-    );
-
-
-    $("amount").disabled = false;
-
-    $("confirm").disabled = false;
-
+    const url =
+        AVATAR_API +
+        "?userIds=" +
+        encodeURIComponent(userId) +
+        "&size=150x150&format=Png&isCircular=false";
 
     try{
 
         const response =
-            await fetch(
-                getAvatarURL(
-                    user.id
-                )
-            );
+            await fetch(url);
 
+        if(!response.ok){
+            throw new Error("Avatar request failed");
+        }
 
         const data =
             await response.json();
 
-
-        if(
-            data.data &&
-            data.data.length
-        ){
-
-            $("selectedAvatar").src =
-                data.data[0].imageUrl;
-
+        if(data.data && data.data[0] && data.data[0].imageUrl){
+            return data.data[0].imageUrl;
         }
 
     }catch(error){
 
-        console.log(error);
+        console.log("Avatar error:",error);
 
     }
 
+    return "https://tr.rbxcdn.com/30DAY-AvatarHeadshot-420A12D3E8F77B3F2E3D9C2A9A3A7B1D-Png/150/150/AvatarHeadshot/Webp/noFilter";
+}
 
-    $("amount").focus();
+
+/* =====================================================
+   SELECT USER
+===================================================== */
+
+function selectUser(user,avatar){
+
+    selectedUser = {
+        id:user.id,
+        name:user.name,
+        displayName:user.displayName || user.name,
+        avatar:avatar
+    };
+
+    document.getElementById("selectedAvatar").src =
+        avatar;
+
+    document.getElementById("selectedDisplay").textContent =
+        selectedUser.displayName;
+
+    document.getElementById("selectedUsername").textContent =
+        "@" + selectedUser.name;
+
+    document.getElementById("searchStep").style.display =
+        "none";
+
+    document.getElementById("selectedStep").classList.add("show");
+
+    document.getElementById("amountInput").value="";
+    document.getElementById("amountInput").focus();
 
 }
 
 
-/* =========================================
-   LIVE SEARCH
-========================================= */
+/* =====================================================
+   EDIT USER
+===================================================== */
 
-$("userSearch").oninput =
-function(){
+document.getElementById("editUser")
+.addEventListener("click",()=>{
 
-    const value =
-        $("userSearch").value;
+    document.getElementById("selectedStep")
+        .classList.remove("show");
 
+    document.getElementById("searchStep")
+        .style.display="block";
 
-    $("clear").style.display =
-        value ? "block" : "none";
+    document.getElementById("usernameInput")
+        .focus();
 
-
-    clearTimeout(searchTimer);
-
-
-    searchTimer =
-        setTimeout(
-            function(){
-
-                searchUsers(value);
-
-            },
-            300
-        );
-
-};
+});
 
 
-/* =========================================
-   CLEAR SEARCH
-========================================= */
+/* =====================================================
+   CONFIRM DEMO SEND
+===================================================== */
 
-$("clear").onclick =
-function(){
-
-    $("userSearch").value = "";
-
-    $("results").classList.remove(
-        "show"
-    );
-
-    $("selectedUser").classList.remove(
-        "show"
-    );
-
-    $("amount").disabled = true;
-
-    $("confirm").disabled = true;
-
-    selectedUser = null;
-
-    $("clear").style.display =
-        "none";
-
-    $("userSearch").focus();
-
-};
-
-
-/* =========================================
-   CHANGE USER
-========================================= */
-
-$("change").onclick =
-function(){
-
-    $("selectedUser").classList.remove(
-        "show"
-    );
-
-    $("amount").disabled = true;
-
-    $("confirm").disabled = true;
-
-    selectedUser = null;
-
-    $("userSearch").focus();
-
-};
-
-
-/* =========================================
-   SEND
-========================================= */
-
-$("confirm").onclick =
-function(){
+document.getElementById("confirmSend")
+.addEventListener("click",()=>{
 
     if(!selectedUser){
-
         return;
-
     }
-
 
     const amount =
-        Number(
-            $("amount").value
-        );
+        Number(document.getElementById("amountInput").value);
 
+    if(!Number.isInteger(amount) || amount <= 0){
 
-    if(
-        !Number.isInteger(amount) ||
-        amount < 1
-    ){
-
-        $("status").textContent =
-            "Enter a valid whole-number Robux amount.";
-
+        showToast("Enter a valid Robux amount.");
         return;
 
     }
 
+    if(amount > demoBalance){
 
-    if(amount > balance){
-
-        $("status").textContent =
-            "Demo balance is only " +
-            balance.toLocaleString() +
-            " Robux.";
+        showToast(
+            "You only have " +
+            demoBalance.toLocaleString() +
+            " demo Robux."
+        );
 
         return;
 
@@ -1947,101 +1866,81 @@ function(){
 
 
     /*
-       DEMO ONLY.
-
-       This changes the local demo balance.
-       It does NOT transfer real Robux.
+      IMPORTANT:
+      This only changes the local demo balance.
+      It does NOT call Roblox to transfer Robux.
     */
 
-    balance -= amount;
+    demoBalance -= amount;
 
     updateBalance();
 
+    closeModal();
 
-    $("form").style.display =
-        "none";
-
-
-    $("success").classList.add(
-        "show"
-    );
-
-
-    $("successText").textContent =
+    showToast(
+        "Demo: " +
         amount.toLocaleString() +
-        " Robux was simulated for @" +
-        selectedUser.name +
-        ". No real Robux were transferred.";
-
-};
-
-
-/* =========================================
-   SEND ANOTHER
-========================================= */
-
-$("again").onclick =
-function(){
-
-    $("success").classList.remove(
-        "show"
+        " Robux sent to @" +
+        selectedUser.name
     );
 
-    $("form").style.display =
-        "block";
-
-    resetForm();
-
-    $("userSearch").focus();
-
-};
+});
 
 
-/* =========================================
-   ENTER KEY
-========================================= */
+/* =====================================================
+   TOAST
+===================================================== */
 
-$("userSearch").addEventListener(
-    "keydown",
-    function(event){
+let toastTimer;
 
-        if(event.key === "Enter"){
+function showToast(message){
 
-            searchUsers(
-                $("userSearch").value
-            );
+    const toast =
+        document.getElementById("toast");
 
-        }
+    toast.textContent=message;
+
+    toast.classList.add("show");
+
+    clearTimeout(toastTimer);
+
+    toastTimer=setTimeout(()=>{
+        toast.classList.remove("show");
+    },3500);
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHtml(value){
+
+    return String(value)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+
+}
+
+
+/* =====================================================
+   ESC KEY
+===================================================== */
+
+document.addEventListener("keydown",(e)=>{
+
+    if(e.key==="Escape" &&
+       overlay.classList.contains("show")){
+
+        closeModal();
 
     }
-);
 
-
-/* =========================================
-   INITIAL AVATAR
-========================================= */
-
-/*
-   Generic placeholder avatar.
-   The selected Roblox user's real avatar
-   is loaded when searched.
-*/
-
-const placeholder =
-    "https://tr.rbxcdn.com/30DAY-AvatarHeadshot-4218D5D6B4DDF8E1CF4F2D3F1C8C8A5E-Png/150/150/AvatarHeadshot/Webp/noFilter";
-
-$("topAvatar").src =
-    placeholder;
-
-$("sideAvatar").src =
-    placeholder;
-
-
-/* =========================================
-   START
-========================================= */
-
-updateBalance();
+});
 
 </script>
 

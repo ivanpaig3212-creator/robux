@@ -1,1 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RoboCoins — Demo Store</title>
+  <link rel="stylesheet" href="style.css">
+</head>
 
+<body>
+
+<header class="navbar">
+  <div class="nav-left">
+    <button class="menu-btn" onclick="toggleMenu()">☰</button>
+
+    <div class="logo">
+      <div class="logo-square"></div>
+      <span>RoboCoins</span>
+      <small>DEMO</small>
+    </div>
+
+    <nav id="desktopNav">
+      <a href="#store">Store</a>
+      <a href="#bundles">Bundles</a>
+      <a href="#send">Send</a>
+    </nav>
+  </div>
+
+  <div class="nav-right">
+    <div class="balance-mini">
+      <span class="coin-icon">◇</span>
+      <span id="navBalance">11</span>
+    </div>
+
+    <button class="send-nav" onclick="scrollToSend()">
+      ↑ Send
+    </button>
+
+    <div class="avatar">🙂</div>
+  </div>
+</header>
+
+<div id="mobileMenu" class="mobile-menu">
+  <a href="#store">Store</a>
+  <a href="#bundles">Bundles</a>
+  <a href="#send">Send</a>
+</div>
+
+<main>
+
+<section class="hero">
+  <div class="hero-content">
+    <div class="demo-pill">FICTIONAL DEMO STORE</div>
+
+    <h1>
+      Enjoy up to <span>25%</span><br>
+      more RoboCoins
+    </h1>
+
+    <p>
+      Choose a package below and test the fictional wallet system.
+    </p>
+  </div>
+</section>
+
+<section class="demo-warning">
+  <div class="warning-icon">ⓘ</div>
+
+  <div>
+    <strong>Demo website</strong>
+    <p>
+      RoboCoins are fictional. Purchases and transfers are simulated.
+      No real Robux, Roblox accounts, or payments are involved.
+    </p>
+  </div>
+</section>
+
+<section id="store" class="store-section">
+
+  <div class="section-title">
+    <h2>RoboCoins</h2>
+    <p>Choose your package</p>
+  </div>
+
+  <div class="packages">
+
+    <div class="package">
+      <div class="package-info">
+        <div class="coin-large">◇</div>
+
+        <div>
+          <h3>24,000</h3>
+          <span class="old-price">32,500</span>
+        </div>
+      </div>
+
+      <button onclick="openPurchase(24000, '₱13,600')">
+        ₱13,600
+      </button>
+    </div>
+
+    <div class="package">
+      <div class="package-info">
+        <div class="coin-large">◇</div>
+
+        <div>
+          <h3>11,000</h3>
+          <span class="old-price">10,000</span>
+        </div>
+      </div>
+
+      <button onclick="openPurchase(11000, '₱6,800')">
+        ₱6,800
+      </button>
+    </div>
+
+    <div class="package">
+      <div class="package-info">
+        <div class="coin-large">◇</div>
+
+        <div>
+          <h3>5,250</h3>
+          <span class="old-price">4,500</span>
+        </div>
+      </div>
+
+      <button onclick="openPurchase(5250, '₱3,400')">
+        ₱3,400
+      </button>
+    </div>
+
+    <div class="package featured">
+
+      <div class="featured-label">
+        ★ FOR YOU
+      </div>
+
+      <div class="package-info">
+        <div class="coin-large">◇</div>
+
+        <div>
+          <h3>3,625</h3>
+          <span class="old-price">3,150</span>
+        </div>
+      </div>
+
+      <button onclick="openPurchase(3625, '₱1,990')">
+        ₱1,990
+      </button>
+    </div>
+
+    <div class="package">
+      <div class="package-info">
+        <div class="coin-large">◇</div>
+
+        <div>
+          <h3>2,000</h3>
+          <span class="old-price">1,700</span>
+        </div>
+      </div>
+
+      <button onclick="openPurchase(2000, '₱1,360')">
+        ₱1,360
+      </button>
+    </div>
+
+  </div>
+</section>
+
+<section id="bundles" class="bundle-section">
+
+  <div class="bundle-banner">
+    <div class="bundle-art">
+      ⚔️
+    </div>
+
+    <div>
+      <span>FEATURED</span>
+      <h2>RPG Bundle</h2>
+      <p>Fictional bonus bundle</p>
+    </div>
+  </div>
+
+</section>
+
+<section class="wallet-section">
+
+  <div class="wallet-card">
+
+    <div class="card-header">
+      <div>
+        <span>DEMO WALLET</span>
+        <h2>Your RoboCoins</h2>
+      </div>
+
+      <div class="wallet-symbol">◇</div>
+    </div>
+
+    <div class="big-balance">
+      <span>◇</span>
+      <strong id="mainBalance">11</strong>
+    </div>
+
+    <button class="reset-btn" onclick="resetWallet()">
+      Reset demo wallet
+    </button>
+
+  </div>
+
+  <div id="send" class="send-card">
+
+    <div class="card-header">
+      <div>
+        <span>TRANSFER</span>
+        <h2>Send RoboCoins</h2>
+      </div>
+
+      <div class="send-symbol">↑</div>
+    </div>
+
+    <label>Recipient</label>
+
+    <input
+      id="recipient"
+      type="text"
+      placeholder="Enter demo username"
+    >
+
+    <label>Amount</label>
+
+    <input
+      id="sendAmount"
+      type="number"
+      min="1"
+      placeholder="Enter amount"
+    >
+
+    <button class="send-button" onclick="sendCoins()">
+      Send RoboCoins
+    </button>
+
+  </div>
+
+</section>
+
+<section class="transactions">
+
+  <div class="section-title">
+    <h2>Recent activity</h2>
+    <p>Your simulated transactions</p>
+  </div>
+
+  <div id="transactionList" class="transaction-list">
+
+    <div class="empty">
+      No transactions yet
+    </div>
+
+  </div>
+
+</section>
+
+</main>
+
+<footer>
+  <strong>RoboCoins DEMO</strong>
+  <p>
+    This is an independent fictional demonstration.
+    Not affiliated with Roblox Corporation.
+  </p>
+</footer>
+
+<div id="purchaseModal" class="modal">
+
+  <div class="modal-box">
+
+    <button class="close" onclick="closePurchase()">×</button>
+
+    <div class="modal-coin">◇</div>
+
+    <h2>Demo Purchase</h2>
+
+    <p>
+      You're adding
+      <strong id="purchaseAmount">0</strong>
+      RoboCoins.
+    </p>
+
+    <div class="modal-price" id="purchasePrice">
+      ₱0
+    </div>
+
+    <div class="modal-note">
+      No real payment will be made.
+    </div>
+
+    <button class="confirm" onclick="confirmPurchase()">
+      Confirm Demo Purchase
+    </button>
+
+    <button class="cancel" onclick="closePurchase()">
+      Cancel
+    </button>
+
+  </div>
+
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

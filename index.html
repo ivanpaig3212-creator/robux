@@ -19,14 +19,14 @@ button,input{font:inherit}.topbar{position:fixed;top:0;left:0;right:0;height:48p
 .send-back,.send-close{width:32px;height:32px;border:0;background:transparent;color:#aeb3bc;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:25px;border-radius:7px}
 .send-back:hover,.send-close:hover{background:#1d2027;color:#fff}
 .send-title-wrap{display:flex;align-items:center;gap:8px;margin-left:5px;font-size:16px;font-weight:800;white-space:nowrap}
-.send-title-icon{width:18px;height:18px;border:2px solid #dce0e7;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;line-height:1;color:#fff}
-.send-modern-balance{margin-left:auto;margin-right:12px;display:flex;align-items:center;gap:5px;font-size:13px;font-weight:700}.send-modern-balance .robux-icon{width:19px;height:19px}.send-close{font-size:24px}
+.send-title-icon{width:18px;height:20px;object-fit:contain;display:block;filter:brightness(0) invert(1)}
+.send-modern-balance{margin-left:auto;margin-right:12px;display:flex;align-items:center;gap:5px;font-size:13px;font-weight:700}.send-modern-balance .robux-icon{width:19px;height:21px;object-fit:contain;filter:brightness(0) invert(1)}.send-close{font-size:24px}
 .send-modern-body{padding:34px 27px 27px;min-height:360px}.recipient-search-title{font-size:15px;font-weight:800;margin-bottom:12px;text-align:center}.send-search{height:44px;background:#20232b;border-color:#353a45}.send-results{max-height:250px;margin-top:7px}.send-results .result{height:58px}.send-modern .search-status{text-align:center}
 .modern-selected-user{text-align:center;padding:0 0 17px}.modern-selected-user img{width:76px;height:76px;border-radius:50%;object-fit:cover;background:#242832;border:2px solid #2c303a;box-shadow:0 8px 20px rgba(0,0,0,.25)}.modern-selected-user .display{margin-top:10px;font-size:18px;font-weight:800;color:#f4f5f7}.modern-selected-user .username{margin-top:3px;color:#858a94;font-size:12px}
-.quick-amounts{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:2px}.quick-amounts button{height:43px;border:1px solid #363b46;background:#272b34;color:#e8eaf0;border-radius:9px;font-size:12px;font-weight:800;cursor:pointer}.quick-amounts button:hover,.quick-amounts button.active{background:#303541;border-color:#464d5a}
-.amount-display-wrap{height:54px;display:flex;align-items:center;justify-content:center;gap:8px;margin:7px 0 8px}.big-robux-icon{width:39px;height:39px;color:#fff;flex:none}.modern-amount-input{width:112px;border:0;background:transparent;color:#fff;text-align:left;font-size:30px;font-weight:800;outline:0;padding:0}.modern-amount-input::-webkit-outer-spin-button,.modern-amount-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}.modern-amount-input[type=number]{-moz-appearance:textfield}
+.quick-amounts button{display:flex;align-items:center;justify-content:center;gap:6px}.quick-icon{width:16px;height:16px;object-fit:contain;filter:brightness(0) invert(1)}.quick-amounts{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:2px}.quick-amounts button{height:43px;border:1px solid #363b46;background:#272b34;color:#e8eaf0;border-radius:9px;font-size:12px;font-weight:800;cursor:pointer}.quick-amounts button:hover,.quick-amounts button.active{background:#303541;border-color:#464d5a}
+.amount-display-wrap{height:54px;display:flex;align-items:center;justify-content:center;gap:8px;margin:7px 0 8px}.big-robux-icon{width:39px;height:39px;object-fit:contain;filter:brightness(0) invert(1);flex:none}.modern-amount-input{width:112px;border:0;background:transparent;color:#fff;text-align:left;font-size:30px;font-weight:800;outline:0;padding:0}.modern-amount-input::-webkit-outer-spin-button,.modern-amount-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}.modern-amount-input[type=number]{-moz-appearance:textfield}
 .modern-next{width:100%;height:49px;border:0;border-radius:10px;background:#3d61d3;color:#fff;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 3px 8px rgba(0,0,0,.25)}.modern-next:hover{background:#496fe8}.modern-note{text-align:center;margin-top:15px;color:#888d97;font-size:12px;font-weight:500}
-@media(max-width:500px){.send-modern-body{padding-left:24px;padding-right:24px}.quick-amounts{gap:7px}}
+.send-review{display:none;text-align:center}.send-review.show{display:block}.review-avatar-wrap img{width:76px;height:76px;border-radius:50%;object-fit:cover;border:2px solid #2c303a}.review-name{margin-top:10px;font-size:18px;font-weight:800}.review-username{margin-top:3px;color:#858a94;font-size:12px}.review-amount{margin-top:24px;display:flex;justify-content:center;align-items:center;gap:8px;font-size:34px;font-weight:900}.review-amount img{width:34px;height:37px;object-fit:contain;filter:brightness(0) invert(1)}.review-label{color:#888d97;font-size:12px;margin-top:2px}.review-actions{display:flex;gap:9px;margin-top:24px}.review-actions button{flex:1;height:46px;border:0;border-radius:9px;font-weight:800;cursor:pointer}.review-back{background:#292d35;color:#fff}.review-send{background:#3d61d3;color:#fff}.review-send:hover{background:#496fe8}@media(max-width:500px){.send-modern-body{padding-left:24px;padding-right:24px}.quick-amounts{gap:7px}}
 </style>
 
 </head>
@@ -491,9 +491,9 @@ button,input{font:inherit}.topbar{position:fixed;top:0;left:0;right:0;height:48p
   <div class="send-modal send-modern">
     <div class="send-modern-header">
       <button class="send-back" id="backSend" aria-label="Back">←</button>
-      <div class="send-title-wrap"><div class="send-title-icon">◇</div><span>Send Robux</span></div>
+      <div class="send-title-wrap"><img class="send-title-icon" src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Robux_2019_Logo_white.svg" alt="" aria-hidden="true"><span>Send Robux</span></div>
       <div class="send-modern-balance">
-        <svg class="robux-icon" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" d="M7 3h10l4 4v10l-4 4H7l-4-4V7l4-4z"/><path fill="none" stroke="currentColor" stroke-width="2" d="m9 8 6 1v6l-6 1V8z"/></svg>
+        <img class="robux-icon" src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Robux_2019_Logo_white.svg" alt="Robux">
         <span id="modalBalance">11</span>
       </div>
       <button class="send-close" id="closeSend" aria-label="Close">×</button>
@@ -512,17 +512,29 @@ button,input{font:inherit}.topbar{position:fixed;top:0;left:0;right:0;height:48p
           <div class="username" id="selectedUsername"></div>
         </div>
         <div class="quick-amounts">
-          <button type="button" data-amount="25">◇ <span>25</span></button>
-          <button type="button" data-amount="50">◇ <span>50</span></button>
-          <button type="button" data-amount="100">◇ <span>100</span></button>
-          <button type="button" data-amount="200">◇ <span>200</span></button>
+          <button type="button" data-amount="25"><img class="quick-icon" src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Robux_2019_Logo_white.svg" alt=""> <span>25</span></button>
+          <button type="button" data-amount="50"><img class="quick-icon" src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Robux_2019_Logo_white.svg" alt=""> <span>50</span></button>
+          <button type="button" data-amount="100"><img class="quick-icon" src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Robux_2019_Logo_white.svg" alt=""> <span>100</span></button>
+          <button type="button" data-amount="200"><img class="quick-icon" src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Robux_2019_Logo_white.svg" alt=""> <span>200</span></button>
         </div>
         <div class="amount-display-wrap">
-          <svg class="big-robux-icon" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" d="M7 3h10l4 4v10l-4 4H7l-4-4V7l4-4z"/><path fill="none" stroke="currentColor" stroke-width="2" d="m9 8 6 1v6l-6 1V8z"/></svg>
+          <img class="big-robux-icon" src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Robux_2019_Logo_white.svg" alt="Robux">
           <input type="number" id="amountInput" class="modern-amount-input" min="1" value="0" aria-label="Robux amount">
         </div>
         <button class="modern-next" id="confirmSend">Next</button>
         <div class="modern-note">Robux are sent instantly with no fees</div>
+      </div>
+
+      <div class="send-review" id="sendReview">
+        <div class="review-avatar-wrap"><img id="reviewAvatar" src="" alt=""></div>
+        <div class="review-name" id="reviewDisplay"></div>
+        <div class="review-username" id="reviewUsername"></div>
+        <div class="review-amount"><img src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Robux_2019_Logo_white.svg" alt="Robux"><span id="reviewAmount">0</span></div>
+        <div class="review-label">Robux</div>
+        <div class="review-actions">
+          <button type="button" class="review-back" id="reviewBack">Back</button>
+          <button type="button" class="review-send" id="reviewSend">Send</button>
+        </div>
       </div>
     </div>
   </div>
@@ -594,6 +606,7 @@ function openModal(){
     document.getElementById("searchStatus").textContent="";
     document.getElementById("searchStep").style.display="block";
     document.getElementById("selectedStep").classList.remove("show");
+    document.getElementById("sendReview").classList.remove("show");
     document.getElementById("amountInput").value="0";
     setTimeout(()=>document.getElementById("usernameInput").focus(),100);
 }
@@ -606,7 +619,10 @@ openSend.addEventListener("click",openModal);
 closeSend.addEventListener("click",closeModal);
 
 document.getElementById("backSend").addEventListener("click",()=>{
-    if(document.getElementById("selectedStep").classList.contains("show")){
+    if(document.getElementById("sendReview").classList.contains("show")){
+        document.getElementById("sendReview").classList.remove("show");
+        document.getElementById("selectedStep").classList.add("show");
+    }else if(document.getElementById("selectedStep").classList.contains("show")){
         document.getElementById("selectedStep").classList.remove("show");
         document.getElementById("searchStep").style.display="block";
         document.getElementById("usernameInput").focus();
@@ -875,6 +891,7 @@ function selectUser(user,avatar){
     document.getElementById("selectedStep").classList.add("show");
 
     document.getElementById("amountInput").value="0";
+    document.getElementById("sendReview").classList.remove("show");
     document.querySelectorAll(".quick-amounts button").forEach(b=>b.classList.remove("active"));
     document.getElementById("amountInput").focus();
 
@@ -904,55 +921,60 @@ document.getElementById("editUser")
    CONFIRM DEMO SEND
 ===================================================== */
 
+const sendReview = document.getElementById("sendReview");
+const reviewAvatar = document.getElementById("reviewAvatar");
+const reviewDisplay = document.getElementById("reviewDisplay");
+const reviewUsername = document.getElementById("reviewUsername");
+const reviewAmount = document.getElementById("reviewAmount");
+
 document.getElementById("confirmSend")
 .addEventListener("click",()=>{
 
     if(!selectedUser){
+        showToast("Select a Roblox user first.");
         return;
     }
 
-    const amount =
-        Number(document.getElementById("amountInput").value);
+    const amount = Number(document.getElementById("amountInput").value);
 
     if(!Number.isInteger(amount) || amount <= 0){
-
         showToast("Choose or enter a Robux amount.");
         return;
+    }
 
+    reviewAvatar.src = selectedUser.avatar;
+    reviewDisplay.textContent = selectedUser.displayName;
+    reviewUsername.textContent = "@" + selectedUser.name;
+    reviewAmount.textContent = amount.toLocaleString();
+
+    document.getElementById("selectedStep").classList.remove("show");
+    sendReview.classList.add("show");
+});
+
+document.getElementById("reviewBack").addEventListener("click",()=>{
+    sendReview.classList.remove("show");
+    document.getElementById("selectedStep").classList.add("show");
+});
+
+document.getElementById("reviewSend").addEventListener("click",()=>{
+    const amount = Number(document.getElementById("amountInput").value);
+
+    if(!selectedUser || !Number.isInteger(amount) || amount <= 0){
+        showToast("Enter a valid Robux amount.");
+        return;
     }
 
     if(amount > demoBalance){
-
-        showToast(
-            "You only have " +
-            demoBalance.toLocaleString() +
-            " demo Robux."
-        );
-
+        showToast("You only have " + demoBalance.toLocaleString() + " demo Robux.");
         return;
-
     }
 
-
-    /*
-      IMPORTANT:
-      This only changes the local demo balance.
-      It does NOT call Roblox to transfer Robux.
-    */
-
     demoBalance -= amount;
-
     updateBalance();
-
+    sendReview.classList.remove("show");
     closeModal();
 
-    showToast(
-        "Demo: " +
-        amount.toLocaleString() +
-        " Robux sent to @" +
-        selectedUser.name
-    );
-
+    showToast("Demo: " + amount.toLocaleString() + " Robux sent to @" + selectedUser.name);
 });
 
 

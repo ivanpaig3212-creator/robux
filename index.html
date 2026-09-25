@@ -1564,13 +1564,13 @@ overlay.addEventListener("click",(e)=>{
 ===================================================== */
 
 const USER_SEARCH_API =
-    "https://users.roblox.com/v1/users/search";
+    "/api/roblox?action=search&keyword=";
 
 const USERNAME_API =
     "https://users.roblox.com/v1/usernames/users";
 
 const AVATAR_API =
-    "https://thumbnails.roblox.com/v1/users/avatar-headshot";
+    "/api/roblox?action=avatar&userIds=";
 
 
 let selectedUser = null;
@@ -1617,10 +1617,8 @@ async function searchRoblox(username){
         */
 
         const url =
-            USER_SEARCH_API +
-            "?keyword=" +
-            encodeURIComponent(username) +
-            "&limit=10";
+    USER_SEARCH_API +
+    encodeURIComponent(username);
 
         const response = await fetch(url);
 
@@ -1748,10 +1746,9 @@ async function displayUsers(users){
 async function getAvatar(userId){
 
     const url =
-        AVATAR_API +
-        "?userIds=" +
-        encodeURIComponent(userId) +
-        "&size=150x150&format=Png&isCircular=false";
+    AVATAR_API +
+    encodeURIComponent(userId) +
+    "&size=150x150&format=Png&isCircular=false";
 
     try{
 

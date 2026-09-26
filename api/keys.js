@@ -378,6 +378,7 @@ export default async function handler(
                 );
             }
 
+
             if (
                 !SESSION_SECRET
             ) {
@@ -391,6 +392,7 @@ export default async function handler(
                     }
                 );
             }
+
 
             const suppliedKey =
                 String(
@@ -417,6 +419,7 @@ export default async function handler(
 
             let valid = false;
 
+
             try {
 
                 valid =
@@ -424,6 +427,7 @@ export default async function handler(
                         Buffer.from(
                             suppliedKey
                         ),
+
                         Buffer.from(
                             ADMIN_KEY
                         )
@@ -498,6 +502,7 @@ export default async function handler(
 
             let key = null;
 
+
             for (
                 let attempt = 0;
                 attempt < 10;
@@ -507,16 +512,24 @@ export default async function handler(
                 const candidate =
                     generateKey();
 
-                const record = {
-                    key: candidate,
 
-                    status: "unused",
+                const record = {
+
+                    key:
+                        candidate,
+
+                    status:
+                        "unused",
 
                     createdAt:
                         new Date()
                             .toISOString(),
 
-                    usedAt: null
+                    usedAt:
+                        null,
+
+                    revokedAt:
+                        null
                 };
 
 
@@ -540,11 +553,15 @@ export default async function handler(
 
                     await redis([
                         "SADD",
+
                         "access:keys",
+
                         candidate
                     ]);
 
-                    key = candidate;
+
+                    key =
+                        candidate;
 
                     break;
                 }
@@ -568,7 +585,9 @@ export default async function handler(
                 res,
                 200,
                 {
-                    success: true,
+                    success:
+                        true,
+
                     key
                 }
             );
@@ -633,9 +652,11 @@ export default async function handler(
                 const raw =
                     records?.[i];
 
+
                 if (!raw) {
                     continue;
                 }
+
 
                 try {
 
@@ -644,7 +665,9 @@ export default async function handler(
                             ? JSON.parse(raw)
                             : raw;
 
+
                     keys.push({
+
                         key:
                             keyNames[i],
 
@@ -658,6 +681,10 @@ export default async function handler(
 
                         usedAt:
                             record.usedAt ||
+                            null,
+
+                        revokedAt:
+                            record.revokedAt ||
                             null
                     });
 
@@ -688,6 +715,133 @@ export default async function handler(
 
 
         /*
+         * REVOKE KEY
+         */
+
+        if (
+            action === "revoke"
+        ) {
+
+            const key =
+                String(
+                    body.key || ""
+                )
+                .trim()
+                .toUpperCase();
+
+
+            if (!key) {
+
+                return json(
+                    res,
+                    400,
+                    {
+                        error:
+                            "Key is required."
+                    }
+                );
+            }
+
+
+            const redisKey =
+                `access:key:${key}`;
+
+
+            const raw =
+                await redis([
+                    "GET",
+                    redisKey
+                ]);
+
+
+            if (!raw) {
+
+                return json(
+                    res,
+                    404,
+                    {
+                        error:
+                            "Key not found."
+                    }
+                );
+            }
+
+
+            let record;
+
+
+            try {
+
+                record =
+                    typeof raw === "string"
+                        ? JSON.parse(raw)
+                        : raw;
+
+            } catch (_) {
+
+                return json(
+                    res,
+                    500,
+                    {
+                        error:
+                            "Invalid key record."
+                    }
+                );
+            }
+
+
+            if (
+                record.status ===
+                "revoked"
+            ) {
+
+                return json(
+                    res,
+                    400,
+                    {
+                        error:
+                            "Key is already revoked."
+                    }
+                );
+            }
+
+
+            record.status =
+                "revoked";
+
+            record.revokedAt =
+                new Date()
+                    .toISOString();
+
+
+            await redis([
+                "SET",
+
+                redisKey,
+
+                JSON.stringify(
+                    record
+                )
+            ]);
+
+
+            return json(
+                res,
+                200,
+                {
+                    success:
+                        true,
+
+                    key,
+
+                    status:
+                        "revoked"
+                }
+            );
+        }
+
+
+        /*
          * LOGOUT
          */
 
@@ -695,13 +849,17 @@ export default async function handler(
             action === "logout"
         ) {
 
-            clearSessionCookie(res);
+            clearSessionCookie(
+                res
+            );
+
 
             return json(
                 res,
                 200,
                 {
-                    success: true
+                    success:
+                        true
                 }
             );
         }
@@ -716,12 +874,14 @@ export default async function handler(
             }
         );
 
+
     } catch (error) {
 
         console.error(
             "Keys API error:",
             error
         );
+
 
         return json(
             res,

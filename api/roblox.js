@@ -1,50 +1,42 @@
 export default async function handler(req, res) {
     try {
-        const { action, keyword, userIds } = req.query;
+        const { action, keyword, userIds, userId } = req.query;
 
         // =========================
-        // SEARCH ROBLOX USER
+        // SEARCH ROBLOX USERS
         // =========================
         if (action === "search") {
-
             if (!keyword || keyword.length < 2) {
                 return res.status(400).json({
                     error: "Username is too short"
                 });
             }
 
-            const response = await fetch(
-                "https://users.roblox.com/v1/usernames/users",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        usernames: [keyword],
-                        excludeBannedUsers: false
-                    })
-                }
-            );
+            const url =
+                "https://users.roblox.com/v1/users/search?keyword=" +
+                encodeURIComponent(keyword) +
+                "&limit=10";
 
-            const data = await response.json();
+            const response = await fetch(url);
+            const text = await response.text();
 
             if (!response.ok) {
-                return res.status(response.status).json(data);
+                return res.status(response.status).send(text);
             }
 
-            return res.status(200).json(data);
+            return res
+                .status(200)
+                .setHeader("Content-Type", "application/json")
+                .send(text);
         }
-
 
         // =========================
         // GET ROBLOX AVATAR
         // =========================
         if (action === "avatar") {
-
             if (!userIds) {
                 return res.status(400).json({
-                    error: "Missing user ID"
+                    error: "Missing userIds"
                 });
             }
 
@@ -52,21 +44,47 @@ export default async function handler(req, res) {
                 "https://thumbnails.roblox.com/v1/users/avatar-headshot" +
                 "?userIds=" +
                 encodeURIComponent(userIds) +
-                "&size=150x150" +
-                "&format=Png" +
-                "&isCircular=false";
+                "&size=150x150&format=Png&isCircular=false";
 
             const response = await fetch(url);
-
-            const data = await response.json();
+            const text = await response.text();
 
             if (!response.ok) {
-                return res.status(response.status).json(data);
+                return res.status(response.status).send(text);
             }
 
-            return res.status(200).json(data);
+            return res
+                .status(200)
+                .setHeader("Content-Type", "application/json")
+                .send(text);
         }
 
+        // =========================
+        // GET ROBLOX USER DETAILS
+        // =========================
+        if (action === "details") {
+            if (!userId) {
+                return res.status(400).json({
+                    error: "Missing userId"
+                });
+            }
+
+            const url =
+                "https://users.roblox.com/v1/users/" +
+                encodeURIComponent(userId);
+
+            const response = await fetch(url);
+            const text = await response.text();
+
+            if (!response.ok) {
+                return res.status(response.status).send(text);
+            }
+
+            return res
+                .status(200)
+                .setHeader("Content-Type", "application/json")
+                .send(text);
+        }
 
         // =========================
         // INVALID ACTION
@@ -76,7 +94,6 @@ export default async function handler(req, res) {
         });
 
     } catch (error) {
-
         console.error(error);
 
         return res.status(500).json({

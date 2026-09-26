@@ -1,208 +1,1226 @@
-async function fetchRoblox(url, attempts = 3) {
-    let lastResponse = null;
-    let lastError = null;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Robux Store</title>
 
-    for (let attempt = 0; attempt < attempts; attempt++) {
-        try {
-            const response = await fetch(url);
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0b0c0f;--panel:#121419;--panel2:#171a20;--panel3:#1d2027;--text:#f2f3f5;--muted:#9a9da5;--border:#292d35;--blue:#3d6cff;--sidebar:255px;--top:48px}
+body{font-family:Arial,Helvetica,sans-serif;color:var(--text);background:var(--bg);overflow-x:hidden}
+button,input{font:inherit}.topbar{position:fixed;top:0;left:0;right:0;height:48px;background:#101216;border-bottom:1px solid #292c33;display:flex;align-items:center;z-index:1000}.logo{width:178px;padding-left:18px;font-size:22px;font-weight:1000;letter-spacing:-1.5px;color:#fff}.toplinks{display:flex;height:100%;align-items:center;gap:48px;font-size:14px;font-weight:700}.toplinks div{cursor:pointer;white-space:nowrap;color:#d7d9de}.toplinks div:hover{color:#fff}.search-top{margin-left:26px;width:min(400px,31vw);height:30px;background:#1b1e24;border:1px solid #333741;border-radius:8px;display:flex;align-items:center;padding:0 10px;color:#999}.search-top input{width:100%;border:0;outline:0;background:transparent;color:#eee;font-size:13px}.search-top input::placeholder{color:#858992}.top-right{margin-left:auto;display:flex;align-items:center;height:100%;gap:14px;padding-right:12px}.top-avatar{width:28px;height:28px;border-radius:50%;object-fit:cover;background:#242832}.top-name{font-size:12px;font-weight:700;margin-left:-9px}.bell{position:relative;width:25px}.notification{position:absolute;right:-5px;top:-6px;background:#e43c4b;color:#fff;font-size:10px;font-weight:bold;width:17px;height:17px;display:flex;justify-content:center;align-items:center;border-radius:50%}.balance-mini{display:flex;align-items:center;gap:5px;font-weight:700;font-size:13px;cursor:pointer}.robux-icon{width:20px;height:20px;flex:none}.sidebar{position:fixed;top:48px;bottom:0;left:0;width:var(--sidebar);background:#0e1014;border-right:1px solid #292c33;overflow-y:auto;padding:10px 12px 20px;z-index:900}.sidebar::-webkit-scrollbar{width:7px}.sidebar::-webkit-scrollbar-thumb{background:#363a43;border-radius:10px}.profile-row{height:48px;display:flex;align-items:center;padding:0 12px;gap:12px;font-size:14px;font-weight:700}.profile-row img{width:26px;height:26px;object-fit:cover;border-radius:50%}.side-item{height:42px;display:flex;align-items:center;gap:14px;padding:0 11px;border-radius:8px;font-size:14px;font-weight:600;color:#b9bdc6;cursor:pointer}.side-item:hover{background:#1a1d23;color:#fff}.side-item svg{width:20px;height:20px;stroke:#aeb3bd;flex:none}.friend-count{margin-left:auto;background:#30343d;color:#fff;border-radius:20px;padding:3px 8px;font-size:10px}.sidebar-card{margin-top:9px;border:1px solid #30343d;border-radius:8px;padding:13px 11px 12px;font-size:12px;line-height:1.45;color:#aeb2bb;background:#14171c}.sidebar-card a{display:inline-block;margin-top:8px;color:#fff;text-decoration:none;font-weight:700}.main{margin-left:var(--sidebar);padding-top:var(--top);min-height:100vh;background:#0b0c0f}.page{min-height:1500px;padding:0 0 80px;background:#0b0c0f}.page::before{content:"";position:fixed;left:var(--sidebar);right:0;top:var(--top);height:300px;pointer-events:none;background:repeating-linear-gradient(115deg,transparent 0 24px,rgba(255,255,255,.035) 25px,transparent 27px 52px);opacity:.18}.balance-area{position:relative;z-index:2;display:flex;justify-content:flex-end;padding:15px 42px 0}.balance-pill{display:flex;align-items:center;gap:12px;background:#171a20;border:1px solid #30343d;border-radius:22px;padding:5px 6px 5px 12px;box-shadow:0 6px 20px rgba(0,0,0,.2)}.balance-number{display:flex;align-items:center;gap:5px;font-weight:800}.send-button{height:32px;padding:0 15px;border:0;border-radius:17px;background:#f0f1f3;color:#17191d;font-size:12px;font-weight:800;cursor:pointer}.send-button:hover{background:#fff}.hero{position:relative;z-index:1;width:min(704px,78%);height:122px;margin:48px auto 0;border:1px solid #30343d;border-radius:12px;background:#14171c;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 30px rgba(0,0,0,.2);overflow:hidden}.hero:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 20% 40%,rgba(61,108,255,.08),transparent 35%),radial-gradient(circle at 80% 60%,rgba(255,255,255,.05),transparent 35%)}.hero h1{position:relative;text-align:center;font-size:38px;line-height:1.02;letter-spacing:-1.4px;color:#f7f7f8}.bonus{position:relative;z-index:2;width:min(704px,78%);margin:45px auto 0}.bonus-title{font-size:20px;font-weight:800;margin-bottom:8px;color:#f0f1f3}.banner{height:100px;border:1px solid #30343d;border-radius:12px 12px 0 0;overflow:hidden;background:radial-gradient(circle at 12% 55%,rgba(255,171,55,.25),transparent 17%),linear-gradient(115deg,#111318 0%,#191d24 38%,#0d0f13 62%,#1c222d 100%);position:relative}.banner:before,.banner:after{content:"";position:absolute;background:rgba(255,255,255,.045);transform:skewX(-22deg)}.banner:before{width:190px;height:170px;right:110px;top:-30px}.banner:after{width:110px;height:170px;right:-10px;top:-20px;background:rgba(61,108,255,.08)}.banner-content{height:100%;display:flex;align-items:center;gap:15px;padding:0 18px;position:relative;z-index:2}.banner-icon{width:62px;height:62px;border-radius:50%;background:radial-gradient(circle,#ffd86b,#b05c00 65%,#623000);display:flex;align-items:center;justify-content:center;font-size:29px;box-shadow:0 0 22px rgba(255,176,46,.2)}.banner-text{color:#fff}.banner-text strong{font-size:15px}.banner-text div{margin-top:5px;font-size:13px;color:#d7dae0}.package-box{background:#15181e;border:1px solid #30343d;border-top:0;border-radius:0 0 12px 12px;padding:4px 12px 8px;box-shadow:0 10px 28px rgba(0,0,0,.18)}.package{min-height:58px;display:grid;grid-template-columns:220px 1fr 150px;align-items:center;column-gap:10px;border-bottom:1px solid #272b33}.package:last-child{border-bottom:0}.amount{display:flex;align-items:center;gap:7px;font-size:26px;font-weight:800;color:#f3f4f6}.amount .old{font-size:15px;color:#777c86;text-decoration:line-through;font-weight:600}.bonus-label,.for-you{display:inline-flex;align-items:center;background:#2a2e36;color:#e5e7eb;padding:5px 9px;border-radius:15px;font-size:10px;font-weight:700;width:max-content}.for-you{margin-left:6px}.price{height:36px;border:1px solid #3a3f49;background:#292d35;color:#f1f2f4;border-radius:7px;font-size:12px;font-weight:800;cursor:pointer}.price:hover{background:#343943}.price.highlight{background:var(--blue);border-color:var(--blue);color:#fff}.price.highlight:hover{background:#4d78ff}.packages-heading{width:min(704px,78%);margin:34px auto 12px;font-size:22px;font-weight:800;color:#f1f2f4}.simple-packages{width:min(704px,78%);margin:0 auto;border:1px solid #30343d;border-radius:12px;background:#15181e;overflow:hidden}.simple-row{display:grid;grid-template-columns:1fr 1fr 150px;align-items:center;min-height:64px;padding:0 14px;border-bottom:1px solid #292d35}.simple-row:last-child{border-bottom:0}.simple-amount{font-size:23px;font-weight:800}.simple-old{font-size:14px;color:#777c86;text-decoration:line-through;margin-left:6px}.new-section{width:min(704px,78%);margin:34px auto 0}.section-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.section-title h2{font-size:22px;color:#f1f2f4}.learn{font-size:11px;color:#b8bdc6}.new-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.new-card{min-height:200px;border:1px solid #30343d;border-radius:10px;background:#15181e;padding:13px;position:relative;overflow:hidden}.new-card:before{content:"";position:absolute;inset:auto -30px -70px auto;width:150px;height:150px;background:radial-gradient(circle,rgba(61,108,255,.14),transparent 68%)}.new-card h3{font-size:14px;color:#fff}.new-card .card-price{float:right;font-size:12px;font-weight:800}.new-card ul{list-style:none;margin-top:26px;color:#b7bbc4;font-size:11px;line-height:1.9}.new-card li:before{content:"◇";margin-right:7px;color:#d6d9df}.card-buy{position:absolute;left:10px;right:10px;bottom:10px;height:32px;border:1px solid #363b45;border-radius:7px;background:#292d35;color:#fff;font-weight:800;font-size:11px;cursor:pointer}.card-buy:hover{background:#353a44}.bottom-info{width:min(704px,78%);margin:28px auto 0;display:grid;grid-template-columns:1fr 1fr;gap:10px}.info-box{border:1px solid #30343d;border-radius:10px;background:#12151a;padding:16px;color:#aeb3bd;font-size:12px;line-height:1.6}.info-box strong{display:block;color:#f0f1f3;font-size:14px;margin-bottom:6px}.chat{position:fixed;bottom:0;right:22px;width:268px;height:47px;background:#171a20;border:1px solid #30343d;border-radius:15px 15px 0 0;box-shadow:0 -2px 18px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:space-between;padding:0 13px;z-index:950;font-size:13px;font-weight:700;color:#e8e9ec}.overlay{position:fixed;inset:0;background:rgba(0,0,0,.62);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:3000}.overlay.show{display:flex}.send-modal{width:440px;max-width:calc(100vw - 30px);background:#15181e;border:1px solid #363b45;border-radius:14px;box-shadow:0 25px 80px rgba(0,0,0,.7);overflow:hidden;animation:pop .18s ease;color:#eee}@keyframes pop{from{transform:scale(.96);opacity:0}to{transform:scale(1);opacity:1}}.modal-header{height:58px;display:flex;align-items:center;padding:0 17px;border-bottom:1px solid #2b3038;font-size:16px;font-weight:800;color:#f1f2f4}.modal-header .close{margin-left:auto;width:30px;height:30px;border:0;background:transparent;font-size:21px;cursor:pointer;color:#9297a1}.modal-header .close:hover{color:#fff}.modal-body{padding:20px}.demo-warning{background:#1b2334;border:1px solid #31436a;color:#c9d5f5;padding:10px 12px;border-radius:8px;font-size:12px;line-height:1.4;margin-bottom:15px}.modal-balance{position:absolute;right:65px;top:18px;display:flex;align-items:center;gap:4px;font-size:13px}.user-search,.amount-input{width:100%;height:43px;background:#20242b;color:#f0f1f3;border:1px solid #3a3f49;border-radius:9px;padding:0 13px;font-size:14px;outline:none}.user-search::placeholder,.amount-input::placeholder{color:#7f848e}.user-search:focus,.amount-input:focus{border-color:#587cff;box-shadow:0 0 0 2px rgba(61,108,255,.12)}.search-status{min-height:25px;padding-top:7px;color:#8f949e;font-size:12px}.results{max-height:180px;overflow:auto}.result{height:60px;display:flex;align-items:center;gap:11px;padding:8px;border-radius:8px;cursor:pointer;color:#eee}.result:hover{background:#20242b}.result img{width:43px;height:43px;border-radius:50%;object-fit:cover}.result-name{font-size:14px;font-weight:700;color:#f0f1f3}.result-user{font-size:12px;color:#8b9099;margin-top:3px}.selected{display:none}.selected.show{display:block}.selected-user{text-align:center;padding:7px 0 15px}.selected-user img{width:70px;height:70px;border-radius:50%;object-fit:cover}.selected-user .display{margin-top:7px;font-size:17px;font-weight:800}.selected-user .username{margin-top:3px;color:#858a94;font-size:12px}.amount-label{font-size:12px;color:#a0a5ae;font-weight:600;margin-bottom:6px}.action-row{display:flex;gap:10px;margin-top:16px}.action-row button{flex:1;height:43px;border-radius:8px;border:0;font-weight:700;cursor:pointer}.send-confirm{background:var(--blue);color:#fff}.send-confirm:hover{background:#4d78ff}.edit-btn{background:#2b3038;color:#eee}.small-note{margin-top:13px;text-align:center;font-size:11px;color:#858a94;line-height:1.4}.purchase-modal{width:460px;max-width:calc(100vw - 30px);background:#15181e;border:1px solid #363b45;border-radius:14px;box-shadow:0 25px 80px rgba(0,0,0,.7);overflow:hidden}.purchase-body{padding:20px}.purchase-amount{font-size:30px;font-weight:900}.purchase-price{font-size:14px;color:#9ca1aa;margin-top:6px}.purchase-actions{display:flex;gap:10px;margin-top:20px}.purchase-actions button{flex:1;height:43px;border-radius:8px;border:0;font-weight:800;cursor:pointer}.free-buy{background:#3d6cff;color:#fff}.free-buy:hover{background:#4d78ff}.cancel-buy{background:#2b3038;color:#eee}.toast{position:fixed;left:50%;bottom:30px;transform:translate(-50%,20px);background:#20242b;color:#fff;padding:12px 18px;border:1px solid #383e48;border-radius:8px;font-size:13px;opacity:0;pointer-events:none;transition:.2s;z-index:5000}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:900px){body{overflow:auto}.toplinks{gap:15px;font-size:11px}.search-top{width:140px;margin-left:10px}.sidebar{display:none}.main{margin-left:0;padding-top:48px}.page{min-height:1800px}.hero,.bonus,.packages-heading,.simple-packages,.new-section,.bottom-info{width:88%}.hero{margin-top:45px}.hero h1{font-size:32px}.package{grid-template-columns:150px 1fr 105px}.amount{font-size:18px}.amount .old{display:none}.new-grid{grid-template-columns:1fr}.bottom-info{grid-template-columns:1fr}.chat{display:none}}
+@media(max-width:550px){.toplinks{display:none}.search-top{width:150px}.balance-area{padding-right:14px}.package{grid-template-columns:120px 1fr 88px}.bonus-label{font-size:9px;padding:4px 6px}.for-you{display:none}.simple-row{grid-template-columns:1fr 1fr 90px}.simple-amount{font-size:18px}}
 
-            lastResponse = response;
+/* Modern Send Robux screen */
+.send-modern{width:366px;max-width:calc(100vw - 20px);background:#15171e;border:1px solid #30333b;border-radius:16px;box-shadow:0 25px 85px rgba(0,0,0,.78);overflow:hidden;color:#f4f5f7}
+.send-modern-header{height:58px;display:flex;align-items:center;padding:0 12px;border-bottom:1px solid #292c34;position:relative;background:#101218}
+.send-back,.send-close{width:31px;height:31px;border:0;background:transparent;color:#aeb3bc;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:25px;border-radius:7px;flex:none}
+.send-back:hover,.send-close:hover{background:#1d2027;color:#fff}
+.send-title-wrap{display:flex;align-items:center;gap:8px;margin-left:5px;font-size:16px;font-weight:800;white-space:nowrap}
+.send-title-icon{width:19px;height:19px;border:2px solid #e4e7ed;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;line-height:1;color:#fff}
+.send-modern-balance{margin-left:auto;margin-right:11px;display:flex;align-items:center;gap:5px;font-size:13px;font-weight:700;color:#e8eaf0}.send-modern-balance .robux-icon{width:19px;height:19px}.send-close{font-size:24px}
+.send-modern-body{padding:0 27px 27px;min-height:430px;position:relative}
+#searchStep{padding-top:22px}.recipient-search-title{font-size:15px;font-weight:800;margin-bottom:12px;text-align:center}.send-search{height:44px;background:#20232b;border-color:#353a45}.send-results{max-height:250px;margin-top:7px}.send-results .result{height:58px}.send-modern .search-status{text-align:center}
+.modern-selected-user{text-align:center;padding:34px 0 0}.modern-selected-user img{width:76px;height:76px;border-radius:50%;object-fit:cover;background:#242832;border:2px solid #2c303a;box-shadow:0 8px 20px rgba(0,0,0,.25)}.modern-selected-user .display{margin-top:10px;font-size:18px;font-weight:800;color:#f4f5f7}.modern-selected-user .username{display:none}
+.selected{display:none}.selected.show{display:block}
+.amount-display-wrap{height:54px;display:flex;align-items:center;justify-content:center;gap:7px;margin-top:39px}.big-robux-icon{width:38px;height:38px;color:#fff;flex:none}.modern-amount-input{width:95px;border:0;background:transparent;color:#fff;text-align:left;font-size:39px;font-weight:900;outline:0;padding:0}.modern-amount-input::-webkit-outer-spin-button,.modern-amount-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}.modern-amount-input[type=number]{-moz-appearance:textfield}
+.quick-amounts{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:20px}.quick-amounts button{height:43px;border:1px solid #30343d;background:#242832;color:#e8eaf0;border-radius:11px;font-size:13px;font-weight:800;cursor:pointer;box-shadow:inset 0 1px rgba(255,255,255,.025)}.quick-amounts button:hover,.quick-amounts button.active{background:#2d323d;border-color:#444a56}
+.modern-next{width:100%;height:49px;border:0;border-radius:11px;background:#3d5fd5;color:#fff;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.25);margin-top:29px}.modern-next:hover{background:#4b6ee8}.modern-note{text-align:center;margin-top:19px;color:#858a95;font-size:12px;font-weight:500}.modern-demo-note{text-align:center;margin-top:5px;color:#555a64;font-size:9px}
+@media(max-width:500px){.send-modern{width:calc(100vw - 16px)}.send-modern-body{padding-left:23px;padding-right:23px}.quick-amounts{gap:7px}.quick-amounts button{font-size:12px}.modern-selected-user{padding-top:28px}}
 
-            // Success
-            if (response.ok) {
-                return response;
-            }
+/* Send confirmation screen */
+.confirm-step{display:none;text-align:center;padding-top:25px}.confirm-step.show{display:block}.confirm-avatar{width:76px;height:76px;border-radius:50%;object-fit:cover;border:2px solid #2c303a;box-shadow:0 8px 20px rgba(0,0,0,.25)}.confirm-title{margin-top:12px;font-size:18px;font-weight:800}.confirm-subtitle{margin-top:5px;color:#8f949e;font-size:12px}.confirm-summary{margin-top:20px;display:flex;justify-content:center;align-items:center;gap:10px;color:#8f949e;font-size:12px}.confirm-summary .dot{color:#555b66}.confirm-summary strong{color:#d9dce2;font-weight:700}.confirm-amount{margin-top:14px;display:flex;justify-content:center;align-items:center;gap:8px;font-size:38px;font-weight:900;color:#fff}.confirm-amount .big-robux-icon{width:37px;height:37px}.confirm-message{margin:18px auto 0;max-width:275px;color:#aeb3bd;font-size:13px;line-height:1.5}.confirm-message strong{color:#f2f3f5}.confirm-remaining{margin-top:13px;color:#7f8590;font-size:11px}.confirm-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:25px}.confirm-actions button{height:48px;border-radius:10px;border:0;font-size:15px;font-weight:800;cursor:pointer}.confirm-back{background:#282c34;color:#f0f1f4}.confirm-send{background:#3d5fd5;color:#fff}.confirm-back:hover{background:#333842}.confirm-send:hover{background:#4b6ee8}.confirm-demo-note{text-align:center;margin-top:13px;color:#555a64;font-size:9px}
 
-            // Retry temporary Roblox/Vercel errors
-            if (
-                response.status === 429 ||
-                response.status === 500 ||
-                response.status === 502 ||
-                response.status === 503 ||
-                response.status === 504
-            ) {
-                const retryAfter = response.headers.get("retry-after");
+/* Green Roblox-inspired send success screen */
+.send-success-modal{position:relative;width:370px;max-width:calc(100vw - 24px);background:#181b20;border:1px solid #30353d;border-radius:14px;box-shadow:0 28px 90px rgba(0,0,0,.78);padding:34px 28px 22px;text-align:center;color:#f4f5f7;animation:pop .18s ease}
+.send-success-close{position:absolute;right:11px;top:10px;width:30px;height:30px;border:0;background:transparent;color:#858b95;font-size:23px;cursor:pointer;border-radius:7px}.send-success-close:hover{background:#252a31;color:#fff}
+.send-success-check{width:76px;height:76px;margin:2px auto 16px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#153b25;color:#2ee36f;box-shadow:0 0 0 7px rgba(46,227,111,.07)}.send-success-check svg{width:48px;height:48px}
+.send-success-title{font-size:23px;font-weight:900;letter-spacing:-.3px}.send-success-text{margin:9px auto 0;max-width:285px;color:#aeb4bd;font-size:13px;line-height:1.5}.send-success-text strong{color:#f1f3f5}
+.send-success-user{margin:20px auto 0;padding:11px 13px;display:flex;align-items:center;text-align:left;gap:11px;background:#111419;border:1px solid #2d323a;border-radius:10px;max-width:285px}.send-success-user img{width:45px;height:45px;border-radius:50%;object-fit:cover;background:#242932}.send-success-display{font-size:14px;font-weight:800;color:#f2f3f5}.send-success-username{margin-top:3px;color:#858b95;font-size:11px}
+.send-success-done{width:100%;height:45px;margin-top:20px;border:0;border-radius:9px;background:#2edb68;color:#08130c;font-size:15px;font-weight:900;cursor:pointer;box-shadow:0 4px 14px rgba(46,219,104,.18)}.send-success-done:hover{background:#3ce779}
+.send-success-demo{margin-top:10px;color:#555b64;font-size:9px}
+</style>
 
-                let waitTime = retryAfter
-                    ? Number(retryAfter) * 1000
-                    : 800 * (attempt + 1);
+</head>
 
-                if (!Number.isFinite(waitTime)) {
-                    waitTime = 800 * (attempt + 1);
-                }
+<body>
 
-                await new Promise(resolve =>
-                    setTimeout(resolve, Math.min(waitTime, 5000))
-                );
+<!-- ================= TOP BAR ================= -->
 
-                continue;
-            }
+<header class="topbar">
 
-            // Don't retry permanent errors
-            return response;
+    <div class="logo">ROBLOX</div>
 
-        } catch (error) {
-            lastError = error;
+    <nav class="toplinks">
+        <div>Charts</div>
+        <div>Marketplace</div>
+        <div>Create</div>
+        <div>Robux</div>
+    </nav>
 
-            await new Promise(resolve =>
-                setTimeout(resolve, 800 * (attempt + 1))
-            );
+    <div class="search-top">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="m20 20-4-4"></path>
+        </svg>
+        <input placeholder="Search">
+    </div>
+
+    <div class="top-right">
+
+        <img id="topAvatar"
+             class="top-avatar"
+             src="https://tr.rbxcdn.com/30DAY-AvatarHeadshot-420A12D3E8F77B3F2E3D9C2A9A3A7B1D-Png/150/150/AvatarHeadshot/Webp/noFilter">
+
+        <span class="top-name">Ashlely</span>
+
+        <div class="bell">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+                <path d="M10 21h4"></path>
+            </svg>
+            <span class="notification">7</span>
+        </div>
+
+        <div class="balance-mini">
+            <svg class="robux-icon" viewBox="0 0 24 24">
+                <path fill="none" stroke="currentColor" stroke-width="2" d="M7 3h10l4 4v10l-4 4H7l-4-4V7l4-4z"/>
+                <path fill="none" stroke="currentColor" stroke-width="2" d="m9 8 6 1v6l-6 1V8z"/>
+            </svg>
+            <span id="topBalance">11</span>
+        </div>
+
+        <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2 2-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21h-3v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1-2-2 .1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H4v-3h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1 2-2 .1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.5V4h3v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1 2 2-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.5 1h.1v3h-.1a1.7 1.7 0 0 0-1.5 1z"/>
+        </svg>
+
+    </div>
+</header>
+
+
+<!-- ================= SIDEBAR ================= -->
+
+<aside class="sidebar">
+
+    <div class="profile-row">
+        <img id="sideAvatar"
+             src="https://tr.rbxcdn.com/30DAY-AvatarHeadshot-420A12D3E8F77B3F2E3D9C2A9A3A7B1D-Png/150/150/AvatarHeadshot/Webp/noFilter">
+        <span>Ashlely</span>
+    </div>
+
+    <div class="side-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <path d="M3 11 12 3l9 8"></path>
+            <path d="M5 10v10h14V10"></path>
+        </svg>
+        Home
+    </div>
+
+    <div class="side-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <circle cx="12" cy="8" r="3"></circle>
+            <path d="M5 21c.7-4 3-6 7-6s6.3 2 7 6"></path>
+        </svg>
+        Profile
+    </div>
+
+    <div class="side-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <path d="M12 2 20 6v12l-8 4-8-4V6z"></path>
+            <path d="m12 7 4 2v6l-4 2-4-2V9z"></path>
+        </svg>
+        Roblox Plus
+    </div>
+
+    <div class="side-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <path d="M4 5h16v11H7l-3 3z"></path>
+            <path d="M8 9h8M8 12h5"></path>
+        </svg>
+        Messages
+    </div>
+
+    <div class="side-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <circle cx="8" cy="8" r="3"></circle>
+            <circle cx="16" cy="9" r="3"></circle>
+            <path d="M2 20c.5-4 2.5-6 6-6s5.5 2 6 6"></path>
+            <path d="M13 15c4 0 6 2 7 5"></path>
+        </svg>
+        Friends
+        <span class="friend-count">500</span>
+    </div>
+
+    <div class="side-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <circle cx="12" cy="8" r="3"></circle>
+            <path d="M6 21c0-5 2-8 6-8s6 3 6 8"></path>
+        </svg>
+        Avatar
+    </div>
+
+    <div class="side-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <rect x="5" y="3" width="14" height="18" rx="2"></rect>
+            <path d="M8 8h8M8 12h8M8 16h5"></path>
+        </svg>
+        Inventory
+    </div>
+
+    <div class="side-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <path d="M12 2 4 7v10l8 5 8-5V7z"></path>
+            <path d="M8 9h8v6H8z"></path>
+        </svg>
+        Sandbox
+    </div>
+
+    <div class="side-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <path d="M4 8h14"></path>
+            <path d="m14 4 5 4-5 4"></path>
+            <path d="M20 16H6"></path>
+            <path d="m10 12-5 4 5 4"></path>
+        </svg>
+        Trade
+    </div>
+
+    <div class="side-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <circle cx="8" cy="8" r="3"></circle>
+            <circle cx="16" cy="8" r="3"></circle>
+            <circle cx="12" cy="16" r="3"></circle>
+            <path d="M4 21c0-3 2-5 4-5"></path>
+            <path d="M20 21c0-3-2-5-4-5"></path>
+        </svg>
+        Communities
+    </div>
+
+    <div class="side-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <path d="m12 3 2.2 5.2L20 10l-5.8 2.3L12 18l-2.2-5.7L4 10l5.8-1.8z"></path>
+        </svg>
+        Themes
+    </div>
+
+    <div class="side-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <path d="M4 5h16v14H4z"></path>
+            <path d="M7 9h10M7 13h7"></path>
+        </svg>
+        Newsroom
+    </div>
+
+    <div class="side-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <path d="M4 10h16l-2-5H6z"></path>
+            <path d="M5 10v9h14v-9"></path>
+            <path d="M9 19v-5h6v5"></path>
+        </svg>
+        Official Store
+    </div>
+
+    <div class="side-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <rect x="4" y="5" width="16" height="14" rx="2"></rect>
+            <path d="M8 9h8M8 13h5"></path>
+        </svg>
+        Buy Gift Cards
+    </div>
+
+    <div class="sidebar-card">
+
+        <div class="card-icon">
+            ◇
+        </div>
+
+        <div>More fun for less Robux.</div>
+        <div>Subscribe to Roblox Plus.</div>
+
+        <a href="#" onclick="return false;">Subscribe</a>
+
+    </div>
+
+</aside>
+
+
+<!-- ================= MAIN ================= -->
+
+<main class="main">
+
+<div class="page">
+
+    <div class="balance-area">
+
+        <div class="balance-pill">
+
+            <div class="balance-number">
+
+                <svg class="robux-icon" viewBox="0 0 24 24">
+                    <path fill="none" stroke="currentColor" stroke-width="2"
+                          d="M7 3h10l4 4v10l-4 4H7l-4-4V7l4-4z"/>
+                    <path fill="none" stroke="currentColor" stroke-width="2"
+                          d="m9 8 6 1v6l-6 1V8z"/>
+                </svg>
+
+                <span id="balance">11</span>
+
+            </div>
+
+            <button class="send-button" id="openSend">
+                ↑ &nbsp;Send
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <section class="hero">
+
+        <h1>
+            Enjoy up to 25%<br>
+            more Robux
+        </h1>
+
+    </section>
+
+
+    <section class="bonus">
+
+        <div class="bonus-title">
+            Bonus item we picked for you
+        </div>
+
+        <div class="banner">
+
+            <div class="banner-content">
+
+                <div class="banner-icon">⚔</div>
+
+                <div class="banner-text">
+                    <strong>[ 🏆 ] RIVALS ⓘ</strong>
+                    <div>RPG Bundle!</div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="package-box">
+
+            <div class="package">
+
+                <div class="amount">
+                    <svg class="robux-icon" viewBox="0 0 24 24">
+                        <path fill="none" stroke="currentColor" stroke-width="2"
+                              d="M7 3h10l4 4v10l-4 4H7l-4-4V7l4-4z"/>
+                        <path fill="none" stroke="currentColor" stroke-width="2"
+                              d="m9 8 6 1v6l-6 1V8z"/>
+                    </svg>
+                    24,000
+                    <span class="old">22,500</span>
+                </div>
+
+                <div>
+                    <span class="bonus-label">+ 1,500 more</span>
+                </div>
+
+                <button class="price" data-robux="24000" data-price="$199.99">$199.99</button>
+
+            </div>
+
+
+            <div class="package">
+
+                <div class="amount">
+                    <svg class="robux-icon" viewBox="0 0 24 24">
+                        <path fill="none" stroke="currentColor" stroke-width="2"
+                              d="M7 3h10l4 4v10l-4 4H7l-4-4V7l4-4z"/>
+                        <path fill="none" stroke="currentColor" stroke-width="2"
+                              d="m9 8 6 1v6l-6 1V8z"/>
+                    </svg>
+                    11,000
+                    <span class="old">10,000</span>
+                </div>
+
+                <div>
+                    <span class="bonus-label">+ 1,000 more</span>
+                </div>
+
+                <button class="price" data-robux="11000" data-price="$99.99">$99.99</button>
+
+            </div>
+
+
+            <div class="package">
+
+                <div class="amount">
+                    <svg class="robux-icon" viewBox="0 0 24 24">
+                        <path fill="none" stroke="currentColor" stroke-width="2"
+                              d="M7 3h10l4 4v10l-4 4H7l-4-4V7l4-4z"/>
+                        <path fill="none" stroke="currentColor" stroke-width="2"
+                              d="m9 8 6 1v6l-6 1V8z"/>
+                    </svg>
+                    5,250
+                    <span class="old">4,500</span>
+                </div>
+
+                <div>
+                    <span class="bonus-label">+ 750 more</span>
+                </div>
+
+                <button class="price" data-robux="5250" data-price="$49.99">$49.99</button>
+
+            </div>
+
+
+            <div class="package">
+
+                <div class="amount">
+                    <svg class="robux-icon" viewBox="0 0 24 24">
+                        <path fill="none" stroke="currentColor" stroke-width="2"
+                              d="M7 3h10l4 4v10l-4 4H7l-4-4V7l4-4z"/>
+                        <path fill="none" stroke="currentColor" stroke-width="2"
+                              d="m9 8 6 1v6l-6 1V8z"/>
+                    </svg>
+                    3,625
+                    <span class="old">3,150</span>
+                </div>
+
+                <div>
+                    <span class="bonus-label">+ 475 more</span>
+                    <span class="for-you">◉ For you</span>
+                </div>
+
+                <button class="price highlight" data-robux="3625" data-price="$34.99">$34.99</button>
+
+            </div>
+
+
+            <div class="package">
+
+                <div class="amount">
+                    <svg class="robux-icon" viewBox="0 0 24 24">
+                        <path fill="none" stroke="currentColor" stroke-width="2"
+                              d="M7 3h10l4 4v10l-4 4H7l-4-4V7l4-4z"/>
+                        <path fill="none" stroke="currentColor" stroke-width="2"
+                              d="m9 8 6 1v6l-6 1V8z"/>
+                    </svg>
+                    2,000
+                    <span class="old">1,700</span>
+                </div>
+
+                <div>
+                    <span class="bonus-label">+ 300 more</span>
+                </div>
+
+                <button class="price" data-robux="2000" data-price="$19.99">$19.99</button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <div class="packages-heading">Robux packages</div>
+
+    <div class="simple-packages">
+        <div class="simple-row">
+            <div class="simple-amount">1,500 <span class="simple-old">1,200</span></div>
+            <div><span class="bonus-label">+ 300 more</span></div>
+            <button class="price" data-robux="1500" data-price="$14.99">$14.99</button>
+        </div>
+        <div class="simple-row">
+            <div class="simple-amount">1,000 <span class="simple-old">800</span></div>
+            <div><span class="bonus-label">+ 200 more</span></div>
+            <button class="price" data-robux="1000" data-price="$9.99">$9.99</button>
+        </div>
+        <div class="simple-row">
+            <div class="simple-amount">500 <span class="simple-old">400</span></div>
+            <div><span class="bonus-label">+ 100 more</span></div>
+            <button class="price" data-robux="500" data-price="$4.99">$4.99</button>
+        </div>
+        <div class="simple-row">
+            <div class="simple-amount">270 <span class="simple-old">240</span></div>
+            <div><span class="bonus-label">+ 30 more</span></div>
+            <button class="price" data-robux="270" data-price="$2.99">$2.99</button>
+        </div>
+    </div>
+
+    <section class="new-section">
+        <div class="section-title">
+            <h2>◇ New on Roblox</h2>
+            <span class="learn">Learn more</span>
+        </div>
+        <div class="new-grid">
+            <div class="new-card">
+                <h3>Roblox Plus <span class="card-price">$4.99</span></h3>
+                <ul>
+                    <li>Up to 20% off on items and avatars</li>
+                    <li>Free private servers</li>
+                    <li>Send Robux for free</li>
+                    <li>Customize profile and app theme</li>
+                </ul>
+                <button class="card-buy" data-robux="0" data-price="$4.99">View plan</button>
+            </div>
+            <div class="new-card">
+                <h3>Plus 500 <span class="card-price">$8.99</span></h3>
+                <ul>
+                    <li>Everything in Plus</li>
+                    <li>+500 Robux every month</li>
+                    <li>$7.00 total value</li>
+                </ul>
+                <button class="card-buy" data-robux="500" data-price="$8.99">View plan</button>
+            </div>
+            <div class="new-card">
+                <h3>Plus 1000 <span class="card-price">$12.99</span></h3>
+                <ul>
+                    <li>Everything in Plus</li>
+                    <li>+1,000 Robux every month</li>
+                    <li>$10.30 total value</li>
+                </ul>
+                <button class="card-buy" data-robux="1000" data-price="$12.99">View plan</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="bottom-info">
+        <div class="info-box"><strong>More ways to get Robux</strong>Browse packages, monthly plans, and special offers from this demo storefront.</div>
+        <div class="info-box"><strong>Customize your experience</strong>Explore profile themes, avatar items, private servers, and other Roblox-style features.</div>
+    </section>
+
+</div>
+
+</main>
+
+
+<!-- ================= SEND MODAL ================= -->
+<div class="overlay" id="overlay">
+  <div class="send-modal send-modern">
+    <div class="send-modern-header">
+      <button class="send-back" id="backSend" aria-label="Back">←</button>
+      <div class="send-title-wrap"><div class="send-title-icon">◇</div><span>Send Robux</span></div>
+      <div class="send-modern-balance">
+        <svg class="robux-icon" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" d="M7 3h10l4 4v10l-4 4H7l-4-4V7l4-4z"/><path fill="none" stroke="currentColor" stroke-width="2" d="m9 8 6 1v6l-6 1V8z"/></svg>
+        <span id="modalBalance">11</span>
+      </div>
+      <button class="send-close" id="closeSend" aria-label="Close">×</button>
+    </div>
+    <div class="send-modern-body">
+      <div id="searchStep">
+        <div class="recipient-search-title">Choose a Roblox user</div>
+        <input id="usernameInput" class="user-search send-search" placeholder="Search Roblox username..." autocomplete="off">
+        <div class="search-status" id="searchStatus"></div>
+        <div class="results send-results" id="results"></div>
+      </div>
+      <div class="selected" id="selectedStep">
+        <div class="selected-user modern-selected-user">
+          <img id="selectedAvatar" src="" alt="">
+          <div class="display" id="selectedDisplay"></div>
+          <div class="username" id="selectedUsername"></div>
+        </div>
+        <div class="amount-display-wrap">
+          <svg class="big-robux-icon" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" d="M7 3h10l4 4v10l-4 4H7l-4-4V7l4-4z"/><path fill="none" stroke="currentColor" stroke-width="2" d="m9 8 6 1v6l-6 1V8z"/></svg>
+          <input type="number" id="amountInput" class="modern-amount-input" min="1" value="0" aria-label="Robux amount">
+        </div>
+        <div class="quick-amounts">
+          <button type="button" data-amount="25">◇ <span>25</span></button>
+          <button type="button" data-amount="50">◇ <span>50</span></button>
+          <button type="button" data-amount="100">◇ <span>100</span></button>
+          <button type="button" data-amount="200">◇ <span>200</span></button>
+        </div>
+        <button class="modern-next" id="confirmSend">Next</button>
+        <div class="modern-note">Robux are sent instantly with no fees</div>
+        <div class="modern-demo-note">Website preview — no real Robux are transferred</div>
+      </div>
+
+      <div class="confirm-step" id="confirmStep">
+        <img id="confirmAvatar" class="confirm-avatar" src="" alt="">
+        <div class="confirm-title" id="confirmName"></div>
+        <div class="confirm-subtitle" id="confirmUsername"></div>
+
+        <div class="confirm-summary">
+          <span>Joined <strong id="confirmJoined">Loading...</strong></span>
+          <span class="dot">•</span>
+          <span><strong>0</strong> mutual connections</span>
+        </div>
+
+        <div class="confirm-amount">
+          <svg class="big-robux-icon" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" d="M7 3h10l4 4v10l-4 4H7l-4-4V7l4-4z"/><path fill="none" stroke="currentColor" stroke-width="2" d="m9 8 6 1v6l-6 1V8z"/></svg>
+          <span id="confirmAmount">0</span>
+        </div>
+
+        <div class="confirm-message">
+          You are about to send <strong id="confirmAmountText">0 Robux</strong> to <strong id="confirmRecipientText">@username</strong>.
+          Please confirm that you want to continue.
+        </div>
+
+        <div class="confirm-remaining">Your balance after sending: <span id="confirmRemaining">0</span> Robux</div>
+
+        <div class="confirm-actions">
+          <button class="confirm-back" id="confirmBack">Back</button>
+          <button class="confirm-send" id="finalSend">Send</button>
+        </div>
+
+        <div class="confirm-demo-note">Website preview — this confirmation does not transfer real Robux.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= SEND SUCCESS ================= -->
+<div class="overlay" id="sendSuccessOverlay">
+    <div class="send-success-modal">
+        <button class="send-success-close" id="sendSuccessClose">×</button>
+
+        <div class="send-success-check">
+            <svg viewBox="0 0 52 52" aria-hidden="true">
+                <circle cx="26" cy="26" r="24" fill="none" stroke="currentColor" stroke-width="3"/>
+                <path d="M15 27l7 7 15-17" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+
+        <div class="send-success-title">Robux Sent!</div>
+        <div class="send-success-text">
+            <strong id="successAmount">0 Robux</strong> has been sent to
+            <strong id="successRecipient">@username</strong>.
+        </div>
+
+        <div class="send-success-user">
+            <img id="successAvatar" src="" alt="">
+            <div>
+                <div class="send-success-display" id="successDisplayName"></div>
+                <div class="send-success-username" id="successUsername"></div>
+            </div>
+        </div>
+
+        <button class="send-success-done" id="sendSuccessDone">Done</button>
+        <div class="send-success-demo">Demo website — no real Robux were transferred.</div>
+    </div>
+</div>
+
+<div class="overlay" id="purchaseOverlay">
+    <div class="purchase-modal">
+        <div class="modal-header">
+            <span>Get Robux</span>
+            <button class="close" id="closePurchase">×</button>
+        </div>
+        <div class="purchase-body">
+            <div class="purchase-amount" id="purchaseAmount">0 Robux</div>
+            <div class="purchase-price" id="purchasePrice">$0.00</div>
+            <div class="demo-warning">Simulation — no payment is processed. Press the button to add this package to your local demo balance.</div>
+            <div class="purchase-actions">
+                <button class="free-buy" id="freeBuy">Add to balance</button>
+                <button class="cancel-buy" id="cancelBuy">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+
+<script>
+
+/* =====================================================
+   DEMO BALANCE
+===================================================== */
+
+let demoBalance = Number(localStorage.getItem("demoRobuxBalance"));
+
+if(!Number.isFinite(demoBalance)){
+    demoBalance = 11;
+}
+
+const balanceElements = [
+    document.getElementById("balance"),
+    document.getElementById("topBalance"),
+    document.getElementById("modalBalance")
+];
+
+function updateBalance(){
+
+    balanceElements.forEach(el=>{
+        if(el) el.textContent = demoBalance.toLocaleString();
+    });
+
+    localStorage.setItem("demoRobuxBalance", demoBalance);
+}
+
+updateBalance();
+
+
+/* =====================================================
+   MODAL
+===================================================== */
+
+const overlay = document.getElementById("overlay");
+const openSend = document.getElementById("openSend");
+const closeSend = document.getElementById("closeSend");
+
+function openModal(){
+    overlay.classList.add("show");
+    document.getElementById("usernameInput").value="";
+    document.getElementById("results").innerHTML="";
+    document.getElementById("searchStatus").textContent="";
+    document.getElementById("searchStep").style.display="block";
+    document.getElementById("selectedStep").classList.remove("show");
+    document.getElementById("confirmStep").classList.remove("show");
+    document.getElementById("amountInput").value="0";
+    document.getElementById("backSend").style.visibility="hidden";
+    setTimeout(()=>document.getElementById("usernameInput").focus(),100);
+}
+
+function closeModal(){
+    overlay.classList.remove("show");
+}
+
+openSend.addEventListener("click",openModal);
+closeSend.addEventListener("click",closeModal);
+
+document.getElementById("backSend").addEventListener("click",()=>{
+    const confirmStep = document.getElementById("confirmStep");
+    if(confirmStep.classList.contains("show")){
+        confirmStep.classList.remove("show");
+        document.getElementById("selectedStep").classList.add("show");
+        return;
+    }
+    if(document.getElementById("selectedStep").classList.contains("show")){
+        document.getElementById("selectedStep").classList.remove("show");
+        document.getElementById("searchStep").style.display="block";
+        document.getElementById("backSend").style.visibility="hidden";
+        document.getElementById("usernameInput").focus();
+    }else{
+        closeModal();
+    }
+});
+
+document.querySelectorAll(".quick-amounts button").forEach(button=>{
+    button.addEventListener("click",()=>{
+        document.getElementById("amountInput").value=button.dataset.amount;
+        document.querySelectorAll(".quick-amounts button").forEach(b=>b.classList.remove("active"));
+        button.classList.add("active");
+    });
+});
+
+overlay.addEventListener("click",(e)=>{
+    if(e.target===overlay){
+        closeModal();
+    }
+});
+
+
+/* =====================================================
+   ROBLOX API
+===================================================== */
+
+const USER_SEARCH_API =
+    "/api/roblox?action=search&keyword=";
+
+const USERNAME_API =
+    "https://users.roblox.com/v1/usernames/users";
+
+const AVATAR_API =
+    "/api/roblox?action=avatar&userIds=";
+
+const USER_DETAILS_API =
+    "/api/roblox?action=details&userId=";
+
+
+let selectedUser = null;
+let searchTimer = null;
+
+
+/* =====================================================
+   SEARCH USER
+===================================================== */
+
+const usernameInput =
+    document.getElementById("usernameInput");
+
+usernameInput.addEventListener("input",()=>{
+
+    clearTimeout(searchTimer);
+
+    const value =
+        usernameInput.value.trim();
+
+    document.getElementById("results").innerHTML="";
+    document.getElementById("searchStatus").textContent="";
+
+    if(value.length < 2){
+        return;
+    }
+
+    document.getElementById("searchStatus").textContent =
+        "Searching Roblox...";
+
+    searchTimer = setTimeout(()=>{
+        searchRoblox(value);
+    },500);
+
+});
+
+
+async function searchRoblox(username){
+
+    try{
+
+        /*
+         First try the public Roblox user search endpoint.
+        */
+
+        const url =
+    USER_SEARCH_API +
+    encodeURIComponent(username);
+
+        const response = await fetch(url);
+
+        if(!response.ok){
+            throw new Error("Roblox search request failed.");
         }
+
+        const data = await response.json();
+
+        let users = data.data || [];
+
+        /*
+         If search returned nothing, try exact username lookup.
+        */
+
+        if(users.length === 0){
+
+            const exactResponse =
+                await fetch(USERNAME_API,{
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({
+                        usernames:[username],
+                        excludeBannedUsers:false
+                    })
+                });
+
+            if(exactResponse.ok){
+
+                const exactData =
+                    await exactResponse.json();
+
+                users = exactData.data || [];
+
+            }
+
+        }
+
+
+        if(users.length === 0){
+
+            document.getElementById("searchStatus").textContent =
+                "No Roblox users found.";
+
+            return;
+        }
+
+
+        document.getElementById("searchStatus").textContent =
+            "Select a Roblox user:";
+
+
+        await displayUsers(users);
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        document.getElementById("searchStatus").innerHTML =
+            "Couldn't connect to Roblox right now.<br>" +
+            "<small>" + escapeHtml(error.message) + "</small>";
+
     }
 
-    if (lastResponse) {
-        return lastResponse;
-    }
-
-    throw lastError || new Error("Roblox request failed");
 }
 
 
-export default async function handler(req, res) {
-    try {
-        const {
-            action,
-            keyword,
-            userIds,
-            userId
-        } = req.query;
+/* =====================================================
+   DISPLAY RESULTS
+===================================================== */
 
+async function displayUsers(users){
 
-        // ==========================================
-        // SEARCH ROBLOX USERS
-        // ==========================================
+    const results =
+        document.getElementById("results");
 
-        if (action === "search") {
+    results.innerHTML="";
 
-            if (!keyword || keyword.length < 2) {
-                return res.status(400).json({
-                    error: "Username is too short"
-                });
-            }
+    for(const user of users){
 
-            const url =
-                "https://users.roblox.com/v1/users/search" +
-                "?keyword=" +
-                encodeURIComponent(keyword) +
-                "&limit=10";
+        const avatar =
+            await getAvatar(user.id);
 
-            const response = await fetchRoblox(url);
+        const row =
+            document.createElement("div");
 
-            const text = await response.text();
+        row.className="result";
 
-            if (!response.ok) {
-                console.error(
-                    "Roblox search failed:",
-                    response.status,
-                    text
-                );
+        row.innerHTML=`
+            <img
+                src="${avatar}"
+                alt=""
+                onerror="this.style.opacity='.4'"
+            >
 
-                return res.status(response.status).send(text);
-            }
+            <div>
+                <div class="result-name">
+                    ${escapeHtml(user.displayName || user.name)}
+                </div>
 
-            return res
-                .status(200)
-                .setHeader("Content-Type", "application/json")
-                .send(text);
-        }
+                <div class="result-user">
+                    @${escapeHtml(user.name)}
+                </div>
+            </div>
+        `;
 
-
-        // ==========================================
-        // GET ROBLOX AVATAR
-        // ==========================================
-
-        if (action === "avatar") {
-
-            if (!userIds) {
-                return res.status(400).json({
-                    error: "Missing userIds"
-                });
-            }
-
-            const url =
-                "https://thumbnails.roblox.com/v1/users/avatar-headshot" +
-                "?userIds=" +
-                encodeURIComponent(userIds) +
-                "&size=150x150" +
-                "&format=Png" +
-                "&isCircular=false";
-
-            const response = await fetchRoblox(url);
-
-            const text = await response.text();
-
-            if (!response.ok) {
-                console.error(
-                    "Roblox avatar failed:",
-                    response.status,
-                    text
-                );
-
-                return res.status(response.status).send(text);
-            }
-
-            return res
-                .status(200)
-                .setHeader("Content-Type", "application/json")
-                .send(text);
-        }
-
-
-        // ==========================================
-        // GET ROBLOX USER DETAILS
-        // ==========================================
-
-        if (action === "details") {
-
-            if (!userId) {
-                return res.status(400).json({
-                    error: "Missing userId"
-                });
-            }
-
-            const url =
-                "https://users.roblox.com/v1/users/" +
-                encodeURIComponent(userId);
-
-            const response = await fetchRoblox(url);
-
-            const text = await response.text();
-
-            if (!response.ok) {
-                console.error(
-                    "Roblox details failed:",
-                    response.status,
-                    text
-                );
-
-                return res.status(response.status).send(text);
-            }
-
-            return res
-                .status(200)
-                .setHeader("Content-Type", "application/json")
-                .send(text);
-        }
-
-
-        // ==========================================
-        // INVALID ACTION
-        // ==========================================
-
-        return res.status(400).json({
-            error: "Invalid action"
+        row.addEventListener("click",()=>{
+            selectUser(user,avatar);
         });
 
-    } catch (error) {
+        results.appendChild(row);
 
-        console.error(
-            "Roblox API error:",
-            error
+    }
+
+}
+
+
+/* =====================================================
+   AVATAR
+===================================================== */
+
+async function getAvatar(userId){
+
+    const url =
+    AVATAR_API +
+    encodeURIComponent(userId) +
+    "&size=150x150&format=Png&isCircular=false";
+
+    try{
+
+        const response =
+            await fetch(url);
+
+        if(!response.ok){
+            throw new Error("Avatar request failed");
+        }
+
+        const data =
+            await response.json();
+
+        if(data.data && data.data[0] && data.data[0].imageUrl){
+            return data.data[0].imageUrl;
+        }
+
+    }catch(error){
+
+        console.log("Avatar error:",error);
+
+    }
+
+    return "https://tr.rbxcdn.com/30DAY-AvatarHeadshot-420A12D3E8F77B3F2E3D9C2A9A3A7B1D-Png/150/150/AvatarHeadshot/Webp/noFilter";
+}
+
+
+/* =====================================================
+   ROBLOX USER DETAILS
+===================================================== */
+
+async function getUserDetails(userId){
+    try{
+        const response = await fetch(
+            USER_DETAILS_API + encodeURIComponent(userId)
         );
 
-        return res.status(500).json({
-            error: "Server failed to contact Roblox",
-            details: error.message
-        });
+        if(!response.ok){
+            throw new Error("Roblox user details request failed");
+        }
+
+        const data = await response.json();
+
+        if(!data || !data.created){
+            throw new Error("Roblox did not return a creation date");
+        }
+
+        return data;
+    }catch(error){
+        console.log("User details error:",error);
+        return null;
     }
 }
+
+function formatJoinedDate(created){
+    if(!created) return "Unavailable";
+
+    const date = new Date(created);
+    if(Number.isNaN(date.getTime())) return "Unavailable";
+
+    return date.toLocaleDateString("en-US", {
+        month:"short",
+        day:"numeric",
+        year:"numeric"
+    });
+}
+
+/* =====================================================
+   SELECT USER
+===================================================== */
+
+async function selectUser(user,avatar){
+
+    selectedUser = {
+        id:user.id,
+        name:user.name,
+        displayName:user.displayName || user.name,
+        avatar:avatar,
+        created:null
+    };
+
+    document.getElementById("confirmJoined").textContent = "Loading...";
+
+    getUserDetails(user.id).then(details=>{
+        if(details && details.created){
+            selectedUser.created = details.created;
+            document.getElementById("confirmJoined").textContent =
+                formatJoinedDate(details.created);
+        }else{
+            document.getElementById("confirmJoined").textContent = "Unavailable";
+        }
+    });
+
+    document.getElementById("selectedAvatar").src =
+        avatar;
+
+    document.getElementById("selectedDisplay").textContent =
+        selectedUser.displayName;
+
+    document.getElementById("selectedUsername").textContent =
+        "@" + selectedUser.name;
+
+    document.getElementById("searchStep").style.display =
+        "none";
+
+    document.getElementById("selectedStep").classList.add("show");
+    document.getElementById("backSend").style.visibility="visible";
+
+    document.getElementById("amountInput").value="0";
+    document.querySelectorAll(".quick-amounts button").forEach(b=>b.classList.remove("active"));
+    document.getElementById("amountInput").focus();
+
+}
+
+
+/* =====================================================
+   CONFIRM DEMO SEND
+===================================================== */
+
+document.getElementById("confirmSend")
+.addEventListener("click",()=>{
+
+    if(!selectedUser){
+        return;
+    }
+
+    const amount =
+        Number(document.getElementById("amountInput").value);
+
+    if(!Number.isInteger(amount) || amount <= 0){
+        showToast("Choose or enter a Robux amount.");
+        return;
+    }
+
+    if(amount > demoBalance){
+        showToast(
+            "You only have " +
+            demoBalance.toLocaleString() +
+            " demo Robux."
+        );
+        return;
+    }
+
+    /* Show the confirmation screen before the local demo transfer. */
+    document.getElementById("confirmAvatar").src = selectedUser.avatar;
+    document.getElementById("confirmName").textContent = selectedUser.displayName;
+    document.getElementById("confirmUsername").textContent = "@" + selectedUser.name;
+    document.getElementById("confirmAmount").textContent = amount.toLocaleString();
+    document.getElementById("confirmAmountText").textContent = amount.toLocaleString() + " Robux";
+    document.getElementById("confirmRecipientText").textContent = "@" + selectedUser.name;
+    document.getElementById("confirmRemaining").textContent = (demoBalance - amount).toLocaleString();
+
+    document.getElementById("selectedStep").classList.remove("show");
+    document.getElementById("confirmStep").classList.add("show");
+});
+
+/* Return to the amount screen without changing the balance. */
+document.getElementById("confirmBack").addEventListener("click",()=>{
+    document.getElementById("confirmStep").classList.remove("show");
+    document.getElementById("selectedStep").classList.add("show");
+});
+
+/* Final local demo send. */
+document.getElementById("finalSend").addEventListener("click",()=>{
+    if(!selectedUser) return;
+
+    const amount = Number(document.getElementById("amountInput").value);
+
+    if(!Number.isInteger(amount) || amount <= 0 || amount > demoBalance){
+        showToast("This demo transfer is no longer valid.");
+        return;
+    }
+
+    demoBalance -= amount;
+    updateBalance();
+
+    // Show the green Roblox-inspired success screen.
+    document.getElementById("successAmount").textContent =
+        amount.toLocaleString() + " Robux";
+    document.getElementById("successRecipient").textContent =
+        "@" + selectedUser.name;
+    document.getElementById("successAvatar").src = selectedUser.avatar;
+    document.getElementById("successDisplayName").textContent =
+        selectedUser.displayName;
+    document.getElementById("successUsername").textContent =
+        "@" + selectedUser.name;
+
+    document.getElementById("confirmStep").classList.remove("show");
+    document.getElementById("sendSuccessOverlay").classList.add("show");
+});
+
+function closeSendSuccess(){
+    document.getElementById("sendSuccessOverlay").classList.remove("show");
+    closeModal();
+}
+
+document.getElementById("sendSuccessClose").addEventListener("click", closeSendSuccess);
+document.getElementById("sendSuccessDone").addEventListener("click", closeSendSuccess);
+document.getElementById("sendSuccessOverlay").addEventListener("click", e=>{
+    if(e.target === document.getElementById("sendSuccessOverlay")){
+        closeSendSuccess();
+    }
+});
+
+
+/* =====================================================
+   LOCAL PACKAGE PURCHASE SIMULATION
+===================================================== */
+
+const purchaseOverlay = document.getElementById("purchaseOverlay");
+const closePurchase = document.getElementById("closePurchase");
+const cancelBuy = document.getElementById("cancelBuy");
+const freeBuy = document.getElementById("freeBuy");
+const purchaseAmount = document.getElementById("purchaseAmount");
+const purchasePrice = document.getElementById("purchasePrice");
+let pendingPackage = null;
+
+function openPurchase(robux, price){
+    pendingPackage = {robux:Number(robux), price};
+    purchaseAmount.textContent = Number(robux).toLocaleString() + " Robux";
+    purchasePrice.textContent = price;
+    purchaseOverlay.classList.add("show");
+}
+
+function closePurchaseModal(){
+    purchaseOverlay.classList.remove("show");
+    pendingPackage = null;
+}
+
+document.querySelectorAll("[data-robux]").forEach(button=>{
+    button.addEventListener("click",()=>{
+        const robux = Number(button.dataset.robux || 0);
+        const price = button.dataset.price || "$0.00";
+        if(robux <= 0){
+            showToast("This plan is available in the demo storefront.");
+            return;
+        }
+        openPurchase(robux, price);
+    });
+});
+
+freeBuy.addEventListener("click",()=>{
+    if(!pendingPackage) return;
+    demoBalance += pendingPackage.robux;
+    updateBalance();
+    const added = pendingPackage.robux.toLocaleString();
+    closePurchaseModal();
+    showToast("Simulation: +" + added + " Robux added to your balance.");
+});
+
+closePurchase.addEventListener("click",closePurchaseModal);
+cancelBuy.addEventListener("click",closePurchaseModal);
+purchaseOverlay.addEventListener("click",e=>{
+    if(e.target === purchaseOverlay) closePurchaseModal();
+});
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+let toastTimer;
+
+function showToast(message){
+
+    const toast =
+        document.getElementById("toast");
+
+    toast.textContent=message;
+
+    toast.classList.add("show");
+
+    clearTimeout(toastTimer);
+
+    toastTimer=setTimeout(()=>{
+        toast.classList.remove("show");
+    },3500);
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHtml(value){
+
+    return String(value)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+
+}
+
+
+/* =====================================================
+   ESC KEY
+===================================================== */
+
+document.addEventListener("keydown",(e)=>{
+
+    if(e.key==="Escape" &&
+       overlay.classList.contains("show")){
+
+        closeModal();
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>

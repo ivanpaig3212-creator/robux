@@ -689,6 +689,9 @@ const USERNAME_API =
 const AVATAR_API =
     "/api/roblox?action=avatar&userIds=";
 
+const USER_DETAILS_API =
+    "/api/roblox?action=details&userId=";
+
 
 let selectedUser = null;
 let searchTimer = null;
@@ -900,16 +903,22 @@ async function getAvatar(userId){
 async function getUserDetails(userId){
     try{
         const response = await fetch(
-            "https://users.roblox.com/v1/users/" + encodeURIComponent(userId)
+            USER_DETAILS_API + encodeURIComponent(userId)
         );
 
         if(!response.ok){
-            throw new Error("User details request failed");
+            throw new Error("Roblox user details request failed");
         }
 
-        return await response.json();
+        const data = await response.json();
+
+        if(!data || !data.created){
+            throw new Error("Roblox did not return a creation date");
+        }
+
+        return data;
     }catch(error){
-        console.log("User details error:", error);
+        console.log("User details error:",error);
         return null;
     }
 }

@@ -1,232 +1,438 @@
-const crypto = require("crypto");
+import crypto from "crypto";
 
-const REDIS_URL = process.env.KV_REST_API_URL || process.env.REDIS_URL;
+const REDIS_URL =
+    process.env.KV_REST_API_URL ||
+    process.env.UPSTASH_REDIS_REST_URL;
+
 const REDIS_TOKEN =
-  process.env.KV_REST_API_TOKEN ||
-  process.env.KV_REST_API_READ_ONLY_TOKEN;
+    process.env.KV_REST_API_TOKEN ||
+    process.env.UPSTASH_REDIS_REST_TOKEN;
 
-const SITE_SESSION_SECRET = process.env.SITE_SESSION_SECRET;
+const SESSION_SECRET =
+    process.env.SITE_SESSION_SECRET;
 
-const DEFAULT_DURATION_MS = 30 * 24 * 60 * 60 * 1000;
+const SESSION_COOKIE =
+    "site_access";
 
-function base64UrlEncode(value) {
-  return Buffer.from(value)
-    .toString("base64")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
-}
+// Used only for old keys that don't have
+// a custom duration stored.
+const LEGACY_SESSION_SECONDS =
+    60 * 60 * 24 * 30;
 
-function sign(value) {
-  return crypto
-    .createHmac("sha256", SITE_SESSION_SECRET)
-    .update(value)
-    .digest("hex");
-}
 
-async function redisCommand(command) {
-  const response = await fetch(REDIS_URL, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${REDIS_TOKEN}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(command)
-  });
+/*
+ * Redis REST helper
+ */
 
-  if (!response.ok) {
-    throw new Error(`Redis error: ${response.status}`);
-  }
+async function redis(command) {
 
-  return response.json();
-}
-
-function parseCookies(req) {
-  const header = req.headers.cookie || "";
-  const cookies = {};
-
-  header.split(";").forEach((part) => {
-    const index = part.indexOf("=");
-
-    if (index === -1) return;
-
-    const name = part.slice(0, index).trim();
-    const value = part.slice(index + 1).trim();
-
-    cookies[name] = decodeURIComponent(value);
-  });
-
-  return cookies;
-}
-
-module.exports = async (req, res) => {
-  if (req.method !== "POST") {
-    return res.status(405).json({
-      success: false,
-      message: "Method not allowed"
-    });
-  }
-
-  try {
     if (!REDIS_URL || !REDIS_TOKEN) {
-      return res.status(500).json({
-        success: false,
-        message: "Redis is not configured."
-      });
+
+        throw new Error(
+            "Redis environment variables are missing."
+        );
+
     }
 
-    if (!SITE_SESSION_SECRET) {
-      return res.status(500).json({
-        success: false,
-        message: "SITE_SESSION_SECRET is not configured."
-      });
+    const response = await fetch(
+        REDIS_URL,
+        {
+            method: "POST",
+
+            headers: {
+                "Authorization":
+                    `Bearer ${REDIS_TOKEN}`,
+
+                "Content-Type":
+                    "application/json"
+            },
+
+            body: JSON.stringify(command)
+        }
+    );
+
+    const data =
+        await response.json().catch(() => null);
+
+    if (!response.ok) {
+
+        throw new Error(
+            data?.error ||
+            "Redis request failed."
+        );
+
     }
 
-    const body =
-      typeof req.body === "string"
-        ? JSON.parse(req.body)
-        : req.body || {};
+    return data?.result;
+}
 
-    const key = String(body.key || "").trim();
 
-    if (!key) {
-      return res.status(400).json({
-        success: false,
-        message: "Please enter an access key."
-      });
-    }
+/*
+ * Create a session that middleware.js understands.
+ *
+ * The first part is the exact expiration timestamp.
+ */
 
-    const redisKey = `access:key:${key}`;
+function createSession(expiresAt) {
 
-    /*
-      Redeem the key atomically.
+    const timestamp =
+        String(expiresAt);
 
-      This:
-      1. Gets the key record.
-      2. Makes sure it is unused.
-      3. Reads its duration.
-      4. Calculates expiration starting NOW.
-      5. Saves the key as used.
-      6. Saves expiresAt.
-      7. Returns the exact expiration timestamp.
-    */
-    const lua = `
-      local value = redis.call("GET", KEYS[1])
+    const signature =
+        crypto
+            .createHash("sha256")
+            .update(
+                SESSION_SECRET +
+                "|" +
+                timestamp
+            )
+            .digest("base64url");
 
-      if not value then
-        return {"NOT_FOUND"}
-      end
+    return (
+        timestamp +
+        "." +
+        signature
+    );
+}
 
-      local record = cjson.decode(value)
 
-      if record.status ~= "unused" then
-        return {"NOT_UNUSED"}
-      end
+/*
+ * Set access cookie
+ */
 
-      local durationMs = tonumber(record.durationMs)
+function setAccessCookie(
+    res,
+    session,
+    maxAge
+) {
 
-      if not durationMs then
-        durationMs = ${DEFAULT_DURATION_MS}
-      end
+    res.setHeader(
+        "Set-Cookie",
+        `${SESSION_COOKIE}=${encodeURIComponent(session)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${maxAge}`
+    );
 
-      local nowMs = tonumber(ARGV[1])
-      local expiresAt = nowMs + durationMs
+}
 
-      record.status = "used"
-      record.usedAt = ARGV[2]
-      record.expiresAt = expiresAt
 
-      redis.call("SET", KEYS[1], cjson.encode(record))
+/*
+ * JSON response
+ */
 
-      return {"OK", tostring(expiresAt)}
-    `;
+function json(
+    res,
+    status,
+    data
+) {
 
-    const nowMs = Date.now();
-    const usedAt = new Date(nowMs).toISOString();
-
-    const result = await redisCommand([
-      "EVAL",
-      lua,
-      "1",
-      redisKey,
-      String(nowMs),
-      usedAt
-    ]);
-
-    const reply = result.result;
-
-    if (!Array.isArray(reply)) {
-      return res.status(500).json({
-        success: false,
-        message: "Unexpected Redis response."
-      });
-    }
-
-    if (reply[0] === "NOT_FOUND") {
-      return res.status(404).json({
-        success: false,
-        message: "Invalid access key."
-      });
-    }
-
-    if (reply[0] === "NOT_UNUSED") {
-      return res.status(409).json({
-        success: false,
-        message: "This access key has already been used or revoked."
-      });
-    }
-
-    if (reply[0] !== "OK") {
-      return res.status(500).json({
-        success: false,
-        message: "Unable to redeem access key."
-      });
-    }
-
-    const expiresAt = Number(reply[1]);
-
-    if (!Number.isFinite(expiresAt) || expiresAt <= Date.now()) {
-      return res.status(500).json({
-        success: false,
-        message: "Invalid access duration."
-      });
-    }
-
-    /*
-      Session format:
-
-      expirationTimestamp.key
-
-      The key is included so middleware can check
-      whether the key has been revoked.
-    */
-    const payload = `${expiresAt}.${key}`;
-    const encodedPayload = base64UrlEncode(payload);
-    const signature = sign(encodedPayload);
-
-    const session = `${encodedPayload}.${signature}`;
-
-    const maxAge = Math.max(
-      1,
-      Math.floor((expiresAt - Date.now()) / 1000)
+    res.setHeader(
+        "Content-Type",
+        "application/json"
     );
 
     res.setHeader(
-      "Set-Cookie",
-      `site_access=${encodeURIComponent(session)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${maxAge}`
+        "Cache-Control",
+        "no-store"
     );
 
-    return res.status(200).json({
-      success: true,
-      message: "Access granted.",
-      expiresAt
-    });
-  } catch (error) {
-    console.error("Access error:", error);
+    return res
+        .status(status)
+        .json(data);
 
-    return res.status(500).json({
-      success: false,
-      message: "Server error while redeeming access key."
-    });
-  }
-};
+}
+
+
+/*
+ * Main API
+ */
+
+export default async function handler(
+    req,
+    res
+) {
+
+    try {
+
+        if (
+            req.method !== "POST"
+        ) {
+
+            return json(
+                res,
+                405,
+                {
+                    error:
+                        "Method not allowed."
+                }
+            );
+
+        }
+
+
+        if (!SESSION_SECRET) {
+
+            return json(
+                res,
+                500,
+                {
+                    error:
+                        "SITE_SESSION_SECRET is not configured."
+                }
+            );
+
+        }
+
+
+        const body =
+            typeof req.body === "string"
+                ? JSON.parse(
+                    req.body || "{}"
+                )
+                : (req.body || {});
+
+
+        const key =
+            String(
+                body.key || ""
+            )
+            .trim()
+            .toUpperCase();
+
+
+        if (!key) {
+
+            return json(
+                res,
+                400,
+                {
+                    error:
+                        "Please enter an access key."
+                }
+            );
+
+        }
+
+
+        /*
+         * The Lua script:
+         *
+         * 1. Finds the key
+         * 2. Checks that it is unused
+         * 3. Reads its custom duration
+         * 4. Calculates expiration from NOW
+         * 5. Marks the key as used
+         * 6. Stores expiresAt
+         *
+         * Everything happens atomically.
+         */
+
+        const lua = `
+
+local raw = redis.call(
+    "GET",
+    KEYS[1]
+)
+
+if not raw then
+    return {0, "missing"}
+end
+
+
+local ok, data =
+    pcall(
+        cjson.decode,
+        raw
+    )
+
+
+if not ok or not data then
+    return {0, "invalid"}
+end
+
+
+if data.status ~= "unused" then
+    return {0, "used"}
+end
+
+
+local durationMs =
+    tonumber(
+        data.durationMs
+    )
+
+
+-- Support keys created by the old system.
+if not durationMs or durationMs <= 0 then
+    durationMs = 2592000000
+end
+
+
+local nowMs =
+    tonumber(ARGV[1])
+
+
+local usedAt =
+    ARGV[2]
+
+
+local expiresAt =
+    nowMs + durationMs
+
+
+data.status = "used"
+
+data.usedAt =
+    usedAt
+
+data.expiresAt =
+    expiresAt
+
+
+redis.call(
+    "SET",
+    KEYS[1],
+    cjson.encode(data)
+)
+
+
+return {
+    1,
+    tostring(expiresAt)
+}
+
+`;
+
+
+        const nowMs =
+            Date.now();
+
+        const usedAt =
+            new Date(
+                nowMs
+            ).toISOString();
+
+
+        const result =
+            await redis([
+                "EVAL",
+                lua,
+                "1",
+                `access:key:${key}`,
+                String(nowMs),
+                usedAt
+            ]);
+
+
+        /*
+         * Failed redemption
+         */
+
+        if (
+            !Array.isArray(result) ||
+            Number(result[0]) !== 1
+        ) {
+
+            return json(
+                res,
+                403,
+                {
+                    error:
+                        "Invalid or already-used access key."
+                }
+            );
+
+        }
+
+
+        /*
+         * Get the exact expiration
+         * calculated by Redis.
+         */
+
+        const expiresAt =
+            Number(
+                result[1]
+            );
+
+
+        if (
+            !Number.isFinite(expiresAt) ||
+            expiresAt <= nowMs
+        ) {
+
+            return json(
+                res,
+                500,
+                {
+                    error:
+                        "Could not create access session."
+                }
+            );
+
+        }
+
+
+        /*
+         * Convert remaining time to seconds
+         * for the browser cookie.
+         */
+
+        const remainingSeconds =
+            Math.max(
+                1,
+                Math.ceil(
+                    (
+                        expiresAt -
+                        nowMs
+                    ) / 1000
+                )
+            );
+
+
+        /*
+         * Create session using the same
+         * format middleware.js currently expects.
+         */
+
+        const session =
+            createSession(
+                expiresAt
+            );
+
+
+        setAccessCookie(
+            res,
+            session,
+            remainingSeconds
+        );
+
+
+        return json(
+            res,
+            200,
+            {
+                success: true,
+                expiresAt
+            }
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Access API error:",
+            error
+        );
+
+
+        return json(
+            res,
+            500,
+            {
+                error:
+                    "Request failed."
+            }
+        );
+
+    }
+
+}

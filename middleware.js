@@ -158,12 +158,14 @@ async function redis(
 
     const url =
         process.env.KV_REST_API_URL ||
-        process.env.UPSTASH_REDIS_REST_URL;
+        process.env.UPSTASH_REDIS_REST_URL ||
+        process.env.REDIS_URL;
 
 
     const token =
         process.env.KV_REST_API_TOKEN ||
-        process.env.UPSTASH_REDIS_REST_TOKEN;
+        process.env.UPSTASH_REDIS_REST_TOKEN ||
+        process.env.KV_REST_API_READ_ONLY_TOKEN;
 
 
     if (
@@ -175,42 +177,50 @@ async function redis(
     }
 
 
-    const response =
-        await fetch(
-            url,
-            {
-                method: "POST",
+    try {
 
-                headers: {
-                    "Authorization":
-                        `Bearer ${token}`,
+        const response =
+            await fetch(
+                url,
+                {
+                    method: "POST",
 
-                    "Content-Type":
-                        "application/json"
-                },
+                    headers: {
+                        "Authorization":
+                            `Bearer ${token}`,
 
-                body:
-                    JSON.stringify(
-                        command
-                    )
-            }
-        );
+                        "Content-Type":
+                            "application/json"
+                    },
 
-
-    if (!response.ok) {
-        return null;
-    }
-
-
-    const data =
-        await response
-            .json()
-            .catch(
-                () => null
+                    body:
+                        JSON.stringify(
+                            command
+                        )
+                }
             );
 
 
-    return data?.result;
+        if (!response.ok) {
+            return null;
+        }
+
+
+        const data =
+            await response
+                .json()
+                .catch(
+                    () => null
+                );
+
+
+        return data?.result;
+
+    } catch (_) {
+
+        return null;
+
+    }
 }
 
 
@@ -219,6 +229,7 @@ async function redis(
  * Validate site session
  *
  * Returns:
+ *
  * {
  *   valid: true,
  *   key: "RBX-..."
@@ -268,7 +279,13 @@ async function validSiteSession(
     try {
 
         /*
+         * -------------------------------------------------
          * Decode payload
+         *
+         * Payload:
+         *
+         * expiration.key
+         * -------------------------------------------------
          */
 
         const payload =
@@ -279,12 +296,6 @@ async function validSiteSession(
                     )
                 );
 
-
-        /*
-         * Payload format:
-         *
-         * expiration.key
-         */
 
         const separator =
             payload.indexOf(".");
@@ -338,7 +349,9 @@ async function validSiteSession(
 
 
         /*
-         * Verify signature
+         * -------------------------------------------------
+         * Verify session signature
+         * -------------------------------------------------
          */
 
         const expected =
@@ -405,12 +418,10 @@ async function validSiteSession(
 
         /*
          * -------------------------------------------------
-         * IMPORTANT:
+         * CHECK REDIS RECORD
          *
-         * Check the exact key in Redis.
-         *
-         * If admin revoked the key,
-         * the session immediately becomes invalid.
+         * This is what allows the admin to revoke
+         * someone who is currently using the website.
          * -------------------------------------------------
          */
 
@@ -420,6 +431,11 @@ async function validSiteSession(
                 `access:key:${key}`
             ]);
 
+
+        /*
+         * If the key was permanently removed,
+         * the session is no longer valid.
+         */
 
         if (!raw) {
 
@@ -448,9 +464,28 @@ async function validSiteSession(
 
 
         /*
-         * Only "used" keys are allowed.
+         * -------------------------------------------------
+         * REVOKED KEY
          *
-         * "revoked" = immediately blocked.
+         * This immediately blocks the current user.
+         * -------------------------------------------------
+         */
+
+        if (
+            record.status ===
+            "revoked"
+        ) {
+
+            return {
+                valid: false
+            };
+        }
+
+
+        /*
+         * -------------------------------------------------
+         * KEY MUST BE USED
+         * -------------------------------------------------
          */
 
         if (
@@ -463,6 +498,30 @@ async function validSiteSession(
             };
         }
 
+
+        /*
+         * -------------------------------------------------
+         * CHECK KEY EXPIRATION
+         * -------------------------------------------------
+         */
+
+        if (
+            record.expiresAt &&
+            Date.now() >=
+                Number(
+                    record.expiresAt
+                )
+        ) {
+
+            return {
+                valid: false
+            };
+        }
+
+
+        /*
+         * Everything is valid.
+         */
 
         return {
             valid: true,
@@ -519,8 +578,7 @@ export default async function middleware(
      * -----------------------------------------------------
      * ADMIN
      *
-     * Keep these public to middleware because
-     * api/keys performs its own admin authentication.
+     * api/keys performs its own authentication.
      * -----------------------------------------------------
      */
 
@@ -562,7 +620,7 @@ export default async function middleware(
         return new Response(
             JSON.stringify({
                 error:
-                    "Unauthorized"
+                    "Access expired or revoked."
             }),
             {
                 status: 401,

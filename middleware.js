@@ -1,603 +1,617 @@
-import { NextResponse } from "next/server";
-
 const SITE_SESSION_COOKIE = "site_access";
-const ADMIN_SESSION_COOKIE = "robux_admin_session";
+const ADMIN_SESSION_COOKIE = "admin_access";
 
 const SESSION_SECRET =
-  process.env.SITE_SESSION_SECRET;
-
-const REDIS_URL =
-  process.env.KV_REST_API_URL ||
-  process.env.UPSTASH_REDIS_REST_URL ||
-  process.env.REDIS_URL;
-
-const REDIS_TOKEN =
-  process.env.KV_REST_API_TOKEN ||
-  process.env.UPSTASH_REDIS_REST_TOKEN ||
-  process.env.KV_REST_API_READ_ONLY_TOKEN;
+    "SITE_SESSION_SECRET";
 
 
 /*
- * Base64 URL decode
+ * ---------------------------------------------------------
+ * Base64 helpers
+ * ---------------------------------------------------------
  */
 
-function base64UrlDecode(value) {
+function b64(bytes) {
 
-  try {
+    let s = "";
 
-    const padded =
-      value +
-      "=".repeat(
-        (4 - (value.length % 4)) % 4
-      );
-
-    const base64 =
-      padded
-        .replace(/-/g, "+")
-        .replace(/_/g, "/");
-
-    return atob(base64);
-
-  } catch {
-
-    return null;
-
-  }
-
-}
-
-
-/*
- * Convert bytes to Base64 URL
- */
-
-function base64UrlEncodeBytes(bytes) {
-
-  let binary = "";
-
-  for (
-    const byte of bytes
-  ) {
-
-    binary +=
-      String.fromCharCode(byte);
-
-  }
-
-  return btoa(binary)
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
-
-}
-
-
-/*
- * Create the same SHA-256
- * signature used by api/access.js
- */
-
-async function createSignature(
-  payload
-) {
-
-  const data =
-    new TextEncoder().encode(
-      `${SESSION_SECRET}|${payload}`
-    );
-
-
-  const hash =
-    await crypto.subtle.digest(
-      "SHA-256",
-      data
-    );
-
-
-  return base64UrlEncodeBytes(
-    new Uint8Array(hash)
-  );
-
-}
-
-
-/*
- * Constant-time string comparison
- */
-
-function safeEqual(
-  a,
-  b
-) {
-
-  if (
-    typeof a !== "string" ||
-    typeof b !== "string"
-  ) {
-
-    return false;
-
-  }
-
-
-  if (
-    a.length !== b.length
-  ) {
-
-    return false;
-
-  }
-
-
-  let result = 0;
-
-
-  for (
-    let i = 0;
-    i < a.length;
-    i++
-  ) {
-
-    result |=
-      a.charCodeAt(i) ^
-      b.charCodeAt(i);
-
-  }
-
-
-  return result === 0;
-
-}
-
-
-/*
- * Check Redis
- */
-
-async function getRedisRecord(
-  key
-) {
-
-  if (
-    !REDIS_URL ||
-    !REDIS_TOKEN
-  ) {
-
-    return null;
-
-  }
-
-
-  try {
-
-    const response =
-      await fetch(
-        REDIS_URL,
-        {
-
-          method: "POST",
-
-          headers: {
-
-            Authorization:
-              `Bearer ${REDIS_TOKEN}`,
-
-            "Content-Type":
-              "application/json"
-
-          },
-
-          body:
-            JSON.stringify([
-              "GET",
-              `access:key:${key}`
-            ])
-
-        }
-      );
-
-
-    if (
-      !response.ok
+    for (
+        let i = 0;
+        i < bytes.length;
+        i += 0x8000
     ) {
 
-      return null;
+        s += String.fromCharCode(
+            ...bytes.subarray(
+                i,
+                i + 0x8000
+            )
+        );
+    }
 
+    return btoa(s)
+        .replace(/\+/g, "-")
+        .replace(/\//g, "_")
+        .replace(/=+$/g, "");
+}
+
+
+function b64d(value) {
+
+    const padded =
+        value
+            .replace(/-/g, "+")
+            .replace(/_/g, "/")
+            .padEnd(
+                value.length +
+                (4 - value.length % 4) % 4,
+                "="
+            );
+
+    const s =
+        atob(padded);
+
+    const bytes =
+        new Uint8Array(
+            s.length
+        );
+
+    for (
+        let i = 0;
+        i < s.length;
+        i++
+    ) {
+
+        bytes[i] =
+            s.charCodeAt(i);
+    }
+
+    return bytes;
+}
+
+
+/*
+ * ---------------------------------------------------------
+ * Read cookie
+ * ---------------------------------------------------------
+ */
+
+function cookie(
+    request,
+    name
+) {
+
+    const header =
+        request.headers.get(
+            "cookie"
+        ) || "";
+
+
+    const match =
+        header.match(
+            new RegExp(
+                "(?:^|;\\s*)" +
+                name +
+                "=([^;]+)"
+            )
+        );
+
+
+    return match
+        ? decodeURIComponent(
+            match[1]
+        )
+        : null;
+}
+
+
+/*
+ * ---------------------------------------------------------
+ * Create signature
+ * ---------------------------------------------------------
+ */
+
+async function sig(
+    payload
+) {
+
+    const secret =
+        process.env[
+            SESSION_SECRET
+        ];
+
+
+    if (!secret) {
+        return null;
     }
 
 
     const data =
-      await response.json();
+        new TextEncoder()
+            .encode(
+                secret +
+                "|" +
+                payload
+            );
+
+
+    return b64(
+        new Uint8Array(
+            await crypto.subtle.digest(
+                "SHA-256",
+                data
+            )
+        )
+    );
+}
+
+
+/*
+ * ---------------------------------------------------------
+ * Redis helper
+ * ---------------------------------------------------------
+ */
+
+async function redis(
+    command
+) {
+
+    const url =
+        process.env.KV_REST_API_URL ||
+        process.env.UPSTASH_REDIS_REST_URL;
+
+
+    const token =
+        process.env.KV_REST_API_TOKEN ||
+        process.env.UPSTASH_REDIS_REST_TOKEN;
 
 
     if (
-      !data.result
+        !url ||
+        !token
     ) {
 
-      return null;
-
+        return null;
     }
 
 
-    return JSON.parse(
-      data.result
-    );
+    const response =
+        await fetch(
+            url,
+            {
+                method: "POST",
 
-  } catch {
+                headers: {
+                    "Authorization":
+                        `Bearer ${token}`,
 
-    return null;
+                    "Content-Type":
+                        "application/json"
+                },
 
-  }
+                body:
+                    JSON.stringify(
+                        command
+                    )
+            }
+        );
 
+
+    if (!response.ok) {
+        return null;
+    }
+
+
+    const data =
+        await response
+            .json()
+            .catch(
+                () => null
+            );
+
+
+    return data?.result;
 }
 
 
 /*
- * Validate the user's site session
+ * ---------------------------------------------------------
+ * Validate site session
+ *
+ * Returns:
+ * {
+ *   valid: true,
+ *   key: "RBX-..."
+ * }
+ *
+ * OR
+ *
+ * {
+ *   valid: false
+ * }
+ * ---------------------------------------------------------
  */
 
 async function validSiteSession(
-  request
+    request
 ) {
 
-  if (
-    !SESSION_SECRET
-  ) {
+    const token =
+        cookie(
+            request,
+            SITE_SESSION_COOKIE
+        );
 
-    return false;
 
-  }
+    if (!token) {
 
-
-  const cookie =
-    request.cookies.get(
-      SITE_SESSION_COOKIE
-    )?.value;
-
-
-  if (!cookie) {
-
-    return false;
-
-  }
-
-
-  let token;
-
-  try {
-
-    token =
-      decodeURIComponent(
-        cookie
-      );
-
-  } catch {
-
-    return false;
-
-  }
-
-
-  const parts =
-    token.split(".");
-
-
-  /*
-   * New session format:
-   *
-   * base64(expiresAt.key).signature
-   */
-
-  if (
-    parts.length !== 2
-  ) {
-
-    return false;
-
-  }
-
-
-  const encodedPayload =
-    parts[0];
-
-  const suppliedSignature =
-    parts[1];
-
-
-  const payload =
-    base64UrlDecode(
-      encodedPayload
-    );
-
-
-  if (!payload) {
-
-    return false;
-
-  }
-
-
-  /*
-   * Verify signature
-   */
-
-  const expectedSignature =
-    await createSignature(
-      payload
-    );
-
-
-  if (
-    !safeEqual(
-      suppliedSignature,
-      expectedSignature
-    )
-  ) {
-
-    return false;
-
-  }
-
-
-  /*
-   * Payload:
-   *
-   * expiresAt.ACCESSKEY
-   */
-
-  const separator =
-    payload.indexOf(".");
-
-
-  if (
-    separator === -1
-  ) {
-
-    return false;
-
-  }
-
-
-  const expiresAt =
-    Number(
-      payload.slice(
-        0,
-        separator
-      )
-    );
-
-
-  const accessKey =
-    payload.slice(
-      separator + 1
-    );
-
-
-  if (
-    !Number.isFinite(
-      expiresAt
-    )
-  ) {
-
-    return false;
-
-  }
-
-
-  if (!accessKey) {
-
-    return false;
-
-  }
-
-
-  /*
-   * Check expiration
-   */
-
-  if (
-    Date.now() >= expiresAt
-  ) {
-
-    return false;
-
-  }
-
-
-  /*
-   * IMPORTANT:
-   *
-   * Check the actual Redis record.
-   *
-   * If the admin revoked the key,
-   * this immediately invalidates
-   * the person's current session.
-   */
-
-  const record =
-    await getRedisRecord(
-      accessKey
-    );
-
-
-  if (!record) {
-
-    return false;
-
-  }
-
-
-  /*
-   * Revoked = kicked out
-   */
-
-  if (
-    record.status ===
-    "revoked"
-  ) {
-
-    return false;
-
-  }
-
-
-  /*
-   * If Redis says the key itself
-   * has expired, also block it.
-   */
-
-  if (
-    record.expiresAt &&
-    Date.now() >=
-      Number(record.expiresAt)
-  ) {
-
-    return false;
-
-  }
-
-
-  /*
-   * The key must still be marked
-   * as used.
-   */
-
-  if (
-    record.status !==
-    "used"
-  ) {
-
-    return false;
-
-  }
-
-
-  return true;
-
-}
-
-
-/*
- * Middleware
- */
-
-export default async function middleware(
-  request
-) {
-
-  const pathname =
-    request.nextUrl.pathname;
-
-
-  /*
-   * Public pages/routes
-   */
-
-  if (
-    pathname === "/unlock.html" ||
-    pathname === "/api/access" ||
-    pathname === "/favicon.ico"
-  ) {
-
-    return NextResponse.next();
-
-  }
-
-
-  /*
-   * Admin panel is handled separately
-   * by api/keys.js.
-   */
-
-  if (
-    pathname === "/admin.html" ||
-    pathname.startsWith("/api/keys")
-  ) {
-
-    return NextResponse.next();
-
-  }
-
-
-  /*
-   * Roblox API requires valid access.
-   */
-
-  if (
-    pathname.startsWith(
-      "/api/roblox"
-    )
-  ) {
-
-    const valid =
-      await validSiteSession(
-        request
-      );
-
-
-    if (!valid) {
-
-      return NextResponse.json(
-        {
-          success: false,
-          error:
-            "Access expired or revoked."
-        },
-        {
-          status: 401
-        }
-      );
-
+        return {
+            valid: false
+        };
     }
 
 
-    return NextResponse.next();
-
-  }
-
-
-  /*
-   * Normal website pages
-   */
-
-  const valid =
-    await validSiteSession(
-      request
-    );
+    const parts =
+        token.split(".");
 
 
-  if (!valid) {
+    if (
+        parts.length !== 2
+    ) {
 
-    const url =
-      request.nextUrl.clone();
-
-    url.pathname =
-      "/unlock.html";
-
-    url.search = "";
-
-
-    return NextResponse.redirect(
-      url
-    );
-
-  }
+        return {
+            valid: false
+        };
+    }
 
 
-  return NextResponse.next();
+    try {
 
+        /*
+         * Decode payload
+         */
+
+        const payload =
+            new TextDecoder()
+                .decode(
+                    b64d(
+                        parts[0]
+                    )
+                );
+
+
+        /*
+         * Payload format:
+         *
+         * expiration.key
+         */
+
+        const separator =
+            payload.indexOf(".");
+
+
+        if (
+            separator === -1
+        ) {
+
+            return {
+                valid: false
+            };
+        }
+
+
+        const expiration =
+            Number(
+                payload.slice(
+                    0,
+                    separator
+                )
+            );
+
+
+        const key =
+            payload.slice(
+                separator + 1
+            );
+
+
+        if (
+            !Number.isFinite(
+                expiration
+            ) ||
+            expiration <=
+                Date.now()
+        ) {
+
+            return {
+                valid: false
+            };
+        }
+
+
+        if (!key) {
+
+            return {
+                valid: false
+            };
+        }
+
+
+        /*
+         * Verify signature
+         */
+
+        const expected =
+            await sig(
+                payload
+            );
+
+
+        if (!expected) {
+
+            return {
+                valid: false
+            };
+        }
+
+
+        const actualBytes =
+            b64d(
+                parts[1]
+            );
+
+
+        const expectedBytes =
+            b64d(
+                expected
+            );
+
+
+        if (
+            actualBytes.length !==
+            expectedBytes.length
+        ) {
+
+            return {
+                valid: false
+            };
+        }
+
+
+        let difference = 0;
+
+
+        for (
+            let i = 0;
+            i < actualBytes.length;
+            i++
+        ) {
+
+            difference |=
+                actualBytes[i] ^
+                expectedBytes[i];
+        }
+
+
+        if (
+            difference !== 0
+        ) {
+
+            return {
+                valid: false
+            };
+        }
+
+
+        /*
+         * -------------------------------------------------
+         * IMPORTANT:
+         *
+         * Check the exact key in Redis.
+         *
+         * If admin revoked the key,
+         * the session immediately becomes invalid.
+         * -------------------------------------------------
+         */
+
+        const raw =
+            await redis([
+                "GET",
+                `access:key:${key}`
+            ]);
+
+
+        if (!raw) {
+
+            return {
+                valid: false
+            };
+        }
+
+
+        let record;
+
+
+        try {
+
+            record =
+                typeof raw === "string"
+                    ? JSON.parse(raw)
+                    : raw;
+
+        } catch (_) {
+
+            return {
+                valid: false
+            };
+        }
+
+
+        /*
+         * Only "used" keys are allowed.
+         *
+         * "revoked" = immediately blocked.
+         */
+
+        if (
+            record.status !==
+            "used"
+        ) {
+
+            return {
+                valid: false
+            };
+        }
+
+
+        return {
+            valid: true,
+            key
+        };
+
+
+    } catch (_) {
+
+        return {
+            valid: false
+        };
+    }
 }
 
 
 /*
- * Routes handled by middleware
+ * ---------------------------------------------------------
+ * Middleware
+ * ---------------------------------------------------------
  */
 
-export const config = {
+export default async function middleware(
+    request
+) {
 
-  matcher: [
-    "/((?!_next/static|_next/image|favicon.ico).*)"
+    const url =
+        new URL(
+            request.url
+        );
 
-  ]
 
-};
+    const path =
+        url.pathname;
+
+
+    /*
+     * -----------------------------------------------------
+     * PUBLIC ACCESS PAGES
+     * -----------------------------------------------------
+     */
+
+    if (
+        path === "/unlock.html" ||
+        path === "/api/access" ||
+        path === "/favicon.ico"
+    ) {
+
+        return;
+    }
+
+
+    /*
+     * -----------------------------------------------------
+     * ADMIN
+     *
+     * Keep these public to middleware because
+     * api/keys performs its own admin authentication.
+     * -----------------------------------------------------
+     */
+
+    if (
+        path === "/admin.html" ||
+        path === "/api/keys"
+    ) {
+
+        return;
+    }
+
+
+    /*
+     * -----------------------------------------------------
+     * ROBLOX API
+     * -----------------------------------------------------
+     */
+
+    if (
+        path.startsWith(
+            "/api/roblox"
+        )
+    ) {
+
+        const session =
+            await validSiteSession(
+                request
+            );
+
+
+        if (
+            session.valid
+        ) {
+
+            return;
+        }
+
+
+        return new Response(
+            JSON.stringify({
+                error:
+                    "Unauthorized"
+            }),
+            {
+                status: 401,
+
+                headers: {
+                    "Content-Type":
+                        "application/json",
+
+                    "Cache-Control":
+                        "no-store"
+                }
+            }
+        );
+    }
+
+
+    /*
+     * -----------------------------------------------------
+     * NORMAL WEBSITE
+     * -----------------------------------------------------
+     */
+
+    const session =
+        await validSiteSession(
+            request
+        );
+
+
+    if (
+        session.valid
+    ) {
+
+        return;
+    }
+
+
+    /*
+     * -----------------------------------------------------
+     * NO ACCESS
+     *
+     * Send them back to unlock page.
+     * -----------------------------------------------------
+     */
+
+    return Response.redirect(
+        new URL(
+            "/unlock.html",
+            request.url
+        ),
+        302
+    );
+}

@@ -29,6 +29,9 @@ button,input{font:inherit}.topbar{position:fixed;top:0;left:0;right:0;height:48p
 .quick-amounts{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:20px}.quick-amounts button{height:43px;border:1px solid #30343d;background:#242832;color:#e8eaf0;border-radius:11px;font-size:13px;font-weight:800;cursor:pointer;box-shadow:inset 0 1px rgba(255,255,255,.025)}.quick-amounts button:hover,.quick-amounts button.active{background:#2d323d;border-color:#444a56}
 .modern-next{width:100%;height:49px;border:0;border-radius:11px;background:#3d5fd5;color:#fff;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.25);margin-top:29px}.modern-next:hover{background:#4b6ee8}.modern-note{text-align:center;margin-top:19px;color:#858a95;font-size:12px;font-weight:500}.modern-demo-note{text-align:center;margin-top:5px;color:#555a64;font-size:9px}
 @media(max-width:500px){.send-modern{width:calc(100vw - 16px)}.send-modern-body{padding-left:23px;padding-right:23px}.quick-amounts{gap:7px}.quick-amounts button{font-size:12px}.modern-selected-user{padding-top:28px}}
+
+/* Send confirmation screen */
+.confirm-step{display:none;text-align:center;padding-top:25px}.confirm-step.show{display:block}.confirm-avatar{width:76px;height:76px;border-radius:50%;object-fit:cover;border:2px solid #2c303a;box-shadow:0 8px 20px rgba(0,0,0,.25)}.confirm-title{margin-top:12px;font-size:18px;font-weight:800}.confirm-subtitle{margin-top:5px;color:#8f949e;font-size:12px}.confirm-amount{margin-top:27px;display:flex;justify-content:center;align-items:center;gap:8px;font-size:38px;font-weight:900;color:#fff}.confirm-amount .big-robux-icon{width:37px;height:37px}.confirm-message{margin:18px auto 0;max-width:275px;color:#aeb3bd;font-size:13px;line-height:1.5}.confirm-message strong{color:#f2f3f5}.confirm-remaining{margin-top:13px;color:#7f8590;font-size:11px}.confirm-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:25px}.confirm-actions button{height:48px;border-radius:10px;border:0;font-size:15px;font-weight:800;cursor:pointer}.confirm-back{background:#282c34;color:#f0f1f4}.confirm-send{background:#3d5fd5;color:#fff}.confirm-back:hover{background:#333842}.confirm-send:hover{background:#4b6ee8}.confirm-demo-note{text-align:center;margin-top:13px;color:#555a64;font-size:9px}
 </style>
 
 </head>
@@ -49,6 +52,10 @@ button,input{font:inherit}.topbar{position:fixed;top:0;left:0;right:0;height:48p
     </nav>
 
     <div class="search-top">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="m20 20-4-4"></path>
+        </svg>
         <input placeholder="Search">
     </div>
 
@@ -521,6 +528,32 @@ button,input{font:inherit}.topbar{position:fixed;top:0;left:0;right:0;height:48p
         </div>
         <button class="modern-next" id="confirmSend">Next</button>
         <div class="modern-note">Robux are sent instantly with no fees</div>
+        <div class="modern-demo-note">Website preview — no real Robux are transferred</div>
+      </div>
+
+      <div class="confirm-step" id="confirmStep">
+        <img id="confirmAvatar" class="confirm-avatar" src="" alt="">
+        <div class="confirm-title" id="confirmName"></div>
+        <div class="confirm-subtitle" id="confirmUsername"></div>
+
+        <div class="confirm-amount">
+          <svg class="big-robux-icon" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" d="M7 3h10l4 4v10l-4 4H7l-4-4V7l4-4z"/><path fill="none" stroke="currentColor" stroke-width="2" d="m9 8 6 1v6l-6 1V8z"/></svg>
+          <span id="confirmAmount">0</span>
+        </div>
+
+        <div class="confirm-message">
+          You are about to send <strong id="confirmAmountText">0 Robux</strong> to <strong id="confirmRecipientText">@username</strong>.
+          Please confirm that you want to continue.
+        </div>
+
+        <div class="confirm-remaining">Your balance after sending: <span id="confirmRemaining">0</span> Robux</div>
+
+        <div class="confirm-actions">
+          <button class="confirm-back" id="confirmBack">Back</button>
+          <button class="confirm-send" id="finalSend">Send</button>
+        </div>
+
+        <div class="confirm-demo-note">Website preview — this confirmation does not transfer real Robux.</div>
       </div>
     </div>
   </div>
@@ -592,6 +625,7 @@ function openModal(){
     document.getElementById("searchStatus").textContent="";
     document.getElementById("searchStep").style.display="block";
     document.getElementById("selectedStep").classList.remove("show");
+    document.getElementById("confirmStep").classList.remove("show");
     document.getElementById("amountInput").value="0";
     document.getElementById("backSend").style.visibility="hidden";
     setTimeout(()=>document.getElementById("usernameInput").focus(),100);
@@ -605,6 +639,12 @@ openSend.addEventListener("click",openModal);
 closeSend.addEventListener("click",closeModal);
 
 document.getElementById("backSend").addEventListener("click",()=>{
+    const confirmStep = document.getElementById("confirmStep");
+    if(confirmStep.classList.contains("show")){
+        confirmStep.classList.remove("show");
+        document.getElementById("selectedStep").classList.add("show");
+        return;
+    }
     if(document.getElementById("selectedStep").classList.contains("show")){
         document.getElementById("selectedStep").classList.remove("show");
         document.getElementById("searchStep").style.display="block";
@@ -897,35 +937,51 @@ document.getElementById("confirmSend")
         Number(document.getElementById("amountInput").value);
 
     if(!Number.isInteger(amount) || amount <= 0){
-
         showToast("Choose or enter a Robux amount.");
         return;
-
     }
 
     if(amount > demoBalance){
-
         showToast(
             "You only have " +
             demoBalance.toLocaleString() +
             " demo Robux."
         );
-
         return;
-
     }
 
+    /* Show the confirmation screen before the local demo transfer. */
+    document.getElementById("confirmAvatar").src = selectedUser.avatar;
+    document.getElementById("confirmName").textContent = selectedUser.displayName;
+    document.getElementById("confirmUsername").textContent = "@" + selectedUser.name;
+    document.getElementById("confirmAmount").textContent = amount.toLocaleString();
+    document.getElementById("confirmAmountText").textContent = amount.toLocaleString() + " Robux";
+    document.getElementById("confirmRecipientText").textContent = "@" + selectedUser.name;
+    document.getElementById("confirmRemaining").textContent = (demoBalance - amount).toLocaleString();
 
-    /*
-      IMPORTANT:
-      This only changes the local demo balance.
-      It does NOT call Roblox to transfer Robux.
-    */
+    document.getElementById("selectedStep").classList.remove("show");
+    document.getElementById("confirmStep").classList.add("show");
+});
+
+/* Return to the amount screen without changing the balance. */
+document.getElementById("confirmBack").addEventListener("click",()=>{
+    document.getElementById("confirmStep").classList.remove("show");
+    document.getElementById("selectedStep").classList.add("show");
+});
+
+/* Final local demo send. */
+document.getElementById("finalSend").addEventListener("click",()=>{
+    if(!selectedUser) return;
+
+    const amount = Number(document.getElementById("amountInput").value);
+
+    if(!Number.isInteger(amount) || amount <= 0 || amount > demoBalance){
+        showToast("This demo transfer is no longer valid.");
+        return;
+    }
 
     demoBalance -= amount;
-
     updateBalance();
-
     closeModal();
 
     showToast(
@@ -934,7 +990,6 @@ document.getElementById("confirmSend")
         " Robux sent to @" +
         selectedUser.name
     );
-
 });
 
 

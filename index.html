@@ -1742,6 +1742,314 @@ body.white-background .learn{
 
 
 <script>
+
+<!-- =========================================================
+     BACKGROUND COLOR / LIGHT MODE SETTING
+     Paste this entire block immediately before </body>
+     ========================================================= -->
+
+<style>
+
+/* =========================================================
+   LIGHT MODE
+   ========================================================= */
+
+body.white-background{
+    background:#ffffff !important;
+    color:#191b1f !important;
+}
+
+/* Main page */
+
+body.white-background .main{
+    background:#ffffff !important;
+}
+
+body.white-background .page{
+    background:#ffffff !important;
+}
+
+body.white-background .page::before{
+    opacity:0 !important;
+}
+
+
+/* =========================================================
+   MAIN TEXT
+   ========================================================= */
+
+body.white-background .packages-heading,
+body.white-background .bonus-title,
+body.white-background .section-title h2{
+    color:#191b1f !important;
+}
+
+body.white-background .learn{
+    color:#5b5f66 !important;
+}
+
+
+/* =========================================================
+   CARDS / PANELS
+   ========================================================= */
+
+body.white-background .card,
+body.white-background .package,
+body.white-background .package-card,
+body.white-background .bonus-card,
+body.white-background .panel,
+body.white-background .content-card{
+    background:#ffffff !important;
+    color:#191b1f !important;
+    border-color:#e1e3e6 !important;
+    box-shadow:0 1px 3px rgba(0,0,0,.08) !important;
+}
+
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+body.white-background button:not(.close){
+    color:#191b1f;
+}
+
+body.white-background .package button,
+body.white-background .package-card button,
+body.white-background .buy-button,
+body.white-background .purchase-button{
+    background:#ffffff !important;
+    color:#191b1f !important;
+    border-color:#d7d9dd !important;
+}
+
+body.white-background .package button:hover,
+body.white-background .package-card button:hover,
+body.white-background .buy-button:hover,
+body.white-background .purchase-button:hover{
+    background:#f2f3f5 !important;
+}
+
+
+/* =========================================================
+   INPUTS
+   ========================================================= */
+
+body.white-background input,
+body.white-background select,
+body.white-background textarea{
+    background:#ffffff !important;
+    color:#191b1f !important;
+    border-color:#d7d9dd !important;
+}
+
+body.white-background input::placeholder,
+body.white-background textarea::placeholder{
+    color:#8a8f98 !important;
+}
+
+
+/* =========================================================
+   PROFILE SETTINGS MODAL
+   ========================================================= */
+
+body.white-background .profile-modal{
+    background:#ffffff !important;
+    color:#191b1f !important;
+    border-color:#e1e3e6 !important;
+    box-shadow:0 12px 40px rgba(0,0,0,.18) !important;
+}
+
+body.white-background .modal-header{
+    color:#191b1f !important;
+    border-color:#e1e3e6 !important;
+}
+
+body.white-background .profile-modal-body{
+    color:#191b1f !important;
+}
+
+body.white-background .profile-preview{
+    background:#f6f7f8 !important;
+    border-color:#e1e3e6 !important;
+}
+
+body.white-background .profile-preview-name{
+    color:#191b1f !important;
+}
+
+body.white-background .profile-preview-user{
+    color:#70757d !important;
+}
+
+body.white-background .profile-label{
+    color:#44484f !important;
+}
+
+body.white-background .profile-input{
+    background:#ffffff !important;
+    color:#191b1f !important;
+    border-color:#d7d9dd !important;
+}
+
+body.white-background .profile-input:focus{
+    border-color:#3d6cff !important;
+}
+
+body.white-background .profile-note{
+    color:#70757d !important;
+}
+
+body.white-background .profile-cancel{
+    background:#ffffff !important;
+    color:#191b1f !important;
+    border-color:#d7d9dd !important;
+}
+
+body.white-background .profile-cancel:hover{
+    background:#f2f3f5 !important;
+}
+
+
+/* =========================================================
+   BACKGROUND COLOR SETTING
+   ========================================================= */
+
+.background-setting{
+    margin-top:18px;
+    padding-top:16px;
+    border-top:1px solid #2c3038;
+}
+
+.background-setting-title{
+    display:block;
+    font-size:12px;
+    color:#a8adb6;
+    font-weight:700;
+    margin-bottom:9px;
+}
+
+.background-options{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.background-option{
+    height:44px;
+    border:1px solid #3a3f49;
+    border-radius:9px;
+    background:#20242b;
+    color:#f0f1f3;
+    cursor:pointer;
+    font-size:13px;
+    font-weight:800;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    transition:
+        border-color .15s ease,
+        background .15s ease,
+        transform .1s ease;
+}
+
+.background-option:hover{
+    border-color:#587cff;
+}
+
+.background-option:active{
+    transform:scale(.98);
+}
+
+.background-option.active{
+    border-color:#3d6cff;
+    background:#293a78;
+    color:#ffffff;
+    box-shadow:0 0 0 2px rgba(61,108,255,.12);
+}
+
+.background-dot{
+    width:16px;
+    height:16px;
+    border-radius:50%;
+    display:inline-block;
+    border:1px solid #555b65;
+    flex-shrink:0;
+}
+
+.background-dot.black{
+    background:#0b0c0f;
+}
+
+.background-dot.white{
+    background:#ffffff;
+}
+
+
+/* Light mode for the background selector */
+
+body.white-background .background-setting{
+    border-top-color:#e1e3e6;
+}
+
+body.white-background .background-setting-title{
+    color:#555b65;
+}
+
+body.white-background .background-option{
+    background:#ffffff;
+    color:#191b1f;
+    border-color:#d7d9dd;
+}
+
+body.white-background .background-option:hover{
+    background:#f2f3f5;
+    border-color:#587cff;
+}
+
+body.white-background .background-option.active{
+    background:#eef2ff;
+    color:#191b1f;
+    border-color:#3d6cff;
+}
+
+
+/* =========================================================
+   COMMON DARK UI ELEMENTS
+   ========================================================= */
+
+/*
+   These selectors catch common elements without
+   changing their size, position or functionality.
+*/
+
+body.white-background .box,
+body.white-background .container,
+body.white-background .section,
+body.white-background .item,
+body.white-background .row,
+body.white-background .table-container{
+    border-color:#e1e3e6;
+}
+
+
+/* =========================================================
+   LIGHT MODE STATUS / SMALL TEXT
+   ========================================================= */
+
+body.white-background .muted,
+body.white-background .subtitle,
+body.white-background .description,
+body.white-background .small-text{
+    color:#70757d !important;
+}
+
+</style>
+
+
+<script>
+
 /* =========================================================
    BACKGROUND COLOR SETTINGS
    ========================================================= */
@@ -1765,7 +2073,7 @@ body.white-background .learn{
 
 
         /*
-         * Apply the selected background
+         * Add/remove light mode.
          */
         document.body.classList.toggle(
             "white-background",
@@ -1774,20 +2082,24 @@ body.white-background .learn{
 
 
         /*
-         * Save selection
+         * Save the choice.
          */
         try{
+
             localStorage.setItem(
                 BACKGROUND_STORAGE_KEY,
                 selected
             );
+
         }catch(error){
-            /* Ignore localStorage errors */
+
+            /* Ignore storage errors */
+
         }
 
 
         /*
-         * Update selected button
+         * Update selected button.
          */
         document
             .querySelectorAll(
@@ -1806,7 +2118,7 @@ body.white-background .learn{
 
 
     /* =====================================================
-       GET SAVED BACKGROUND
+       GET SAVED COLOR
        ===================================================== */
 
     function getSavedBackground(){
@@ -1818,21 +2130,23 @@ body.white-background .learn{
                     BACKGROUND_STORAGE_KEY
                 );
 
-            return saved === "white"
-                ? "white"
-                : "black";
+            if(saved === "white"){
+                return "white";
+            }
 
         }catch(error){
 
-            return "black";
+            /* Ignore storage errors */
 
         }
+
+        return "black";
 
     }
 
 
     /* =====================================================
-       APPLY SAVED BACKGROUND
+       APPLY SAVED COLOR
        ===================================================== */
 
     applyBackgroundColor(
@@ -1857,8 +2171,8 @@ body.white-background .learn{
 
 
     /*
-     * Make sure the existing profile settings
-     * actually exist before doing anything.
+     * If the existing profile settings
+     * cannot be found, stop safely.
      */
 
     if(
@@ -1872,7 +2186,7 @@ body.white-background .learn{
 
 
     /* =====================================================
-       PREVENT DUPLICATE SETTING
+       DON'T CREATE IT TWICE
        ===================================================== */
 
     if(
@@ -1887,7 +2201,7 @@ body.white-background .learn{
 
 
     /* =====================================================
-       CREATE BACKGROUND SETTING
+       CREATE THE SETTING
        ===================================================== */
 
     const setting =
@@ -1939,13 +2253,6 @@ body.white-background .learn{
        INSERT INTO EXISTING PROFILE SETTINGS
        ===================================================== */
 
-    /*
-     * Put it immediately above the existing
-     * profile status message.
-     *
-     * This does NOT modify the username system.
-     */
-
     profileBody.insertBefore(
         setting,
         profileStatusElement
@@ -1953,7 +2260,7 @@ body.white-background .learn{
 
 
     /* =====================================================
-       BLACK / WHITE BUTTONS
+       BUTTON EVENTS
        ===================================================== */
 
     setting
@@ -1985,6 +2292,7 @@ body.white-background .learn{
     );
 
 })();
+
 </script>
 
 </body>

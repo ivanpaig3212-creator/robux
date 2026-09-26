@@ -406,8 +406,8 @@ async function login() {
     }
 
     const result = await api("login", {
-        adminKey
-    });
+    key: adminKey
+});
 
     if (!result.data.success) {
 

@@ -1,699 +1,966 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Robux Admin</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Access Key Manager</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+<style>
+*{
+    box-sizing:border-box
+}
 
-        body {
-            margin: 0;
-            font-family: Arial, Helvetica, sans-serif;
-            background: #0b0b0f;
-            color: white;
-        }
+body{
+    margin:0;
+    background:#0b0c0f;
+    color:#f2f3f5;
+    font-family:Arial,Helvetica,sans-serif;
+    padding:30px
+}
 
-        .container {
-            width: min(1100px, 94%);
-            margin: 40px auto;
-        }
+.wrap{
+    max-width:760px;
+    margin:0 auto
+}
 
-        .card {
-            background: #15151b;
-            border: 1px solid #292933;
-            border-radius: 14px;
-            padding: 24px;
-            margin-bottom: 20px;
-        }
+.card{
+    background:#15181e;
+    border:1px solid #30343d;
+    border-radius:14px;
+    padding:22px;
+    margin-bottom:16px
+}
 
-        h1,
-        h2 {
-            margin-top: 0;
-        }
+.head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px
+}
 
-        input,
-        select {
-            width: 100%;
-            padding: 13px;
-            margin-top: 8px;
-            margin-bottom: 14px;
-            border-radius: 8px;
-            border: 1px solid #363642;
-            background: #0d0d12;
-            color: white;
-            font-size: 15px;
-            outline: none;
-        }
+.logo{
+    font-size:24px;
+    font-weight:900
+}
 
-        input:focus,
-        select:focus {
-            border-color: #00c853;
-        }
+.muted{
+    color:#9298a3;
+    font-size:12px
+}
 
-        button {
-            border: 0;
-            border-radius: 8px;
-            padding: 12px 18px;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-        }
+.row{
+    display:flex;
+    gap:10px;
+    margin-top:18px
+}
 
-        .green {
-            background: #00c853;
-            color: white;
-        }
+input,
+select{
+    height:44px;
+    background:#20242b;
+    border:1px solid #3a3f49;
+    border-radius:8px;
+    color:#fff;
+    padding:0 12px;
+    outline:none
+}
 
-        .green:hover {
-            background: #00b84a;
-        }
+input:focus,
+select:focus{
+    border-color:#3d6cff
+}
 
-        .red {
-            background: #e53935;
-            color: white;
-        }
+input{
+    flex:1
+}
 
-        .red:hover {
-            background: #d32f2f;
-        }
+button{
+    height:44px;
+    border:0;
+    border-radius:8px;
+    background:#3d6cff;
+    color:#fff;
+    font-weight:800;
+    padding:0 18px;
+    cursor:pointer
+}
 
-        .gray {
-            background: #292933;
-            color: white;
-        }
+button:hover{
+    opacity:.9
+}
 
-        .gray:hover {
-            background: #353541;
-        }
+button:disabled{
+    opacity:.5;
+    cursor:not-allowed
+}
 
-        .hidden {
-            display: none;
-        }
+button.secondary{
+    background:#2b3038
+}
 
-        .message {
-            margin-top: 12px;
-            padding: 12px;
-            border-radius: 8px;
-            background: #202028;
-            color: #ddd;
-        }
+.duration-box{
+    margin-top:18px;
+    padding:16px;
+    background:#101217;
+    border:1px solid #292d35;
+    border-radius:10px
+}
 
-        .key-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
+.duration-title{
+    font-size:13px;
+    font-weight:800;
+    margin-bottom:8px
+}
 
-        .key-item {
-            background: #0f0f14;
-            border: 1px solid #292933;
-            border-radius: 10px;
-            padding: 16px;
-        }
+.duration-row{
+    display:flex;
+    gap:10px
+}
 
-        .key-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
+.duration-row input{
+    width:150px;
+    flex:none
+}
 
-        .key-value {
-            font-family: monospace;
-            font-size: 16px;
-            word-break: break-all;
-        }
+.duration-row select{
+    flex:1;
+    cursor:pointer
+}
 
-        .key-info {
-            margin-top: 10px;
-            color: #aaa;
-            font-size: 14px;
-            line-height: 1.6;
-        }
+.duration-note{
+    margin-top:9px;
+    color:#7f8794;
+    font-size:11px
+}
 
-        .actions {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-top: 12px;
-        }
+.status{
+    min-height:20px;
+    margin-top:12px;
+    font-size:12px;
+    color:#9aa0aa
+}
 
-        .badge {
-            display: inline-block;
-            padding: 5px 9px;
-            border-radius: 999px;
-            font-size: 12px;
-            font-weight: bold;
-        }
+.success{
+    color:#8be28e
+}
 
-        .unused {
-            background: #1d3b25;
-            color: #65e889;
-        }
+.error{
+    color:#ff9d9d
+}
 
-        .used {
-            background: #303b52;
-            color: #8db4ff;
-        }
+.hidden{
+    display:none
+}
 
-        .revoked {
-            background: #482020;
-            color: #ff7777;
-        }
+.login h1{
+    font-size:21px;
+    margin:0 0 8px
+}
 
-        .expired {
-            background: #443719;
-            color: #ffc857;
-        }
+.empty{
+    color:#7f858f;
+    font-size:13px;
+    padding:16px 0
+}
 
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
+.key{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:14px 0;
+    border-bottom:1px solid #292d35
+}
 
-        .subtitle {
-            color: #999;
-            margin-top: -10px;
-        }
+.key:last-child{
+    border-bottom:0
+}
 
-        label {
-            display: block;
-            color: #ddd;
-            font-size: 14px;
-            font-weight: bold;
-        }
+.keycode{
+    font-family:monospace;
+    font-size:14px;
+    word-break:break-all
+}
 
-        .duration-note {
-            color: #888;
-            font-size: 13px;
-            margin-top: -6px;
-            margin-bottom: 14px;
-        }
-    </style>
+.key-info{
+    margin-top:5px;
+    line-height:1.6
+}
+
+.badge{
+    display:inline-block;
+    font-size:10px;
+    font-weight:800;
+    padding:5px 8px;
+    border-radius:20px;
+    background:#29322b;
+    color:#8be28e
+}
+
+.badge.used{
+    background:#332b2b;
+    color:#ff9d9d
+}
+
+.badge.revoked{
+    background:#302d24;
+    color:#ffd36b
+}
+
+.badge.expired{
+    background:#332b2b;
+    color:#ff9d9d
+}
+
+.key-buttons{
+    display:flex;
+    gap:8px;
+    align-items:center;
+    flex-shrink:0
+}
+
+.revoke{
+    background:#442b2b
+}
+
+@media(max-width:600px){
+
+    body{
+        padding:15px
+    }
+
+    .row{
+        flex-direction:column
+    }
+
+    .head{
+        flex-direction:column;
+        align-items:flex-start
+    }
+
+    .head button{
+        width:100%
+    }
+
+    .duration-row{
+        flex-direction:column
+    }
+
+    .duration-row input{
+        width:100%
+    }
+
+    .key{
+        align-items:flex-start;
+        flex-direction:column
+    }
+
+    .key-buttons{
+        width:100%
+    }
+
+    .key-buttons button{
+        flex:1
+    }
+}
+</style>
 </head>
 
 <body>
 
-<div class="container">
+<main class="wrap">
 
     <!-- LOGIN -->
-    <div id="loginCard" class="card">
-        <h1>Admin Login</h1>
-        <p class="subtitle">Robux Demo Access Management</p>
+    <div class="card login" id="loginCard">
 
-        <label for="adminKey">Admin Key</label>
-        <input
-            id="adminKey"
-            type="password"
-            placeholder="Enter admin key"
-        >
+        <div class="logo">
+            🔑 Access Key Manager
+        </div>
 
-        <button class="green" onclick="login()">
-            Login
-        </button>
+        <p class="muted">
+            Admin only. Generate one-time access keys for your visitors.
+        </p>
 
-        <div id="loginMessage"></div>
+        <div class="row">
+            <input
+                id="adminKey"
+                type="password"
+                placeholder="Admin key"
+            >
+
+            <button id="loginBtn">
+                Login
+            </button>
+        </div>
+
+        <div class="status" id="loginStatus"></div>
+
     </div>
 
 
     <!-- ADMIN PANEL -->
-    <div id="adminPanel" class="hidden">
+    <div class="card hidden" id="panel">
 
-        <div class="top-bar">
+        <div class="head">
+
             <div>
-                <h1>Access Key Manager</h1>
-                <div class="subtitle">
-                    Generate and manage demo website access keys.
+                <div class="logo">
+                    Access Key Manager
+                </div>
+
+                <div class="muted">
+                    Create custom-duration access keys.
                 </div>
             </div>
 
-            <button class="gray" onclick="logout()">
-                Logout
-            </button>
         </div>
 
 
-        <!-- GENERATE -->
-        <div class="card">
+        <!-- CUSTOM TIME -->
+        <div class="duration-box">
 
-            <h2>Generate Access Key</h2>
+            <div class="duration-title">
+                ⏱ Access Duration
+            </div>
 
-            <label for="durationSelect">
-                Access Duration
-            </label>
+            <div class="duration-row">
 
-            <select id="durationSelect">
-                <option value="1h">1 Hour</option>
-                <option value="6h">6 Hours</option>
-                <option value="1d">1 Day</option>
-                <option value="3d">3 Days</option>
-                <option value="7d" selected>7 Days</option>
-                <option value="30d">30 Days</option>
-            </select>
+                <input
+                    id="durationValue"
+                    type="number"
+                    min="1"
+                    step="1"
+                    value="1"
+                    placeholder="Amount"
+                >
+
+                <select id="durationUnit">
+
+                    <option value="minutes">
+                        Minutes
+                    </option>
+
+                    <option value="hours" selected>
+                        Hours
+                    </option>
+
+                    <option value="days">
+                        Days
+                    </option>
+
+                    <option value="weeks">
+                        Weeks
+                    </option>
+
+                </select>
+
+            </div>
 
             <div class="duration-note">
                 The timer starts when the user redeems the key.
+                Maximum duration: 365 days.
             </div>
 
-            <button class="green" onclick="generateKey()">
+        </div>
+
+
+        <div class="row">
+
+            <button id="generateBtn">
                 Generate Key
             </button>
 
-            <div id="generateMessage"></div>
-
         </div>
 
 
-        <!-- KEYS -->
-        <div class="card">
+        <div class="status" id="panelStatus"></div>
 
-            <div class="top-bar">
-                <div>
-                    <h2>Access Keys</h2>
-                    <div class="subtitle">
-                        Manage generated keys.
-                    </div>
-                </div>
 
-                <button class="gray" onclick="loadKeys()">
-                    Refresh
-                </button>
-            </div>
-
-            <div id="keyList" class="key-list">
-                Loading...
-            </div>
-
+        <!-- KEY LIST -->
+        <div
+            style="
+                margin-top:25px;
+                font-size:17px;
+                font-weight:900;
+            "
+        >
+            Access Keys
         </div>
+
+        <div id="keys" style="margin-top:8px"></div>
 
     </div>
 
-</div>
+</main>
 
 
 <script>
 
+const loginCard =
+    document.getElementById("loginCard");
+
+const panel =
+    document.getElementById("panel");
+
+const adminKey =
+    document.getElementById("adminKey");
+
+const loginBtn =
+    document.getElementById("loginBtn");
+
+const loginStatus =
+    document.getElementById("loginStatus");
+
+const durationValue =
+    document.getElementById("durationValue");
+
+const durationUnit =
+    document.getElementById("durationUnit");
+
+const generateBtn =
+    document.getElementById("generateBtn");
+
+const panelStatus =
+    document.getElementById("panelStatus");
+
+const keysEl =
+    document.getElementById("keys");
+
+
 async function api(action, extra = {}) {
 
-    const response = await fetch("/api/keys", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
+    const r = await fetch("/api/keys", {
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/json"
         },
-        credentials: "include",
-        body: JSON.stringify({
+
+        credentials:"same-origin",
+
+        body:JSON.stringify({
             action,
             ...extra
         })
+
     });
 
-    let data;
+    const d =
+        await r.json().catch(() => ({}));
 
-    try {
-        data = await response.json();
-    } catch {
-        data = {
-            success: false,
-            message: "Invalid server response."
-        };
+    if(!r.ok){
+
+        throw new Error(
+            d.error || "Request failed"
+        );
+
     }
 
-    return {
-        response,
-        data
-    };
+    return d;
 }
 
 
-function showMessage(elementId, message, success = false) {
+/* LOGIN */
 
-    const element = document.getElementById(elementId);
+loginBtn.onclick = async () => {
 
-    element.innerHTML = `
-        <div class="message" style="
-            color: ${success ? "#65e889" : "#ff7777"};
-        ">
-            ${escapeHtml(message)}
-        </div>
-    `;
-}
+    loginStatus.textContent =
+        "Checking...";
+
+    try{
+
+        await api("login",{
+            key:adminKey.value.trim()
+        });
+
+        loginStatus.textContent = "";
+
+        loginCard.classList.add("hidden");
+
+        panel.classList.remove("hidden");
+
+        await loadKeys();
+
+    }catch(e){
+
+        loginStatus.textContent =
+            e.message;
+
+        loginStatus.className =
+            "status error";
+
+    }
+
+};
 
 
-function escapeHtml(value) {
+adminKey.onkeydown = e => {
 
-    return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
+    if(e.key === "Enter"){
+
+        loginBtn.click();
+
+    }
+
+};
 
 
-function formatDuration(duration) {
+/* GENERATE CUSTOM KEY */
+
+generateBtn.onclick = async () => {
+
+    const value =
+        Number(durationValue.value);
+
+    const unit =
+        durationUnit.value;
+
+
+    if(!Number.isFinite(value) || value <= 0){
+
+        panelStatus.textContent =
+            "Enter a valid duration.";
+
+        panelStatus.className =
+            "status error";
+
+        return;
+
+    }
+
+
+    generateBtn.disabled = true;
+
+    panelStatus.textContent =
+        "Generating...";
+
+    panelStatus.className =
+        "status";
+
+
+    try{
+
+        const d =
+            await api("generate",{
+
+                durationValue:value,
+
+                durationUnit:unit
+
+            });
+
+
+        panelStatus.textContent =
+            "Key generated: " +
+            d.key +
+            " — duration: " +
+            formatDuration(
+                d.durationValue,
+                d.durationUnit
+            ) +
+            ". Timer starts when redeemed.";
+
+        panelStatus.className =
+            "status success";
+
+
+        await loadKeys();
+
+
+    }catch(e){
+
+        panelStatus.textContent =
+            e.message;
+
+        panelStatus.className =
+            "status error";
+
+    }
+
+
+    generateBtn.disabled = false;
+
+};
+
+
+/* FORMAT DURATION */
+
+function formatDuration(value, unit){
+
+    if(value === null || value === undefined){
+
+        return "Legacy duration";
+
+    }
+
+    const number =
+        Number(value);
 
     const names = {
-        "1h": "1 Hour",
-        "6h": "6 Hours",
-        "1d": "1 Day",
-        "3d": "3 Days",
-        "7d": "7 Days",
-        "30d": "30 Days"
+
+        minutes:
+            number === 1
+            ? "minute"
+            : "minutes",
+
+        hours:
+            number === 1
+            ? "hour"
+            : "hours",
+
+        days:
+            number === 1
+            ? "day"
+            : "days",
+
+        weeks:
+            number === 1
+            ? "week"
+            : "weeks"
+
     };
 
-    return names[duration] || duration || "Unknown";
+    return number + " " + (names[unit] || unit);
+
 }
 
 
-function formatDate(date) {
+/* CHECK EXPIRATION */
 
-    if (!date) {
-        return "—";
+function getStatus(k){
+
+    if(k.status === "revoked"){
+
+        return {
+            text:"REVOKED",
+            className:"revoked"
+        };
+
     }
 
-    const parsed = new Date(date);
 
-    if (Number.isNaN(parsed.getTime())) {
-        return "—";
+    if(
+        k.expiresAt &&
+        Date.now() >= Number(k.expiresAt)
+    ){
+
+        return {
+            text:"EXPIRED",
+            className:"expired"
+        };
+
     }
 
-    return parsed.toLocaleString();
+
+    if(k.status === "used"){
+
+        return {
+            text:"USED",
+            className:"used"
+        };
+
+    }
+
+
+    return {
+        text:"UNUSED",
+        className:""
+    };
+
 }
 
 
-async function login() {
+/* LOAD KEYS */
 
-    const adminKey =
-        document.getElementById("adminKey").value.trim();
+async function loadKeys(){
 
-    if (!adminKey) {
+    try{
 
-        showMessage(
-            "loginMessage",
-            "Please enter the admin key."
-        );
-
-        return;
-    }
-
-    const result = await api("login", {
-    key: adminKey
-});
-
-    if (!result.data.success) {
-
-        showMessage(
-            "loginMessage",
-            result.data.message || "Login failed."
-        );
-
-        return;
-    }
-
-    document.getElementById("loginCard").classList.add("hidden");
-    document.getElementById("adminPanel").classList.remove("hidden");
-
-    document.getElementById("adminKey").value = "";
-
-    loadKeys();
-}
+        const d =
+            await api("list");
 
 
-async function logout() {
-
-    await api("logout");
-
-    document.getElementById("adminPanel").classList.add("hidden");
-    document.getElementById("loginCard").classList.remove("hidden");
-
-    document.getElementById("keyList").innerHTML = "";
-}
+        keysEl.innerHTML = "";
 
 
-async function generateKey() {
+        if(!d.success){
 
-    const duration =
-        document.getElementById("durationSelect").value;
+            throw new Error(
+                d.error ||
+                "Failed to load keys."
+            );
 
-    const result = await api("generate", {
-        duration
-    });
-
-    if (!result.data.success) {
-
-        showMessage(
-            "generateMessage",
-            result.data.message || "Failed to generate key."
-        );
-
-        return;
-    }
-
-    showMessage(
-        "generateMessage",
-        `Key generated: ${result.data.key}`,
-        true
-    );
-
-    loadKeys();
-}
-
-
-async function loadKeys() {
-
-    const list = document.getElementById("keyList");
-
-    list.innerHTML = "Loading...";
-
-    const result = await api("list");
-
-    if (!result.data.success) {
-
-        list.innerHTML = `
-            <div class="message" style="color:#ff7777;">
-                ${escapeHtml(
-                    result.data.message || "Failed to load keys."
-                )}
-            </div>
-        `;
-
-        return;
-    }
-
-    const keys = result.data.keys || [];
-
-    if (keys.length === 0) {
-
-        list.innerHTML = `
-            <div class="message">
-                No access keys yet.
-            </div>
-        `;
-
-        return;
-    }
-
-    list.innerHTML = keys.map((item) => {
-
-        const isExpired =
-            item.status === "used" &&
-            item.expiresAt &&
-            new Date(item.expiresAt).getTime() <= Date.now();
-
-        let statusClass = item.status;
-        let statusText = item.status.toUpperCase();
-
-        if (isExpired) {
-            statusClass = "expired";
-            statusText = "EXPIRED";
         }
 
-        let expirationText;
 
-        if (item.status === "revoked") {
+        if(!d.keys || !d.keys.length){
 
-            expirationText = "Revoked";
+            keysEl.innerHTML =
+                '<div class="empty">' +
+                'No keys generated yet.' +
+                '</div>';
 
-        } else if (isExpired) {
+            return;
 
-            expirationText = `Expired: ${formatDate(item.expiresAt)}`;
-
-        } else if (item.status === "used") {
-
-            expirationText = `Expires: ${formatDate(item.expiresAt)}`;
-
-        } else {
-
-            expirationText = "Starts when redeemed";
         }
 
-        return `
-            <div class="key-item">
 
-                <div class="key-top">
+        d.keys.forEach(k => {
 
-                    <div class="key-value">
-                        ${escapeHtml(item.key)}
-                    </div>
+            const row =
+                document.createElement("div");
 
-                    <span class="badge ${statusClass}">
-                        ${escapeHtml(statusText)}
-                    </span>
+            row.className =
+                "key";
 
-                </div>
 
-                <div class="key-info">
+            /* LEFT */
 
-                    <div>
-                        <strong>Duration:</strong>
-                        ${escapeHtml(
-                            formatDuration(item.duration)
-                        )}
-                    </div>
+            const left =
+                document.createElement("div");
 
-                    <div>
-                        <strong>Created:</strong>
-                        ${escapeHtml(
-                            formatDate(item.createdAt)
-                        )}
-                    </div>
+            left.style.flex = "1";
 
-                    <div>
-                        <strong>Used:</strong>
-                        ${escapeHtml(
-                            formatDate(item.usedAt)
-                        )}
-                    </div>
 
-                    <div>
-                        <strong>Access:</strong>
-                        ${escapeHtml(expirationText)}
-                    </div>
+            const code =
+                document.createElement("div");
 
-                    ${
-                        item.revokedAt
-                            ? `
-                                <div>
-                                    <strong>Revoked:</strong>
-                                    ${escapeHtml(
-                                        formatDate(item.revokedAt)
-                                    )}
-                                </div>
-                            `
-                            : ""
+            code.className =
+                "keycode";
+
+            code.textContent =
+                k.key;
+
+
+            const info =
+                document.createElement("div");
+
+            info.className =
+                "muted key-info";
+
+
+            let durationText =
+                formatDuration(
+                    k.durationValue,
+                    k.durationUnit
+                );
+
+
+            if(k.status === "unused"){
+
+                info.textContent =
+                    durationText +
+                    " • Starts when redeemed";
+
+            }else{
+
+                info.textContent =
+                    durationText;
+
+            }
+
+
+            if(k.createdAt){
+
+                info.textContent +=
+                    " • Created " +
+                    new Date(
+                        k.createdAt
+                    ).toLocaleString();
+
+            }
+
+
+            if(k.usedAt){
+
+                info.textContent +=
+                    " • Redeemed " +
+                    new Date(
+                        k.usedAt
+                    ).toLocaleString();
+
+            }
+
+
+            if(k.expiresAt){
+
+                const expires =
+                    new Date(
+                        Number(k.expiresAt)
+                    );
+
+                info.textContent +=
+                    " • Expires " +
+                    expires.toLocaleString();
+
+            }
+
+
+            left.append(
+                code,
+                info
+            );
+
+
+            /* RIGHT */
+
+            const right =
+                document.createElement("div");
+
+            right.className =
+                "key-buttons";
+
+
+            const status =
+                getStatus(k);
+
+
+            const badge =
+                document.createElement("span");
+
+            badge.className =
+                "badge " +
+                status.className;
+
+            badge.textContent =
+                status.text;
+
+
+            /* COPY */
+
+            const copy =
+                document.createElement("button");
+
+            copy.className =
+                "secondary";
+
+            copy.textContent =
+                "Copy";
+
+
+            copy.onclick = async () => {
+
+                try{
+
+                    await navigator.clipboard.writeText(
+                        k.key
+                    );
+
+                    copy.textContent =
+                        "Copied";
+
+                    setTimeout(
+                        () => {
+                            copy.textContent =
+                                "Copy";
+                        },
+                        1200
+                    );
+
+                }catch{
+
+                    prompt(
+                        "Copy this key:",
+                        k.key
+                    );
+
+                }
+
+            };
+
+
+            right.append(
+                badge,
+                copy
+            );
+
+
+            /* REVOKE */
+
+            if(
+                k.status !== "revoked" &&
+                k.status !== "used"
+            ){
+
+                const revoke =
+                    document.createElement("button");
+
+                revoke.className =
+                    "revoke";
+
+                revoke.textContent =
+                    "Revoke";
+
+
+                revoke.onclick = async () => {
+
+                    if(
+                        !confirm(
+                            "Revoke this access key?"
+                        )
+                    ){
+
+                        return;
+
                     }
 
-                </div>
 
-                <div class="actions">
+                    revoke.disabled = true;
 
-                    <button
-                        class="gray"
-                        onclick="copyKey('${escapeHtml(item.key)}')"
-                    >
-                        Copy Key
-                    </button>
+                    try{
 
-                    ${
-                        item.status === "unused"
-                            ? `
-                                <button
-                                    class="red"
-                                    onclick="revokeKey('${escapeHtml(item.key)}')"
-                                >
-                                    Revoke
-                                </button>
-                            `
-                            : ""
+                        await api(
+                            "revoke",
+                            {
+                                key:k.key
+                            }
+                        );
+
+                        await loadKeys();
+
+                    }catch(e){
+
+                        panelStatus.textContent =
+                            e.message;
+
+                        panelStatus.className =
+                            "status error";
+
+                        revoke.disabled = false;
+
                     }
 
-                </div>
-
-            </div>
-        `;
-
-    }).join("");
-}
+                };
 
 
-async function revokeKey(key) {
+                right.append(revoke);
 
-    const confirmed = confirm(
-        "Are you sure you want to revoke this key?"
-    );
+            }
 
-    if (!confirmed) {
-        return;
+
+            row.append(
+                left,
+                right
+            );
+
+            keysEl.append(row);
+
+        });
+
+
+    }catch(e){
+
+        panelStatus.textContent =
+            e.message;
+
+        panelStatus.className =
+            "status error";
+
     }
 
-    const result = await api("revoke", {
-        key
-    });
-
-    if (!result.data.success) {
-
-        alert(
-            result.data.message ||
-            "Failed to revoke key."
-        );
-
-        return;
-    }
-
-    loadKeys();
 }
-
-
-async function copyKey(key) {
-
-    try {
-
-        await navigator.clipboard.writeText(key);
-
-        alert("Key copied!");
-
-    } catch {
-
-        prompt(
-            "Copy this access key:",
-            key
-        );
-    }
-}
-
-
-/*
-    Automatically check whether the admin
-    session is already active when opening
-    the admin page.
-*/
-async function checkLogin() {
-
-    const result = await api("list");
-
-    if (result.data.success) {
-
-        document.getElementById("loginCard")
-            .classList.add("hidden");
-
-        document.getElementById("adminPanel")
-            .classList.remove("hidden");
-
-        loadKeys();
-    }
-}
-
-
-checkLogin();
 
 </script>
 

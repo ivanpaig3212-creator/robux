@@ -1,5 +1,3 @@
-import crypto from "crypto";
-
 const REDIS_URL =
     process.env.KV_REST_API_URL ||
     process.env.UPSTASH_REDIS_REST_URL;
@@ -11,7 +9,7 @@ const REDIS_TOKEN =
 const SESSION_SECRET =
     process.env.SITE_SESSION_SECRET;
 
-const SESSION_COOKIE =
+const ACCESS_COOKIE =
     "site_access";
 
 const SESSION_SECONDS =
@@ -19,36 +17,34 @@ const SESSION_SECONDS =
 
 
 /*
- * Redis REST helper
+ * ---------------------------------------------------------
+ * Redis
+ * ---------------------------------------------------------
  */
 
 async function redis(command) {
 
-    if (!REDIS_URL || !REDIS_TOKEN) {
-        throw new Error(
-            "Redis environment variables are missing."
+    const response =
+        await fetch(
+            REDIS_URL,
+            {
+                method: "POST",
+
+                headers: {
+                    "Authorization":
+                        `Bearer ${REDIS_TOKEN}`,
+
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body:
+                    JSON.stringify(command)
+            }
         );
-    }
-
-    const response = await fetch(
-        REDIS_URL,
-        {
-            method: "POST",
-
-            headers: {
-                "Authorization":
-                    `Bearer ${REDIS_TOKEN}`,
-
-                "Content-Type":
-                    "application/json"
-            },
-
-            body: JSON.stringify(command)
-        }
-    );
 
     const data =
-        await response.json().catch(() => null);
+        await response.json();
 
     if (!response.ok) {
         throw new Error(
@@ -57,61 +53,137 @@ async function redis(command) {
         );
     }
 
-    return data?.result;
+    return data.result;
 }
 
 
 /*
- * Create the same type of session
- * that middleware.js understands.
+ * ---------------------------------------------------------
+ * Base64 URL helpers
+ * ---------------------------------------------------------
  */
 
-function createSession() {
+function b64(bytes) {
 
-    const expires =
-        Date.now() +
-        SESSION_SECONDS * 1000;
+    let s = "";
 
-    const timestamp =
-        String(expires);
+    for (
+        let i = 0;
+        i < bytes.length;
+        i += 0x8000
+    ) {
 
-    const signature =
-        crypto
-            .createHash("sha256")
-            .update(
-                SESSION_SECRET +
-                "|" +
-                timestamp
+        s += String.fromCharCode(
+            ...bytes.subarray(
+                i,
+                i + 0x8000
             )
-            .digest("base64url");
+        );
+    }
 
-    return (
-        timestamp +
-        "." +
-        signature
+    return btoa(s)
+        .replace(/\+/g, "-")
+        .replace(/\//g, "_")
+        .replace(/=+$/g, "");
+}
+
+
+function b64d(value) {
+
+    const padded =
+        value
+            .replace(/-/g, "+")
+            .replace(/_/g, "/")
+            .padEnd(
+                value.length +
+                (4 - value.length % 4) % 4,
+                "="
+            );
+
+    const s =
+        atob(padded);
+
+    const bytes =
+        new Uint8Array(
+            s.length
+        );
+
+    for (
+        let i = 0;
+        i < s.length;
+        i++
+    ) {
+
+        bytes[i] =
+            s.charCodeAt(i);
+    }
+
+    return bytes;
+}
+
+
+/*
+ * ---------------------------------------------------------
+ * Sign session
+ * ---------------------------------------------------------
+ */
+
+async function sign(payload) {
+
+    const data =
+        new TextEncoder().encode(
+            SESSION_SECRET +
+            "|" +
+            payload
+        );
+
+    return b64(
+        new Uint8Array(
+            await crypto.subtle.digest(
+                "SHA-256",
+                data
+            )
+        )
     );
 }
 
 
 /*
- * Set access cookie
+ * ---------------------------------------------------------
+ * Cookie
+ * ---------------------------------------------------------
  */
 
-function setAccessCookie(
-    res,
-    session
+function getCookie(
+    req,
+    name
 ) {
 
-    res.setHeader(
-        "Set-Cookie",
+    const header =
+        req.headers.cookie ||
+        "";
 
-        `${SESSION_COOKIE}=${encodeURIComponent(session)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${SESSION_SECONDS}`
-    );
+    const match =
+        header.match(
+            new RegExp(
+                "(?:^|;\\s*)" +
+                name +
+                "=([^;]+)"
+            )
+        );
+
+    return match
+        ? decodeURIComponent(
+            match[1]
+        )
+        : null;
 }
 
 
 /*
+ * ---------------------------------------------------------
  * JSON response
+ * ---------------------------------------------------------
  */
 
 function json(
@@ -137,7 +209,9 @@ function json(
 
 
 /*
- * Main API
+ * ---------------------------------------------------------
+ * MAIN
+ * ---------------------------------------------------------
  */
 
 export default async function handler(
@@ -162,23 +236,14 @@ export default async function handler(
         }
 
 
-        if (!SESSION_SECRET) {
-
-            return json(
-                res,
-                500,
-                {
-                    error:
-                        "SITE_SESSION_SECRET is not configured."
-                }
-            );
-        }
-
-
         const body =
             typeof req.body === "string"
-                ? JSON.parse(req.body || "{}")
-                : (req.body || {});
+                ? JSON.parse(
+                    req.body || "{}"
+                )
+                : (
+                    req.body || {}
+                );
 
 
         const key =
@@ -189,6 +254,12 @@ export default async function handler(
             .toUpperCase();
 
 
+        /*
+         * -------------------------------------------------
+         * REQUIRE KEY
+         * -------------------------------------------------
+         */
+
         if (!key) {
 
             return json(
@@ -196,90 +267,135 @@ export default async function handler(
                 400,
                 {
                     error:
-                        "Please enter an access key."
+                        "Access key is required."
                 }
             );
         }
 
 
         /*
-         * IMPORTANT:
+         * -------------------------------------------------
+         * ATOMICALLY REDEEM KEY
          *
-         * This Lua script checks and consumes
-         * the key atomically.
-         *
-         * That means two people cannot
-         * successfully redeem the same key
-         * at the same time.
+         * Only an "unused" key can create
+         * an access session.
+         * -------------------------------------------------
          */
 
         const lua = `
-local raw = redis.call("GET", KEYS[1])
+            local value =
+                redis.call(
+                    "GET",
+                    KEYS[1]
+                )
 
-if not raw then
-    return 0
-end
+            if not value then
+                return 0
+            end
 
-local ok, data = pcall(cjson.decode, raw)
+            local record =
+                cjson.decode(value)
 
-if not ok or not data then
-    return 0
-end
+            if record["status"] ~= "unused" then
+                return 0
+            end
 
-if data.status ~= "unused" then
-    return 0
-end
+            record["status"] = "used"
 
-data.status = "used"
-data.usedAt = ARGV[1]
+            record["usedAt"] =
+                ARGV[1]
 
-redis.call(
-    "SET",
-    KEYS[1],
-    cjson.encode(data)
-)
+            redis.call(
+                "SET",
+                KEYS[1],
+                cjson.encode(record)
+            )
 
-return 1
-`;
+            return 1
+        `;
 
 
-        const result =
+        const redeemed =
             await redis([
                 "EVAL",
                 lua,
                 "1",
                 `access:key:${key}`,
-                new Date().toISOString()
+                new Date()
+                    .toISOString()
             ]);
 
 
+        /*
+         * -------------------------------------------------
+         * INVALID / USED / REVOKED KEY
+         * -------------------------------------------------
+         */
+
         if (
-            Number(result) !== 1
+            Number(redeemed) !== 1
         ) {
 
             return json(
                 res,
-                403,
+                401,
                 {
                     error:
-                        "Invalid or already-used access key."
+                        "Invalid, used, or revoked access key."
                 }
             );
         }
 
 
         /*
-         * Key was successfully consumed.
-         * Give this visitor a 30-day session.
+         * -------------------------------------------------
+         * CREATE SESSION
+         *
+         * IMPORTANT:
+         * The KEY is stored inside the signed session.
+         * This lets middleware later check whether
+         * that exact key has been revoked.
+         * -------------------------------------------------
          */
 
+        const expiresAt =
+            Date.now() +
+            SESSION_SECONDS * 1000;
+
+
+        const payload =
+            expiresAt +
+            "." +
+            key;
+
+
+        const signature =
+            await sign(
+                payload
+            );
+
+
         const session =
-            createSession();
+            b64(
+                new TextEncoder()
+                    .encode(
+                        payload
+                    )
+            ) +
+            "." +
+            signature;
 
 
-        setAccessCookie(
-            res,
-            session
+        /*
+         * -------------------------------------------------
+         * SEND COOKIE
+         * -------------------------------------------------
+         */
+
+        res.setHeader(
+            "Set-Cookie",
+
+            `${ACCESS_COOKIE}=${encodeURIComponent(session)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${SESSION_SECONDS}`
         );
 
 
@@ -287,7 +403,8 @@ return 1
             res,
             200,
             {
-                success: true
+                success:
+                    true
             }
         );
 
@@ -299,12 +416,13 @@ return 1
             error
         );
 
+
         return json(
             res,
             500,
             {
                 error:
-                    "Request failed."
+                    "Unable to process access key."
             }
         );
     }

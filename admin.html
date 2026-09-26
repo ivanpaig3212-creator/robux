@@ -4,11 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
+
 <title>Access Key Manager</title>
 
 <style>
 *{
-    box-sizing:border-box
+    box-sizing:border-box;
 }
 
 body{
@@ -16,12 +17,12 @@ body{
     background:#0b0c0f;
     color:#f2f3f5;
     font-family:Arial,Helvetica,sans-serif;
-    padding:30px
+    padding:30px;
 }
 
 .wrap{
-    max-width:760px;
-    margin:0 auto
+    max-width:800px;
+    margin:auto;
 }
 
 .card{
@@ -29,30 +30,23 @@ body{
     border:1px solid #30343d;
     border-radius:14px;
     padding:22px;
-    margin-bottom:16px
-}
-
-.head{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:12px
+    margin-bottom:16px;
 }
 
 .logo{
     font-size:24px;
-    font-weight:900
+    font-weight:900;
 }
 
 .muted{
     color:#9298a3;
-    font-size:12px
+    font-size:12px;
 }
 
 .row{
     display:flex;
     gap:10px;
-    margin-top:18px
+    margin-top:18px;
 }
 
 input,
@@ -63,16 +57,16 @@ select{
     border-radius:8px;
     color:#fff;
     padding:0 12px;
-    outline:none
+    outline:none;
 }
 
 input:focus,
 select:focus{
-    border-color:#3d6cff
+    border-color:#3d6cff;
 }
 
 input{
-    flex:1
+    flex:1;
 }
 
 button{
@@ -82,21 +76,29 @@ button{
     background:#3d6cff;
     color:#fff;
     font-weight:800;
-    padding:0 18px;
-    cursor:pointer
+    padding:0 16px;
+    cursor:pointer;
 }
 
 button:hover{
-    opacity:.9
+    opacity:.9;
 }
 
 button:disabled{
     opacity:.5;
-    cursor:not-allowed
+    cursor:not-allowed;
 }
 
-button.secondary{
-    background:#2b3038
+.secondary{
+    background:#2b3038;
+}
+
+.revoke{
+    background:#57352c;
+}
+
+.remove{
+    background:#47262b;
 }
 
 .duration-box{
@@ -104,164 +106,160 @@ button.secondary{
     padding:16px;
     background:#101217;
     border:1px solid #292d35;
-    border-radius:10px
+    border-radius:10px;
 }
 
 .duration-title{
     font-size:13px;
     font-weight:800;
-    margin-bottom:8px
+    margin-bottom:9px;
 }
 
 .duration-row{
     display:flex;
-    gap:10px
+    gap:10px;
 }
 
 .duration-row input{
     width:150px;
-    flex:none
+    flex:none;
 }
 
 .duration-row select{
     flex:1;
-    cursor:pointer
 }
 
 .duration-note{
     margin-top:9px;
     color:#7f8794;
-    font-size:11px
+    font-size:11px;
 }
 
 .status{
     min-height:20px;
     margin-top:12px;
     font-size:12px;
-    color:#9aa0aa
 }
 
 .success{
-    color:#8be28e
+    color:#8be28e;
 }
 
 .error{
-    color:#ff9d9d
+    color:#ff9d9d;
 }
 
 .hidden{
-    display:none
+    display:none;
 }
 
-.login h1{
-    font-size:21px;
-    margin:0 0 8px
+.keys-title{
+    margin-top:28px;
+    font-size:18px;
+    font-weight:900;
 }
 
 .empty{
     color:#7f858f;
     font-size:13px;
-    padding:16px 0
+    padding:16px 0;
 }
 
 .key{
     display:flex;
-    align-items:center;
     justify-content:space-between;
-    gap:12px;
-    padding:14px 0;
-    border-bottom:1px solid #292d35
+    gap:15px;
+    padding:16px 0;
+    border-bottom:1px solid #292d35;
 }
 
 .key:last-child{
-    border-bottom:0
+    border-bottom:0;
+}
+
+.key-left{
+    min-width:0;
+    flex:1;
 }
 
 .keycode{
     font-family:monospace;
     font-size:14px;
-    word-break:break-all
+    word-break:break-all;
 }
 
 .key-info{
-    margin-top:5px;
-    line-height:1.6
+    margin-top:7px;
+    color:#8f96a2;
+    font-size:11px;
+    line-height:1.6;
 }
 
 .badge{
     display:inline-block;
-    font-size:10px;
-    font-weight:800;
     padding:5px 8px;
     border-radius:20px;
     background:#29322b;
-    color:#8be28e
+    color:#8be28e;
+    font-size:10px;
+    font-weight:900;
+    white-space:nowrap;
 }
 
 .badge.used{
     background:#332b2b;
-    color:#ff9d9d
+    color:#ff9d9d;
 }
 
 .badge.revoked{
     background:#302d24;
-    color:#ffd36b
+    color:#ffd36b;
 }
 
 .badge.expired{
     background:#332b2b;
-    color:#ff9d9d
+    color:#ff7777;
 }
 
-.key-buttons{
+.key-actions{
     display:flex;
-    gap:8px;
     align-items:center;
-    flex-shrink:0
+    justify-content:flex-end;
+    gap:7px;
+    flex-wrap:wrap;
+    max-width:280px;
 }
 
-.revoke{
-    background:#442b2b
-}
-
-@media(max-width:600px){
+@media(max-width:650px){
 
     body{
-        padding:15px
+        padding:15px;
     }
 
     .row{
-        flex-direction:column
-    }
-
-    .head{
         flex-direction:column;
-        align-items:flex-start
-    }
-
-    .head button{
-        width:100%
     }
 
     .duration-row{
-        flex-direction:column
+        flex-direction:column;
     }
 
     .duration-row input{
-        width:100%
+        width:100%;
     }
 
     .key{
-        align-items:flex-start;
-        flex-direction:column
+        flex-direction:column;
     }
 
-    .key-buttons{
-        width:100%
+    .key-actions{
+        max-width:none;
+        width:100%;
+        justify-content:flex-start;
     }
 
-    .key-buttons button{
-        flex:1
+    .key-actions button{
+        flex:1;
     }
 }
 </style>
@@ -272,17 +270,19 @@ button.secondary{
 <main class="wrap">
 
     <!-- LOGIN -->
-    <div class="card login" id="loginCard">
+
+    <div class="card" id="loginCard">
 
         <div class="logo">
             🔑 Access Key Manager
         </div>
 
         <p class="muted">
-            Admin only. Generate one-time access keys for your visitors.
+            Admin only. Create and manage access keys.
         </p>
 
         <div class="row">
+
             <input
                 id="adminKey"
                 type="password"
@@ -292,32 +292,35 @@ button.secondary{
             <button id="loginBtn">
                 Login
             </button>
+
         </div>
 
-        <div class="status" id="loginStatus"></div>
+        <div
+            id="loginStatus"
+            class="status"
+        ></div>
 
     </div>
 
 
     <!-- ADMIN PANEL -->
-    <div class="card hidden" id="panel">
 
-        <div class="head">
+    <div
+        class="card hidden"
+        id="panel"
+    >
 
-            <div>
-                <div class="logo">
-                    Access Key Manager
-                </div>
+        <div class="logo">
+            Access Key Manager
+        </div>
 
-                <div class="muted">
-                    Create custom-duration access keys.
-                </div>
-            </div>
-
+        <div class="muted">
+            Create custom-duration access keys.
         </div>
 
 
-        <!-- CUSTOM TIME -->
+        <!-- DURATION -->
+
         <div class="duration-box">
 
             <div class="duration-title">
@@ -332,7 +335,6 @@ button.secondary{
                     min="1"
                     step="1"
                     value="1"
-                    placeholder="Amount"
                 >
 
                 <select id="durationUnit">
@@ -358,8 +360,8 @@ button.secondary{
             </div>
 
             <div class="duration-note">
-                The timer starts when the user redeems the key.
-                Maximum duration: 365 days.
+                The timer starts when the key is redeemed.
+                Maximum duration is 365 days.
             </div>
 
         </div>
@@ -374,21 +376,19 @@ button.secondary{
         </div>
 
 
-        <div class="status" id="panelStatus"></div>
+        <div
+            id="panelStatus"
+            class="status"
+        ></div>
 
 
         <!-- KEY LIST -->
-        <div
-            style="
-                margin-top:25px;
-                font-size:17px;
-                font-weight:900;
-            "
-        >
+
+        <div class="keys-title">
             Access Keys
         </div>
 
-        <div id="keys" style="margin-top:8px"></div>
+        <div id="keys"></div>
 
     </div>
 
@@ -428,65 +428,110 @@ const keysEl =
     document.getElementById("keys");
 
 
-async function api(action, extra = {}) {
+/* API */
 
-    const r = await fetch("/api/keys", {
+async function api(
+    action,
+    extra = {}
+){
 
-        method:"POST",
+    const response =
+        await fetch(
+            "/api/keys",
+            {
+                method:"POST",
 
-        headers:{
-            "Content-Type":"application/json"
-        },
+                headers:{
+                    "Content-Type":
+                        "application/json"
+                },
 
-        credentials:"same-origin",
+                credentials:"same-origin",
 
-        body:JSON.stringify({
-            action,
-            ...extra
-        })
+                body:
+                    JSON.stringify({
+                        action,
+                        ...extra
+                    })
+            }
+        );
 
-    });
 
-    const d =
-        await r.json().catch(() => ({}));
+    const data =
+        await response
+            .json()
+            .catch(
+                () => ({})
+            );
 
-    if(!r.ok){
+
+    if(!response.ok){
 
         throw new Error(
-            d.error || "Request failed"
+            data.error ||
+            data.message ||
+            "Request failed."
         );
 
     }
 
-    return d;
+
+    return data;
+
 }
 
 
 /* LOGIN */
 
-loginBtn.onclick = async () => {
+loginBtn.onclick =
+async () => {
 
     loginStatus.textContent =
         "Checking...";
 
+    loginStatus.className =
+        "status";
+
+
     try{
 
-        await api("login",{
-            key:adminKey.value.trim()
-        });
+        const data =
+            await api(
+                "login",
+                {
+                    key:
+                        adminKey.value.trim()
+                }
+            );
 
-        loginStatus.textContent = "";
 
-        loginCard.classList.add("hidden");
+        if(!data.success){
 
-        panel.classList.remove("hidden");
+            throw new Error(
+                data.error ||
+                "Login failed."
+            );
+
+        }
+
+
+        loginCard
+            .classList
+            .add("hidden");
+
+
+        panel
+            .classList
+            .remove("hidden");
+
 
         await loadKeys();
 
-    }catch(e){
+
+    }catch(error){
 
         loginStatus.textContent =
-            e.message;
+            error.message;
 
         loginStatus.className =
             "status error";
@@ -496,9 +541,13 @@ loginBtn.onclick = async () => {
 };
 
 
-adminKey.onkeydown = e => {
+adminKey.onkeydown =
+event => {
 
-    if(e.key === "Enter"){
+    if(
+        event.key ===
+        "Enter"
+    ){
 
         loginBtn.click();
 
@@ -507,18 +556,25 @@ adminKey.onkeydown = e => {
 };
 
 
-/* GENERATE CUSTOM KEY */
+/* GENERATE */
 
-generateBtn.onclick = async () => {
+generateBtn.onclick =
+async () => {
 
     const value =
-        Number(durationValue.value);
+        Number(
+            durationValue.value
+        );
+
 
     const unit =
         durationUnit.value;
 
 
-    if(!Number.isFinite(value) || value <= 0){
+    if(
+        !Number.isFinite(value) ||
+        value <= 0
+    ){
 
         panelStatus.textContent =
             "Enter a valid duration.";
@@ -531,7 +587,9 @@ generateBtn.onclick = async () => {
     }
 
 
-    generateBtn.disabled = true;
+    generateBtn.disabled =
+        true;
+
 
     panelStatus.textContent =
         "Generating...";
@@ -542,23 +600,26 @@ generateBtn.onclick = async () => {
 
     try{
 
-        const d =
-            await api("generate",{
+        const data =
+            await api(
+                "generate",
+                {
+                    durationValue:
+                        value,
 
-                durationValue:value,
-
-                durationUnit:unit
-
-            });
+                    durationUnit:
+                        unit
+                }
+            );
 
 
         panelStatus.textContent =
             "Key generated: " +
-            d.key +
-            " — duration: " +
+            data.key +
+            " — " +
             formatDuration(
-                d.durationValue,
-                d.durationUnit
+                data.durationValue,
+                data.durationUnit
             ) +
             ". Timer starts when redeemed.";
 
@@ -569,10 +630,10 @@ generateBtn.onclick = async () => {
         await loadKeys();
 
 
-    }catch(e){
+    }catch(error){
 
         panelStatus.textContent =
-            e.message;
+            error.message;
 
         panelStatus.className =
             "status error";
@@ -580,58 +641,78 @@ generateBtn.onclick = async () => {
     }
 
 
-    generateBtn.disabled = false;
+    generateBtn.disabled =
+        false;
 
 };
 
 
-/* FORMAT DURATION */
+/* DURATION TEXT */
 
-function formatDuration(value, unit){
+function formatDuration(
+    value,
+    unit
+){
 
-    if(value === null || value === undefined){
+    if(
+        value === null ||
+        value === undefined
+    ){
 
         return "Legacy duration";
 
     }
 
+
     const number =
         Number(value);
+
 
     const names = {
 
         minutes:
             number === 1
-            ? "minute"
-            : "minutes",
+                ? "minute"
+                : "minutes",
 
         hours:
             number === 1
-            ? "hour"
-            : "hours",
+                ? "hour"
+                : "hours",
 
         days:
             number === 1
-            ? "day"
-            : "days",
+                ? "day"
+                : "days",
 
         weeks:
             number === 1
-            ? "week"
-            : "weeks"
+                ? "week"
+                : "weeks"
 
     };
 
-    return number + " " + (names[unit] || unit);
+
+    return (
+        number +
+        " " +
+        (
+            names[unit] ||
+            unit
+        )
+    );
 
 }
 
 
-/* CHECK EXPIRATION */
+/* STATUS */
 
-function getStatus(k){
+function getStatus(key){
 
-    if(k.status === "revoked"){
+    if(
+        key.status ===
+        "revoked"
+    ){
 
         return {
             text:"REVOKED",
@@ -642,8 +723,9 @@ function getStatus(k){
 
 
     if(
-        k.expiresAt &&
-        Date.now() >= Number(k.expiresAt)
+        key.expiresAt &&
+        Date.now() >=
+        Number(key.expiresAt)
     ){
 
         return {
@@ -654,7 +736,10 @@ function getStatus(k){
     }
 
 
-    if(k.status === "used"){
+    if(
+        key.status ===
+        "used"
+    ){
 
         return {
             text:"USED",
@@ -678,28 +763,34 @@ async function loadKeys(){
 
     try{
 
-        const d =
+        const data =
             await api("list");
 
 
-        keysEl.innerHTML = "";
-
-
-        if(!d.success){
+        if(
+            !data.success
+        ){
 
             throw new Error(
-                d.error ||
+                data.error ||
                 "Failed to load keys."
             );
 
         }
 
 
-        if(!d.keys || !d.keys.length){
+        keysEl.innerHTML =
+            "";
+
+
+        if(
+            !data.keys ||
+            data.keys.length === 0
+        ){
 
             keysEl.innerHTML =
                 '<div class="empty">' +
-                'No keys generated yet.' +
+                'No access keys yet.' +
                 '</div>';
 
             return;
@@ -707,260 +798,480 @@ async function loadKeys(){
         }
 
 
-        d.keys.forEach(k => {
+        data.keys.forEach(
+            key => {
 
-            const row =
-                document.createElement("div");
-
-            row.className =
-                "key";
-
-
-            /* LEFT */
-
-            const left =
-                document.createElement("div");
-
-            left.style.flex = "1";
-
-
-            const code =
-                document.createElement("div");
-
-            code.className =
-                "keycode";
-
-            code.textContent =
-                k.key;
-
-
-            const info =
-                document.createElement("div");
-
-            info.className =
-                "muted key-info";
-
-
-            let durationText =
-                formatDuration(
-                    k.durationValue,
-                    k.durationUnit
-                );
-
-
-            if(k.status === "unused"){
-
-                info.textContent =
-                    durationText +
-                    " • Starts when redeemed";
-
-            }else{
-
-                info.textContent =
-                    durationText;
+                renderKey(key);
 
             }
+        );
 
 
-            if(k.createdAt){
+    }catch(error){
 
-                info.textContent +=
-                    " • Created " +
-                    new Date(
-                        k.createdAt
-                    ).toLocaleString();
-
-            }
-
-
-            if(k.usedAt){
-
-                info.textContent +=
-                    " • Redeemed " +
-                    new Date(
-                        k.usedAt
-                    ).toLocaleString();
-
-            }
-
-
-            if(k.expiresAt){
-
-                const expires =
-                    new Date(
-                        Number(k.expiresAt)
-                    );
-
-                info.textContent +=
-                    " • Expires " +
-                    expires.toLocaleString();
-
-            }
-
-
-            left.append(
-                code,
-                info
-            );
-
-
-            /* RIGHT */
-
-            const right =
-                document.createElement("div");
-
-            right.className =
-                "key-buttons";
-
-
-            const status =
-                getStatus(k);
-
-
-            const badge =
-                document.createElement("span");
-
-            badge.className =
-                "badge " +
-                status.className;
-
-            badge.textContent =
-                status.text;
-
-
-            /* COPY */
-
-            const copy =
-                document.createElement("button");
-
-            copy.className =
-                "secondary";
-
-            copy.textContent =
-                "Copy";
-
-
-            copy.onclick = async () => {
-
-                try{
-
-                    await navigator.clipboard.writeText(
-                        k.key
-                    );
-
-                    copy.textContent =
-                        "Copied";
-
-                    setTimeout(
-                        () => {
-                            copy.textContent =
-                                "Copy";
-                        },
-                        1200
-                    );
-
-                }catch{
-
-                    prompt(
-                        "Copy this key:",
-                        k.key
-                    );
-
-                }
-
-            };
-
-
-            right.append(
-                badge,
-                copy
-            );
-
-
-            /* REVOKE */
-
-            if(
-                k.status !== "revoked" &&
-                k.status !== "used"
-            ){
-
-                const revoke =
-                    document.createElement("button");
-
-                revoke.className =
-                    "revoke";
-
-                revoke.textContent =
-                    "Revoke";
-
-
-                revoke.onclick = async () => {
-
-                    if(
-                        !confirm(
-                            "Revoke this access key?"
-                        )
-                    ){
-
-                        return;
-
-                    }
-
-
-                    revoke.disabled = true;
-
-                    try{
-
-                        await api(
-                            "revoke",
-                            {
-                                key:k.key
-                            }
-                        );
-
-                        await loadKeys();
-
-                    }catch(e){
-
-                        panelStatus.textContent =
-                            e.message;
-
-                        panelStatus.className =
-                            "status error";
-
-                        revoke.disabled = false;
-
-                    }
-
-                };
-
-
-                right.append(revoke);
-
-            }
-
-
-            row.append(
-                left,
-                right
-            );
-
-            keysEl.append(row);
-
-        });
-
-
-    }catch(e){
-
-        panelStatus.textContent =
-            e.message;
-
-        panelStatus.className =
-            "status error";
+        keysEl.innerHTML =
+            '<div class="empty">' +
+            'Failed to load keys: ' +
+            escapeHtml(
+                error.message
+            ) +
+            '</div>';
 
     }
 
 }
+
+
+/* RENDER KEY */
+
+function renderKey(key){
+
+    const row =
+        document.createElement(
+            "div"
+        );
+
+    row.className =
+        "key";
+
+
+    /* LEFT */
+
+    const left =
+        document.createElement(
+            "div"
+        );
+
+    left.className =
+        "key-left";
+
+
+    const code =
+        document.createElement(
+            "div"
+        );
+
+    code.className =
+        "keycode";
+
+    code.textContent =
+        key.key;
+
+
+    const info =
+        document.createElement(
+            "div"
+        );
+
+    info.className =
+        "key-info";
+
+
+    let text =
+        formatDuration(
+            key.durationValue,
+            key.durationUnit
+        );
+
+
+    if(
+        key.status ===
+        "unused"
+    ){
+
+        text +=
+            " • Starts when redeemed";
+
+    }
+
+
+    if(key.createdAt){
+
+        text +=
+            " • Created " +
+            new Date(
+                key.createdAt
+            ).toLocaleString();
+
+    }
+
+
+    if(key.usedAt){
+
+        text +=
+            " • Redeemed " +
+            new Date(
+                key.usedAt
+            ).toLocaleString();
+
+    }
+
+
+    if(key.expiresAt){
+
+        text +=
+            " • Expires " +
+            new Date(
+                Number(
+                    key.expiresAt
+                )
+            ).toLocaleString();
+
+    }
+
+
+    info.textContent =
+        text;
+
+
+    left.append(
+        code,
+        info
+    );
+
+
+    /* ACTIONS */
+
+    const actions =
+        document.createElement(
+            "div"
+        );
+
+    actions.className =
+        "key-actions";
+
+
+    const status =
+        getStatus(key);
+
+
+    const badge =
+        document.createElement(
+            "span"
+        );
+
+    badge.className =
+        "badge " +
+        status.className;
+
+    badge.textContent =
+        status.text;
+
+
+    actions.append(
+        badge
+    );
+
+
+    /* COPY */
+
+    const copy =
+        document.createElement(
+            "button"
+        );
+
+    copy.className =
+        "secondary";
+
+    copy.textContent =
+        "Copy";
+
+
+    copy.onclick =
+    async () => {
+
+        try{
+
+            await navigator
+                .clipboard
+                .writeText(
+                    key.key
+                );
+
+
+            copy.textContent =
+                "Copied";
+
+
+            setTimeout(
+                () => {
+
+                    copy.textContent =
+                        "Copy";
+
+                },
+                1200
+            );
+
+
+        }catch{
+
+            prompt(
+                "Copy this key:",
+                key.key
+            );
+
+        }
+
+    };
+
+
+    actions.append(
+        copy
+    );
+
+
+    /*
+     * REVOKE
+     *
+     * Available for unused keys.
+     */
+
+    if(
+        key.status !==
+        "revoked" &&
+        key.status !==
+        "used"
+    ){
+
+        const revoke =
+            document.createElement(
+                "button"
+            );
+
+        revoke.className =
+            "revoke";
+
+        revoke.textContent =
+            "Revoke";
+
+
+        revoke.onclick =
+        async () => {
+
+            const confirmed =
+                confirm(
+                    "Revoke this access key?\n\n" +
+                    key.key
+                );
+
+
+            if(!confirmed){
+
+                return;
+
+            }
+
+
+            revoke.disabled =
+                true;
+
+
+            try{
+
+                await api(
+                    "revoke",
+                    {
+                        key:
+                            key.key
+                    }
+                );
+
+
+                await loadKeys();
+
+
+            }catch(error){
+
+                panelStatus.textContent =
+                    error.message;
+
+                panelStatus.className =
+                    "status error";
+
+
+                revoke.disabled =
+                    false;
+
+            }
+
+        };
+
+
+        actions.append(
+            revoke
+        );
+
+    }
+
+
+    /*
+     * REMOVE
+     *
+     * Only expired or revoked keys.
+     */
+
+    const expired =
+        key.expiresAt &&
+        Date.now() >=
+        Number(
+            key.expiresAt
+        );
+
+
+    const revoked =
+        key.status ===
+        "revoked";
+
+
+    if(
+        expired ||
+        revoked
+    ){
+
+        const remove =
+            document.createElement(
+                "button"
+            );
+
+        remove.className =
+            "remove";
+
+        remove.textContent =
+            "Remove";
+
+
+        remove.onclick =
+        async () => {
+
+            const confirmed =
+                confirm(
+                    "Permanently remove this key?\n\n" +
+                    key.key +
+                    "\n\n" +
+                    "This cannot be undone."
+                );
+
+
+            if(!confirmed){
+
+                return;
+
+            }
+
+
+            remove.disabled =
+                true;
+
+
+            try{
+
+                await api(
+                    "remove",
+                    {
+                        key:
+                            key.key
+                    }
+                );
+
+
+                await loadKeys();
+
+
+            }catch(error){
+
+                panelStatus.textContent =
+                    error.message;
+
+                panelStatus.className =
+                    "status error";
+
+
+                remove.disabled =
+                    false;
+
+            }
+
+        };
+
+
+        actions.append(
+            remove
+        );
+
+    }
+
+
+    row.append(
+        left,
+        actions
+    );
+
+
+    keysEl.append(
+        row
+    );
+
+}
+
+
+/* HTML ESCAPE */
+
+function escapeHtml(
+    value
+){
+
+    return String(
+        value
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+/*
+ * Refresh status automatically.
+ *
+ * This makes an UNUSED/USED key
+ * change to EXPIRED without
+ * refreshing the whole page.
+ */
+
+setInterval(
+    () => {
+
+        if(
+            !panel.classList.contains(
+                "hidden"
+            )
+        ){
+
+            loadKeys();
+
+        }
+
+    },
+    30000
+);
 
 </script>
 

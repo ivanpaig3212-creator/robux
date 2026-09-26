@@ -18,7 +18,7 @@ const DEFAULT_DURATION_MS =
 
 
 /*
- * Base64 URL encoding
+ * Base64 URL encode
  */
 
 function base64UrlEncode(value) {
@@ -34,17 +34,9 @@ function base64UrlEncode(value) {
 
 
 /*
- * IMPORTANT:
+ * Sign session payload
  *
  * This must match middleware.js.
- *
- * middleware.js calculates:
- *
- * SHA256(
- *   SITE_SESSION_SECRET + "|" + payload
- * )
- *
- * and then Base64URL encodes it.
  */
 
 function sign(payload) {
@@ -68,15 +60,21 @@ function sign(payload) {
  * Redis REST
  */
 
-async function redisCommand(command) {
+async function redisCommand(
+  command
+) {
 
-  if (!REDIS_URL || !REDIS_TOKEN) {
+  if (
+    !REDIS_URL ||
+    !REDIS_TOKEN
+  ) {
 
     throw new Error(
       "Redis environment variables are missing."
     );
 
   }
+
 
   const response =
     await fetch(
@@ -137,20 +135,8 @@ module.exports = async (
   try {
 
     if (
-      !REDIS_URL ||
-      !REDIS_TOKEN
+      !SITE_SESSION_SECRET
     ) {
-
-      return res.status(500).json({
-        success: false,
-        message:
-          "Redis is not configured."
-      });
-
-    }
-
-
-    if (!SITE_SESSION_SECRET) {
 
       return res.status(500).json({
         success: false,
@@ -193,9 +179,7 @@ module.exports = async (
 
 
     /*
-     * Redeem key atomically.
-     *
-     * The duration starts NOW.
+     * Atomically redeem the key.
      */
 
     const lua = `
@@ -235,7 +219,6 @@ local durationMs =
     )
 
 
--- Old keys get 30 days.
 if not durationMs or durationMs <= 0 then
 
     durationMs =
@@ -310,10 +293,6 @@ return {
     const reply =
       result.result;
 
-
-    /*
-     * Invalid key
-     */
 
     if (
       !Array.isArray(reply)
@@ -393,15 +372,20 @@ return {
 
 
     /*
-     * --------------------------------------------------
-     * SESSION
+     * IMPORTANT
      *
-     * Payload:
+     * The session payload now contains:
      *
-     * expiration.key
+     * expiration timestamp
+     * +
+     * access key
      *
-     * Middleware decodes this payload.
-     * --------------------------------------------------
+     * Example:
+     *
+     * 1780000000000.RBX-ABC123-...
+     *
+     * This lets middleware identify
+     * which key owns the session.
      */
 
     const payload =
@@ -413,13 +397,6 @@ return {
         payload
       );
 
-
-    /*
-     * IMPORTANT:
-     *
-     * Sign the ORIGINAL payload,
-     * NOT the encoded payload.
-     */
 
     const signature =
       sign(

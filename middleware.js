@@ -1,617 +1,603 @@
+import { NextResponse } from "next/server";
+
 const SITE_SESSION_COOKIE = "site_access";
-const ADMIN_SESSION_COOKIE = "admin_access";
+const ADMIN_SESSION_COOKIE = "robux_admin_session";
 
 const SESSION_SECRET =
-    "SITE_SESSION_SECRET";
+  process.env.SITE_SESSION_SECRET;
+
+const REDIS_URL =
+  process.env.KV_REST_API_URL ||
+  process.env.UPSTASH_REDIS_REST_URL ||
+  process.env.REDIS_URL;
+
+const REDIS_TOKEN =
+  process.env.KV_REST_API_TOKEN ||
+  process.env.UPSTASH_REDIS_REST_TOKEN ||
+  process.env.KV_REST_API_READ_ONLY_TOKEN;
 
 
 /*
- * ---------------------------------------------------------
- * Base64 helpers
- * ---------------------------------------------------------
+ * Base64 URL decode
  */
 
-function b64(bytes) {
+function base64UrlDecode(value) {
 
-    let s = "";
-
-    for (
-        let i = 0;
-        i < bytes.length;
-        i += 0x8000
-    ) {
-
-        s += String.fromCharCode(
-            ...bytes.subarray(
-                i,
-                i + 0x8000
-            )
-        );
-    }
-
-    return btoa(s)
-        .replace(/\+/g, "-")
-        .replace(/\//g, "_")
-        .replace(/=+$/g, "");
-}
-
-
-function b64d(value) {
+  try {
 
     const padded =
-        value
-            .replace(/-/g, "+")
-            .replace(/_/g, "/")
-            .padEnd(
-                value.length +
-                (4 - value.length % 4) % 4,
-                "="
-            );
+      value +
+      "=".repeat(
+        (4 - (value.length % 4)) % 4
+      );
 
-    const s =
-        atob(padded);
+    const base64 =
+      padded
+        .replace(/-/g, "+")
+        .replace(/_/g, "/");
 
-    const bytes =
-        new Uint8Array(
-            s.length
-        );
+    return atob(base64);
 
-    for (
-        let i = 0;
-        i < s.length;
-        i++
-    ) {
+  } catch {
 
-        bytes[i] =
-            s.charCodeAt(i);
-    }
+    return null;
 
-    return bytes;
+  }
+
 }
 
 
 /*
- * ---------------------------------------------------------
- * Read cookie
- * ---------------------------------------------------------
+ * Convert bytes to Base64 URL
  */
 
-function cookie(
-    request,
-    name
-) {
+function base64UrlEncodeBytes(bytes) {
 
-    const header =
-        request.headers.get(
-            "cookie"
-        ) || "";
+  let binary = "";
 
+  for (
+    const byte of bytes
+  ) {
 
-    const match =
-        header.match(
-            new RegExp(
-                "(?:^|;\\s*)" +
-                name +
-                "=([^;]+)"
-            )
-        );
+    binary +=
+      String.fromCharCode(byte);
 
+  }
 
-    return match
-        ? decodeURIComponent(
-            match[1]
-        )
-        : null;
+  return btoa(binary)
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+
 }
 
 
 /*
- * ---------------------------------------------------------
- * Create signature
- * ---------------------------------------------------------
+ * Create the same SHA-256
+ * signature used by api/access.js
  */
 
-async function sig(
-    payload
+async function createSignature(
+  payload
 ) {
 
-    const secret =
-        process.env[
-            SESSION_SECRET
-        ];
-
-
-    if (!secret) {
-        return null;
-    }
-
-
-    const data =
-        new TextEncoder()
-            .encode(
-                secret +
-                "|" +
-                payload
-            );
-
-
-    return b64(
-        new Uint8Array(
-            await crypto.subtle.digest(
-                "SHA-256",
-                data
-            )
-        )
+  const data =
+    new TextEncoder().encode(
+      `${SESSION_SECRET}|${payload}`
     );
+
+
+  const hash =
+    await crypto.subtle.digest(
+      "SHA-256",
+      data
+    );
+
+
+  return base64UrlEncodeBytes(
+    new Uint8Array(hash)
+  );
+
 }
 
 
 /*
- * ---------------------------------------------------------
- * Redis helper
- * ---------------------------------------------------------
+ * Constant-time string comparison
  */
 
-async function redis(
-    command
+function safeEqual(
+  a,
+  b
 ) {
 
-    const url =
-        process.env.KV_REST_API_URL ||
-        process.env.UPSTASH_REDIS_REST_URL;
+  if (
+    typeof a !== "string" ||
+    typeof b !== "string"
+  ) {
+
+    return false;
+
+  }
 
 
-    const token =
-        process.env.KV_REST_API_TOKEN ||
-        process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (
+    a.length !== b.length
+  ) {
+
+    return false;
+
+  }
+
+
+  let result = 0;
+
+
+  for (
+    let i = 0;
+    i < a.length;
+    i++
+  ) {
+
+    result |=
+      a.charCodeAt(i) ^
+      b.charCodeAt(i);
+
+  }
+
+
+  return result === 0;
+
+}
+
+
+/*
+ * Check Redis
+ */
+
+async function getRedisRecord(
+  key
+) {
+
+  if (
+    !REDIS_URL ||
+    !REDIS_TOKEN
+  ) {
+
+    return null;
+
+  }
+
+
+  try {
+
+    const response =
+      await fetch(
+        REDIS_URL,
+        {
+
+          method: "POST",
+
+          headers: {
+
+            Authorization:
+              `Bearer ${REDIS_TOKEN}`,
+
+            "Content-Type":
+              "application/json"
+
+          },
+
+          body:
+            JSON.stringify([
+              "GET",
+              `access:key:${key}`
+            ])
+
+        }
+      );
 
 
     if (
-        !url ||
-        !token
+      !response.ok
     ) {
 
-        return null;
-    }
+      return null;
 
-
-    const response =
-        await fetch(
-            url,
-            {
-                method: "POST",
-
-                headers: {
-                    "Authorization":
-                        `Bearer ${token}`,
-
-                    "Content-Type":
-                        "application/json"
-                },
-
-                body:
-                    JSON.stringify(
-                        command
-                    )
-            }
-        );
-
-
-    if (!response.ok) {
-        return null;
     }
 
 
     const data =
-        await response
-            .json()
-            .catch(
-                () => null
-            );
+      await response.json();
 
 
-    return data?.result;
+    if (
+      !data.result
+    ) {
+
+      return null;
+
+    }
+
+
+    return JSON.parse(
+      data.result
+    );
+
+  } catch {
+
+    return null;
+
+  }
+
 }
 
 
 /*
- * ---------------------------------------------------------
- * Validate site session
- *
- * Returns:
- * {
- *   valid: true,
- *   key: "RBX-..."
- * }
- *
- * OR
- *
- * {
- *   valid: false
- * }
- * ---------------------------------------------------------
+ * Validate the user's site session
  */
 
 async function validSiteSession(
-    request
+  request
 ) {
 
-    const token =
-        cookie(
-            request,
-            SITE_SESSION_COOKIE
-        );
+  if (
+    !SESSION_SECRET
+  ) {
 
+    return false;
 
-    if (!token) {
+  }
 
-        return {
-            valid: false
-        };
-    }
 
+  const cookie =
+    request.cookies.get(
+      SITE_SESSION_COOKIE
+    )?.value;
 
-    const parts =
-        token.split(".");
 
+  if (!cookie) {
 
-    if (
-        parts.length !== 2
-    ) {
+    return false;
 
-        return {
-            valid: false
-        };
-    }
+  }
 
 
-    try {
+  let token;
 
-        /*
-         * Decode payload
-         */
+  try {
 
-        const payload =
-            new TextDecoder()
-                .decode(
-                    b64d(
-                        parts[0]
-                    )
-                );
+    token =
+      decodeURIComponent(
+        cookie
+      );
 
+  } catch {
 
-        /*
-         * Payload format:
-         *
-         * expiration.key
-         */
+    return false;
 
-        const separator =
-            payload.indexOf(".");
+  }
 
 
-        if (
-            separator === -1
-        ) {
+  const parts =
+    token.split(".");
 
-            return {
-                valid: false
-            };
-        }
 
+  /*
+   * New session format:
+   *
+   * base64(expiresAt.key).signature
+   */
 
-        const expiration =
-            Number(
-                payload.slice(
-                    0,
-                    separator
-                )
-            );
+  if (
+    parts.length !== 2
+  ) {
 
+    return false;
 
-        const key =
-            payload.slice(
-                separator + 1
-            );
+  }
 
 
-        if (
-            !Number.isFinite(
-                expiration
-            ) ||
-            expiration <=
-                Date.now()
-        ) {
+  const encodedPayload =
+    parts[0];
 
-            return {
-                valid: false
-            };
-        }
+  const suppliedSignature =
+    parts[1];
 
 
-        if (!key) {
+  const payload =
+    base64UrlDecode(
+      encodedPayload
+    );
 
-            return {
-                valid: false
-            };
-        }
 
+  if (!payload) {
 
-        /*
-         * Verify signature
-         */
+    return false;
 
-        const expected =
-            await sig(
-                payload
-            );
+  }
 
 
-        if (!expected) {
+  /*
+   * Verify signature
+   */
 
-            return {
-                valid: false
-            };
-        }
+  const expectedSignature =
+    await createSignature(
+      payload
+    );
 
 
-        const actualBytes =
-            b64d(
-                parts[1]
-            );
+  if (
+    !safeEqual(
+      suppliedSignature,
+      expectedSignature
+    )
+  ) {
 
+    return false;
 
-        const expectedBytes =
-            b64d(
-                expected
-            );
+  }
 
 
-        if (
-            actualBytes.length !==
-            expectedBytes.length
-        ) {
+  /*
+   * Payload:
+   *
+   * expiresAt.ACCESSKEY
+   */
 
-            return {
-                valid: false
-            };
-        }
+  const separator =
+    payload.indexOf(".");
 
 
-        let difference = 0;
+  if (
+    separator === -1
+  ) {
 
+    return false;
 
-        for (
-            let i = 0;
-            i < actualBytes.length;
-            i++
-        ) {
+  }
 
-            difference |=
-                actualBytes[i] ^
-                expectedBytes[i];
-        }
 
+  const expiresAt =
+    Number(
+      payload.slice(
+        0,
+        separator
+      )
+    );
 
-        if (
-            difference !== 0
-        ) {
 
-            return {
-                valid: false
-            };
-        }
+  const accessKey =
+    payload.slice(
+      separator + 1
+    );
 
 
-        /*
-         * -------------------------------------------------
-         * IMPORTANT:
-         *
-         * Check the exact key in Redis.
-         *
-         * If admin revoked the key,
-         * the session immediately becomes invalid.
-         * -------------------------------------------------
-         */
+  if (
+    !Number.isFinite(
+      expiresAt
+    )
+  ) {
 
-        const raw =
-            await redis([
-                "GET",
-                `access:key:${key}`
-            ]);
+    return false;
 
+  }
 
-        if (!raw) {
 
-            return {
-                valid: false
-            };
-        }
+  if (!accessKey) {
 
+    return false;
 
-        let record;
+  }
 
 
-        try {
+  /*
+   * Check expiration
+   */
 
-            record =
-                typeof raw === "string"
-                    ? JSON.parse(raw)
-                    : raw;
+  if (
+    Date.now() >= expiresAt
+  ) {
 
-        } catch (_) {
+    return false;
 
-            return {
-                valid: false
-            };
-        }
+  }
 
 
-        /*
-         * Only "used" keys are allowed.
-         *
-         * "revoked" = immediately blocked.
-         */
+  /*
+   * IMPORTANT:
+   *
+   * Check the actual Redis record.
+   *
+   * If the admin revoked the key,
+   * this immediately invalidates
+   * the person's current session.
+   */
 
-        if (
-            record.status !==
-            "used"
-        ) {
+  const record =
+    await getRedisRecord(
+      accessKey
+    );
 
-            return {
-                valid: false
-            };
-        }
 
+  if (!record) {
 
-        return {
-            valid: true,
-            key
-        };
+    return false;
 
+  }
 
-    } catch (_) {
 
-        return {
-            valid: false
-        };
-    }
+  /*
+   * Revoked = kicked out
+   */
+
+  if (
+    record.status ===
+    "revoked"
+  ) {
+
+    return false;
+
+  }
+
+
+  /*
+   * If Redis says the key itself
+   * has expired, also block it.
+   */
+
+  if (
+    record.expiresAt &&
+    Date.now() >=
+      Number(record.expiresAt)
+  ) {
+
+    return false;
+
+  }
+
+
+  /*
+   * The key must still be marked
+   * as used.
+   */
+
+  if (
+    record.status !==
+    "used"
+  ) {
+
+    return false;
+
+  }
+
+
+  return true;
+
 }
 
 
 /*
- * ---------------------------------------------------------
  * Middleware
- * ---------------------------------------------------------
  */
 
 export default async function middleware(
-    request
+  request
 ) {
 
-    const url =
-        new URL(
-            request.url
-        );
+  const pathname =
+    request.nextUrl.pathname;
 
 
-    const path =
-        url.pathname;
+  /*
+   * Public pages/routes
+   */
+
+  if (
+    pathname === "/unlock.html" ||
+    pathname === "/api/access" ||
+    pathname === "/favicon.ico"
+  ) {
+
+    return NextResponse.next();
+
+  }
 
 
-    /*
-     * -----------------------------------------------------
-     * PUBLIC ACCESS PAGES
-     * -----------------------------------------------------
-     */
+  /*
+   * Admin panel is handled separately
+   * by api/keys.js.
+   */
 
-    if (
-        path === "/unlock.html" ||
-        path === "/api/access" ||
-        path === "/favicon.ico"
-    ) {
+  if (
+    pathname === "/admin.html" ||
+    pathname.startsWith("/api/keys")
+  ) {
 
-        return;
-    }
+    return NextResponse.next();
 
-
-    /*
-     * -----------------------------------------------------
-     * ADMIN
-     *
-     * Keep these public to middleware because
-     * api/keys performs its own admin authentication.
-     * -----------------------------------------------------
-     */
-
-    if (
-        path === "/admin.html" ||
-        path === "/api/keys"
-    ) {
-
-        return;
-    }
+  }
 
 
-    /*
-     * -----------------------------------------------------
-     * ROBLOX API
-     * -----------------------------------------------------
-     */
+  /*
+   * Roblox API requires valid access.
+   */
 
-    if (
-        path.startsWith(
-            "/api/roblox"
-        )
-    ) {
+  if (
+    pathname.startsWith(
+      "/api/roblox"
+    )
+  ) {
 
-        const session =
-            await validSiteSession(
-                request
-            );
+    const valid =
+      await validSiteSession(
+        request
+      );
 
 
-        if (
-            session.valid
-        ) {
+    if (!valid) {
 
-            return;
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "Access expired or revoked."
+        },
+        {
+          status: 401
         }
+      );
 
-
-        return new Response(
-            JSON.stringify({
-                error:
-                    "Unauthorized"
-            }),
-            {
-                status: 401,
-
-                headers: {
-                    "Content-Type":
-                        "application/json",
-
-                    "Cache-Control":
-                        "no-store"
-                }
-            }
-        );
     }
 
 
-    /*
-     * -----------------------------------------------------
-     * NORMAL WEBSITE
-     * -----------------------------------------------------
-     */
+    return NextResponse.next();
 
-    const session =
-        await validSiteSession(
-            request
-        );
+  }
 
 
-    if (
-        session.valid
-    ) {
+  /*
+   * Normal website pages
+   */
 
-        return;
-    }
-
-
-    /*
-     * -----------------------------------------------------
-     * NO ACCESS
-     *
-     * Send them back to unlock page.
-     * -----------------------------------------------------
-     */
-
-    return Response.redirect(
-        new URL(
-            "/unlock.html",
-            request.url
-        ),
-        302
+  const valid =
+    await validSiteSession(
+      request
     );
+
+
+  if (!valid) {
+
+    const url =
+      request.nextUrl.clone();
+
+    url.pathname =
+      "/unlock.html";
+
+    url.search = "";
+
+
+    return NextResponse.redirect(
+      url
+    );
+
+  }
+
+
+  return NextResponse.next();
+
 }
+
+
+/*
+ * Routes handled by middleware
+ */
+
+export const config = {
+
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico).*)"
+
+  ]
+
+};

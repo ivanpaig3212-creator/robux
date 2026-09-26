@@ -1626,12 +1626,10 @@ document.addEventListener("keydown",(e)=>{
 
 <!-- =========================================================
      BACKGROUND COLOR SETTING
-     Add this entire block immediately before </body>
+     Paste immediately before </body>
      ========================================================= -->
 
 <style>
-/* ================= BACKGROUND SETTING ================= */
-
 .background-setting{
     margin-top:18px;
     padding-top:16px;
@@ -1665,24 +1663,16 @@ document.addEventListener("keydown",(e)=>{
     align-items:center;
     justify-content:center;
     gap:8px;
-    transition:
-        border-color .15s ease,
-        background .15s ease,
-        transform .1s ease;
 }
 
 .background-option:hover{
     border-color:#587cff;
 }
 
-.background-option:active{
-    transform:scale(.98);
-}
-
 .background-option.active{
     border-color:#3d6cff;
     background:#293a78;
-    box-shadow:0 0 0 2px rgba(61,108,255,.12);
+    color:#fff;
 }
 
 .background-dot{
@@ -1691,7 +1681,6 @@ document.addEventListener("keydown",(e)=>{
     border-radius:50%;
     display:inline-block;
     border:1px solid #555b65;
-    flex-shrink:0;
 }
 
 .background-dot.black{
@@ -1699,99 +1688,41 @@ document.addEventListener("keydown",(e)=>{
 }
 
 .background-dot.white{
-    background:#ffffff;
+    background:#fff;
 }
 
 
-/* ================= WHITE BACKGROUND ================= */
-
-/*
-   Only the main website background becomes white.
-   The existing sidebar, top bar, cards and controls
-   remain dark.
-*/
+/* ================= WHITE MODE ================= */
 
 body.white-background{
-    background:#ffffff !important;
+    background:#fff !important;
+    color:#191b1f !important;
 }
 
-body.white-background .main{
-    background:#ffffff !important;
-}
-
+body.white-background .main,
 body.white-background .page{
-    background:#ffffff !important;
+    background:#fff !important;
 }
 
-/* Hide the decorative dark background effect if present */
 body.white-background .page::before{
     opacity:0 !important;
 }
 
-/* Text that sits directly on the page background */
+
+/* Main content */
+
 body.white-background .packages-heading,
 body.white-background .bonus-title,
 body.white-background .section-title h2{
-    color:#17191d !important;
+    color:#191b1f !important;
 }
 
 body.white-background .learn{
     color:#555b65 !important;
 }
-</style>
 
 
-<script>
-
-<!-- =========================================================
-     BACKGROUND COLOR / LIGHT MODE SETTING
-     Paste this entire block immediately before </body>
-     ========================================================= -->
-
-<style>
-
-/* =========================================================
-   LIGHT MODE
-   ========================================================= */
-
-body.white-background{
-    background:#ffffff !important;
-    color:#191b1f !important;
-}
-
-/* Main page */
-
-body.white-background .main{
-    background:#ffffff !important;
-}
-
-body.white-background .page{
-    background:#ffffff !important;
-}
-
-body.white-background .page::before{
-    opacity:0 !important;
-}
-
-
-/* =========================================================
-   MAIN TEXT
-   ========================================================= */
-
-body.white-background .packages-heading,
-body.white-background .bonus-title,
-body.white-background .section-title h2{
-    color:#191b1f !important;
-}
-
-body.white-background .learn{
-    color:#5b5f66 !important;
-}
-
-
-/* =========================================================
-   CARDS / PANELS
-   ========================================================= */
+/* Common cards */
 
 body.white-background .card,
 body.white-background .package,
@@ -1799,26 +1730,19 @@ body.white-background .package-card,
 body.white-background .bonus-card,
 body.white-background .panel,
 body.white-background .content-card{
-    background:#ffffff !important;
+    background:#fff !important;
     color:#191b1f !important;
     border-color:#e1e3e6 !important;
-    box-shadow:0 1px 3px rgba(0,0,0,.08) !important;
 }
 
 
-/* =========================================================
-   BUTTONS
-   ========================================================= */
-
-body.white-background button:not(.close){
-    color:#191b1f;
-}
+/* Buttons */
 
 body.white-background .package button,
 body.white-background .package-card button,
 body.white-background .buy-button,
 body.white-background .purchase-button{
-    background:#ffffff !important;
+    background:#fff !important;
     color:#191b1f !important;
     border-color:#d7d9dd !important;
 }
@@ -1831,14 +1755,12 @@ body.white-background .purchase-button:hover{
 }
 
 
-/* =========================================================
-   INPUTS
-   ========================================================= */
+/* Inputs */
 
 body.white-background input,
 body.white-background select,
 body.white-background textarea{
-    background:#ffffff !important;
+    background:#fff !important;
     color:#191b1f !important;
     border-color:#d7d9dd !important;
 }
@@ -1849,29 +1771,15 @@ body.white-background textarea::placeholder{
 }
 
 
-/* =========================================================
-   PROFILE SETTINGS MODAL
-   ========================================================= */
+/* Profile modal */
 
 body.white-background .profile-modal{
-    background:#ffffff !important;
-    color:#191b1f !important;
-    border-color:#e1e3e6 !important;
-    box-shadow:0 12px 40px rgba(0,0,0,.18) !important;
-}
-
-body.white-background .modal-header{
-    color:#191b1f !important;
-    border-color:#e1e3e6 !important;
-}
-
-body.white-background .profile-modal-body{
+    background:#fff !important;
     color:#191b1f !important;
 }
 
 body.white-background .profile-preview{
     background:#f6f7f8 !important;
-    border-color:#e1e3e6 !important;
 }
 
 body.white-background .profile-preview-name{
@@ -1887,13 +1795,9 @@ body.white-background .profile-label{
 }
 
 body.white-background .profile-input{
-    background:#ffffff !important;
+    background:#fff !important;
     color:#191b1f !important;
     border-color:#d7d9dd !important;
-}
-
-body.white-background .profile-input:focus{
-    border-color:#3d6cff !important;
 }
 
 body.white-background .profile-note{
@@ -1901,96 +1805,13 @@ body.white-background .profile-note{
 }
 
 body.white-background .profile-cancel{
-    background:#ffffff !important;
+    background:#fff !important;
     color:#191b1f !important;
     border-color:#d7d9dd !important;
 }
 
-body.white-background .profile-cancel:hover{
-    background:#f2f3f5 !important;
-}
-
-
-/* =========================================================
-   BACKGROUND COLOR SETTING
-   ========================================================= */
-
-.background-setting{
-    margin-top:18px;
-    padding-top:16px;
-    border-top:1px solid #2c3038;
-}
-
-.background-setting-title{
-    display:block;
-    font-size:12px;
-    color:#a8adb6;
-    font-weight:700;
-    margin-bottom:9px;
-}
-
-.background-options{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-}
-
-.background-option{
-    height:44px;
-    border:1px solid #3a3f49;
-    border-radius:9px;
-    background:#20242b;
-    color:#f0f1f3;
-    cursor:pointer;
-    font-size:13px;
-    font-weight:800;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:8px;
-    transition:
-        border-color .15s ease,
-        background .15s ease,
-        transform .1s ease;
-}
-
-.background-option:hover{
-    border-color:#587cff;
-}
-
-.background-option:active{
-    transform:scale(.98);
-}
-
-.background-option.active{
-    border-color:#3d6cff;
-    background:#293a78;
-    color:#ffffff;
-    box-shadow:0 0 0 2px rgba(61,108,255,.12);
-}
-
-.background-dot{
-    width:16px;
-    height:16px;
-    border-radius:50%;
-    display:inline-block;
-    border:1px solid #555b65;
-    flex-shrink:0;
-}
-
-.background-dot.black{
-    background:#0b0c0f;
-}
-
-.background-dot.white{
-    background:#ffffff;
-}
-
-
-/* Light mode for the background selector */
-
 body.white-background .background-setting{
-    border-top-color:#e1e3e6;
+    border-color:#e1e3e6;
 }
 
 body.white-background .background-setting-title{
@@ -1998,14 +1819,9 @@ body.white-background .background-setting-title{
 }
 
 body.white-background .background-option{
-    background:#ffffff;
+    background:#fff;
     color:#191b1f;
     border-color:#d7d9dd;
-}
-
-body.white-background .background-option:hover{
-    background:#f2f3f5;
-    border-color:#587cff;
 }
 
 body.white-background .background-option.active{
@@ -2013,58 +1829,33 @@ body.white-background .background-option.active{
     color:#191b1f;
     border-color:#3d6cff;
 }
-
-
-/* =========================================================
-   COMMON DARK UI ELEMENTS
-   ========================================================= */
-
-/*
-   These selectors catch common elements without
-   changing their size, position or functionality.
-*/
-
-body.white-background .box,
-body.white-background .container,
-body.white-background .section,
-body.white-background .item,
-body.white-background .row,
-body.white-background .table-container{
-    border-color:#e1e3e6;
-}
-
-
-/* =========================================================
-   LIGHT MODE STATUS / SMALL TEXT
-   ========================================================= */
-
-body.white-background .muted,
-body.white-background .subtitle,
-body.white-background .description,
-body.white-background .small-text{
-    color:#70757d !important;
-}
-
 </style>
 
 
 <script>
-
-/* =========================================================
-   BACKGROUND COLOR SETTINGS
-   ========================================================= */
-
 (function(){
 
-    const BACKGROUND_STORAGE_KEY =
-        "robuxBackgroundColor";
+    const STORAGE_KEY = "robuxBackgroundColor";
 
 
-    /* =====================================================
-       APPLY BACKGROUND
-       ===================================================== */
+    function getSavedColor(){
 
-    function applyBackgroundColor(color){
+        try{
+
+            return localStorage.getItem(STORAGE_KEY) === "white"
+                ? "white"
+                : "black";
+
+        }catch(error){
+
+            return "black";
+
+        }
+
+    }
+
+
+    function applyColor(color){
 
         const selected =
             color === "white"
@@ -2072,39 +1863,24 @@ body.white-background .small-text{
                 : "black";
 
 
-        /*
-         * Add/remove light mode.
-         */
         document.body.classList.toggle(
             "white-background",
             selected === "white"
         );
 
 
-        /*
-         * Save the choice.
-         */
         try{
 
             localStorage.setItem(
-                BACKGROUND_STORAGE_KEY,
+                STORAGE_KEY,
                 selected
             );
 
-        }catch(error){
-
-            /* Ignore storage errors */
-
-        }
+        }catch(error){}
 
 
-        /*
-         * Update selected button.
-         */
         document
-            .querySelectorAll(
-                ".background-option"
-            )
+            .querySelectorAll(".background-option")
             .forEach(function(button){
 
                 button.classList.toggle(
@@ -2117,182 +1893,171 @@ body.white-background .small-text{
     }
 
 
-    /* =====================================================
-       GET SAVED COLOR
-       ===================================================== */
+    function addBackgroundSetting(){
 
-    function getSavedBackground(){
+        /*
+         * Find your existing profile settings.
+         */
 
-        try{
+        const profileBody =
+            document.querySelector(
+                "#profileSettingsOverlay .profile-modal-body"
+            );
 
-            const saved =
-                localStorage.getItem(
-                    BACKGROUND_STORAGE_KEY
-                );
 
-            if(saved === "white"){
-                return "white";
-            }
+        if(!profileBody){
 
-        }catch(error){
+            /*
+             * Try again shortly if the profile
+             * is created later by the page.
+             */
 
-            /* Ignore storage errors */
+            setTimeout(
+                addBackgroundSetting,
+                500
+            );
+
+            return;
 
         }
 
-        return "black";
+
+        /*
+         * Don't add it twice.
+         */
+
+        if(
+            document.getElementById(
+                "backgroundSetting"
+            )
+        ){
+
+            return;
+
+        }
+
+
+        /*
+         * Create the setting.
+         */
+
+        const setting =
+            document.createElement("div");
+
+
+        setting.id =
+            "backgroundSetting";
+
+
+        setting.className =
+            "background-setting";
+
+
+        setting.innerHTML = `
+
+            <span class="background-setting-title">
+                Background Color
+            </span>
+
+            <div class="background-options">
+
+                <button
+                    type="button"
+                    class="background-option"
+                    data-background="black"
+                >
+                    <span class="background-dot black"></span>
+                    Black
+                </button>
+
+                <button
+                    type="button"
+                    class="background-option"
+                    data-background="white"
+                >
+                    <span class="background-dot white"></span>
+                    White
+                </button>
+
+            </div>
+
+        `;
+
+
+        /*
+         * Put it at the bottom of the
+         * profile settings.
+         */
+
+        profileBody.appendChild(
+            setting
+        );
+
+
+        /*
+         * Add button actions.
+         */
+
+        setting
+            .querySelectorAll(
+                ".background-option"
+            )
+            .forEach(function(button){
+
+                button.addEventListener(
+                    "click",
+                    function(){
+
+                        applyColor(
+                            button.dataset.background
+                        );
+
+                    }
+                );
+
+            });
+
+
+        /*
+         * Apply saved choice.
+         */
+
+        applyColor(
+            getSavedColor()
+        );
 
     }
-
-
-    /* =====================================================
-       APPLY SAVED COLOR
-       ===================================================== */
-
-    applyBackgroundColor(
-        getSavedBackground()
-    );
-
-
-    /* =====================================================
-       FIND EXISTING PROFILE SETTINGS
-       ===================================================== */
-
-    const profileBody =
-        document.querySelector(
-            "#profileSettingsOverlay .profile-modal-body"
-        );
-
-
-    const profileStatusElement =
-        document.getElementById(
-            "profileStatus"
-        );
 
 
     /*
-     * If the existing profile settings
-     * cannot be found, stop safely.
+     * Wait until the entire page is loaded.
      */
 
     if(
-        !profileBody ||
-        !profileStatusElement
+        document.readyState === "loading"
     ){
 
-        return;
-
-    }
-
-
-    /* =====================================================
-       DON'T CREATE IT TWICE
-       ===================================================== */
-
-    if(
-        document.getElementById(
-            "backgroundSetting"
-        )
-    ){
-
-        return;
-
-    }
-
-
-    /* =====================================================
-       CREATE THE SETTING
-       ===================================================== */
-
-    const setting =
-        document.createElement(
-            "div"
+        document.addEventListener(
+            "DOMContentLoaded",
+            addBackgroundSetting
         );
 
+    }else{
 
-    setting.id =
-        "backgroundSetting";
+        addBackgroundSetting();
 
-
-    setting.className =
-        "background-setting";
+    }
 
 
-    setting.innerHTML = `
+    /*
+     * Apply saved color immediately.
+     */
 
-        <span class="background-setting-title">
-            Background Color
-        </span>
-
-        <div class="background-options">
-
-            <button
-                type="button"
-                class="background-option"
-                data-background="black"
-            >
-                <span class="background-dot black"></span>
-                Black
-            </button>
-
-            <button
-                type="button"
-                class="background-option"
-                data-background="white"
-            >
-                <span class="background-dot white"></span>
-                White
-            </button>
-
-        </div>
-
-    `;
-
-
-    /* =====================================================
-       INSERT INTO EXISTING PROFILE SETTINGS
-       ===================================================== */
-
-    profileBody.insertBefore(
-        setting,
-        profileStatusElement
-    );
-
-
-    /* =====================================================
-       BUTTON EVENTS
-       ===================================================== */
-
-    setting
-        .querySelectorAll(
-            ".background-option"
-        )
-        .forEach(function(button){
-
-            button.addEventListener(
-                "click",
-                function(){
-
-                    applyBackgroundColor(
-                        button.dataset.background
-                    );
-
-                }
-            );
-
-        });
-
-
-    /* =====================================================
-       SET INITIAL BUTTON
-       ===================================================== */
-
-    applyBackgroundColor(
-        getSavedBackground()
+    applyColor(
+        getSavedColor()
     );
 
 })();
-
 </script>
 
 </body>

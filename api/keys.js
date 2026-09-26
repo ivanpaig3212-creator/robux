@@ -22,38 +22,44 @@ const SESSION_SECONDS =
 
 
 /*
- * ---------------------------------------------------------
- * Redis helper
- * ---------------------------------------------------------
+ * REDIS
  */
 
 async function redis(command) {
 
     if (!REDIS_URL || !REDIS_TOKEN) {
+
         throw new Error(
             "Redis environment variables are missing."
         );
+
     }
 
-    const response = await fetch(
-        REDIS_URL,
-        {
-            method: "POST",
+    const response =
+        await fetch(
+            REDIS_URL,
+            {
+                method: "POST",
 
-            headers: {
-                "Authorization":
-                    `Bearer ${REDIS_TOKEN}`,
+                headers: {
+                    "Authorization":
+                        `Bearer ${REDIS_TOKEN}`,
 
-                "Content-Type":
-                    "application/json"
-            },
+                    "Content-Type":
+                        "application/json"
+                },
 
-            body: JSON.stringify(command)
-        }
-    );
+                body:
+                    JSON.stringify(command)
+            }
+        );
+
 
     const data =
-        await response.json().catch(() => null);
+        await response
+            .json()
+            .catch(() => null);
+
 
     if (!response.ok) {
 
@@ -61,16 +67,16 @@ async function redis(command) {
             data?.error ||
             "Redis request failed."
         );
+
     }
+
 
     return data?.result;
 }
 
 
 /*
- * ---------------------------------------------------------
- * Session signing
- * ---------------------------------------------------------
+ * ADMIN SESSION
  */
 
 function sign(value) {
@@ -82,19 +88,23 @@ function sign(value) {
         )
         .update(value)
         .digest("hex");
+
 }
 
 
 function createSession() {
 
     const timestamp =
-        String(Date.now());
+        String(
+            Date.now()
+        );
 
     return (
         timestamp +
         "." +
         sign(timestamp)
     );
+
 }
 
 
@@ -104,15 +114,24 @@ function verifySession(session) {
         !session ||
         !SESSION_SECRET
     ) {
+
         return false;
+
     }
+
 
     const parts =
         session.split(".");
 
-    if (parts.length !== 2) {
+
+    if (
+        parts.length !== 2
+    ) {
+
         return false;
+
     }
+
 
     const timestamp =
         parts[0];
@@ -120,15 +139,20 @@ function verifySession(session) {
     const signature =
         parts[1];
 
+
     const expected =
         sign(timestamp);
+
 
     if (
         signature.length !==
         expected.length
     ) {
+
         return false;
+
     }
+
 
     try {
 
@@ -138,17 +162,22 @@ function verifySession(session) {
                 Buffer.from(expected)
             )
         ) {
+
             return false;
+
         }
 
     } catch (_) {
 
         return false;
+
     }
+
 
     const age =
         Date.now() -
         Number(timestamp);
+
 
     return (
         Number.isFinite(age) &&
@@ -156,49 +185,72 @@ function verifySession(session) {
         age <
             SESSION_SECONDS * 1000
     );
+
 }
 
 
-/*
- * ---------------------------------------------------------
- * Cookies
- * ---------------------------------------------------------
- */
-
-function getCookie(req, name) {
+function getCookie(
+    req,
+    name
+) {
 
     const cookieHeader =
         req.headers.cookie || "";
 
+
     const cookies =
         cookieHeader
             .split(";")
-            .map(x => x.trim());
+            .map(
+                x => x.trim()
+            );
 
-    for (const cookie of cookies) {
+
+    for (
+        const cookie of cookies
+    ) {
 
         const index =
             cookie.indexOf("=");
 
-        if (index === -1) {
+
+        if (
+            index === -1
+        ) {
+
             continue;
+
         }
 
+
         const key =
-            cookie.slice(0, index);
+            cookie.slice(
+                0,
+                index
+            );
+
 
         const value =
-            cookie.slice(index + 1);
+            cookie.slice(
+                index + 1
+            );
 
-        if (key === name) {
+
+        if (
+            key === name
+        ) {
 
             return decodeURIComponent(
                 value
             );
+
         }
+
     }
 
+
     return null;
+
 }
 
 
@@ -212,23 +264,41 @@ function setSessionCookie(
 
         `${SESSION_COOKIE}=${encodeURIComponent(session)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${SESSION_SECONDS}`
     );
+
 }
 
 
-function clearSessionCookie(res) {
+function clearSessionCookie(
+    res
+) {
 
     res.setHeader(
         "Set-Cookie",
 
         `${SESSION_COOKIE}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`
     );
+
+}
+
+
+function isAdmin(req) {
+
+    const session =
+        getCookie(
+            req,
+            SESSION_COOKIE
+        );
+
+
+    return verifySession(
+        session
+    );
+
 }
 
 
 /*
- * ---------------------------------------------------------
- * JSON response
- * ---------------------------------------------------------
+ * JSON
  */
 
 function json(
@@ -250,33 +320,12 @@ function json(
     return res
         .status(status)
         .json(data);
+
 }
 
 
 /*
- * ---------------------------------------------------------
- * Admin authentication
- * ---------------------------------------------------------
- */
-
-function isAdmin(req) {
-
-    const session =
-        getCookie(
-            req,
-            SESSION_COOKIE
-        );
-
-    return verifySession(
-        session
-    );
-}
-
-
-/*
- * ---------------------------------------------------------
- * Generate unique key
- * ---------------------------------------------------------
+ * KEY GENERATOR
  */
 
 function generateKey() {
@@ -305,6 +354,7 @@ function generateKey() {
             .toString("hex")
             .toUpperCase();
 
+
     return (
         "RBX-" +
         part1 +
@@ -315,13 +365,12 @@ function generateKey() {
         "-" +
         part4
     );
+
 }
 
 
 /*
- * ---------------------------------------------------------
- * Duration conversion
- * ---------------------------------------------------------
+ * CUSTOM DURATION
  */
 
 function getDurationMs(
@@ -332,12 +381,16 @@ function getDurationMs(
     const number =
         Number(value);
 
+
     if (
         !Number.isFinite(number) ||
         number <= 0
     ) {
+
         return null;
+
     }
+
 
     const units = {
 
@@ -352,17 +405,26 @@ function getDurationMs(
 
         weeks:
             7 * 24 * 60 * 60 * 1000
+
     };
 
-    if (!units[unit]) {
+
+    if (
+        !units[unit]
+    ) {
+
         return null;
+
     }
 
+
     const durationMs =
-        number * units[unit];
+        number *
+        units[unit];
+
 
     /*
-     * Maximum duration:
+     * Maximum:
      * 365 days
      */
 
@@ -373,20 +435,24 @@ function getDurationMs(
         60 *
         1000;
 
+
     if (
-        durationMs > maximum
+        durationMs >
+        maximum
     ) {
+
         return null;
+
     }
 
+
     return durationMs;
+
 }
 
 
 /*
- * ---------------------------------------------------------
- * Main API
- * ---------------------------------------------------------
+ * MAIN HANDLER
  */
 
 export default async function handler(
@@ -404,10 +470,12 @@ export default async function handler(
                 res,
                 405,
                 {
+                    success: false,
                     error:
                         "Method not allowed."
                 }
             );
+
         }
 
 
@@ -416,7 +484,9 @@ export default async function handler(
                 ? JSON.parse(
                     req.body || "{}"
                 )
-                : (req.body || {});
+                : (
+                    req.body || {}
+                );
 
 
         const action =
@@ -424,95 +494,34 @@ export default async function handler(
 
 
         /*
-         * -------------------------------------------------
          * LOGIN
-         * -------------------------------------------------
          */
 
         if (
             action === "login"
         ) {
 
-            if (!ADMIN_KEY) {
-
-                return json(
-                    res,
-                    500,
-                    {
-                        error:
-                            "ADMIN_KEY is not configured."
-                    }
-                );
-            }
-
-
-            if (!SESSION_SECRET) {
-
-                return json(
-                    res,
-                    500,
-                    {
-                        error:
-                            "SITE_SESSION_SECRET is not configured."
-                    }
-                );
-            }
-
-
-            const suppliedKey =
+            const key =
                 String(
                     body.key || ""
-                ).trim();
+                );
 
 
             if (
-                !suppliedKey ||
-                suppliedKey.length !==
-                    ADMIN_KEY.length
+                !ADMIN_KEY ||
+                key !== ADMIN_KEY
             ) {
 
                 return json(
                     res,
                     401,
                     {
+                        success: false,
                         error:
                             "Invalid admin key."
                     }
                 );
-            }
 
-
-            let valid = false;
-
-
-            try {
-
-                valid =
-                    crypto.timingSafeEqual(
-                        Buffer.from(
-                            suppliedKey
-                        ),
-                        Buffer.from(
-                            ADMIN_KEY
-                        )
-                    );
-
-            } catch (_) {
-
-                valid = false;
-            }
-
-
-            if (!valid) {
-
-                return json(
-                    res,
-                    401,
-                    {
-                        error:
-                            "Invalid admin key."
-                    }
-                );
             }
 
 
@@ -533,34 +542,58 @@ export default async function handler(
                     success: true
                 }
             );
+
         }
 
 
         /*
-         * -------------------------------------------------
-         * Everything below requires admin login
-         * -------------------------------------------------
+         * LOGOUT
          */
 
-        if (!isAdmin(req)) {
+        if (
+            action === "logout"
+        ) {
 
-            clearSessionCookie(res);
+            clearSessionCookie(
+                res
+            );
+
+
+            return json(
+                res,
+                200,
+                {
+                    success: true
+                }
+            );
+
+        }
+
+
+        /*
+         * EVERYTHING BELOW
+         * REQUIRES ADMIN LOGIN
+         */
+
+        if (
+            !isAdmin(req)
+        ) {
 
             return json(
                 res,
                 401,
                 {
+                    success: false,
                     error:
-                        "Admin authentication required."
+                        "Unauthorized."
                 }
             );
+
         }
 
 
         /*
-         * -------------------------------------------------
          * GENERATE
-         * -------------------------------------------------
          */
 
         if (
@@ -572,11 +605,11 @@ export default async function handler(
                     body.durationValue
                 );
 
+
             const durationUnit =
                 String(
-                    body.durationUnit ||
-                    "days"
-                ).toLowerCase();
+                    body.durationUnit || ""
+                );
 
 
             const durationMs =
@@ -586,39 +619,124 @@ export default async function handler(
                 );
 
 
-            if (!durationMs) {
+            if (
+                !durationMs
+            ) {
 
                 return json(
                     res,
                     400,
                     {
+                        success: false,
                         error:
-                            "Invalid access duration."
+                            "Invalid duration. Use 1–365 days maximum."
                     }
                 );
+
             }
 
 
-            let key = null;
+            let candidate;
 
 
             for (
-                let attempt = 0;
-                attempt < 10;
-                attempt++
+                let i = 0;
+                i < 10;
+                i++
             ) {
 
-                const candidate =
+                const possible =
                     generateKey();
 
 
-                const record = {
+                const existing =
+                    await redis([
+                        "GET",
+                        `access:key:${possible}`
+                    ]);
 
+
+                if (!existing) {
+
+                    candidate =
+                        possible;
+
+                    break;
+
+                }
+
+            }
+
+
+            if (!candidate) {
+
+                return json(
+                    res,
+                    500,
+                    {
+                        success: false,
+                        error:
+                            "Could not generate a unique key."
+                    }
+                );
+
+            }
+
+
+            const record = {
+
+                key:
+                    candidate,
+
+                status:
+                    "unused",
+
+                durationValue:
+                    durationValue,
+
+                durationUnit:
+                    durationUnit,
+
+                durationMs:
+                    durationMs,
+
+                createdAt:
+                    new Date()
+                        .toISOString(),
+
+                usedAt:
+                    null,
+
+                expiresAt:
+                    null,
+
+                revokedAt:
+                    null
+
+            };
+
+
+            await redis([
+                "SET",
+                `access:key:${candidate}`,
+                JSON.stringify(record)
+            ]);
+
+
+            await redis([
+                "SADD",
+                "access:keys",
+                candidate
+            ]);
+
+
+            return json(
+                res,
+                200,
+                {
+                    success: true,
                     key:
                         candidate,
-
-                    status:
-                        "unused",
 
                     durationValue:
                         durationValue,
@@ -627,156 +745,55 @@ export default async function handler(
                         durationUnit,
 
                     durationMs:
-                        durationMs,
-
-                    createdAt:
-                        new Date()
-                            .toISOString(),
-
-                    usedAt:
-                        null,
-
-                    expiresAt:
-                        null,
-
-                    revokedAt:
-                        null
-                };
-
-
-                const result =
-                    await redis([
-                        "SET",
-
-                        `access:key:${candidate}`,
-
-                        JSON.stringify(
-                            record
-                        ),
-
-                        "NX"
-                    ]);
-
-
-                if (
-                    result === "OK"
-                ) {
-
-                    await redis([
-                        "SADD",
-
-                        "access:keys",
-
-                        candidate
-                    ]);
-
-
-                    key =
-                        candidate;
-
-                    break;
-                }
-            }
-
-
-            if (!key) {
-
-                return json(
-                    res,
-                    500,
-                    {
-                        error:
-                            "Could not generate a unique key. Try again."
-                    }
-                );
-            }
-
-
-            return json(
-                res,
-                200,
-                {
-                    success:
-                        true,
-
-                    key,
-
-                    durationValue,
-
-                    durationUnit,
-
-                    durationMs
+                        durationMs
                 }
             );
+
         }
 
 
         /*
-         * -------------------------------------------------
-         * LIST KEYS
-         * -------------------------------------------------
+         * LIST
          */
 
         if (
             action === "list"
         ) {
 
-            const keyNames =
+            const members =
                 await redis([
                     "SMEMBERS",
                     "access:keys"
                 ]);
 
 
-            if (
-                !Array.isArray(
-                    keyNames
-                ) ||
-                keyNames.length === 0
-            ) {
-
-                return json(
-                    res,
-                    200,
-                    {
-                        success:
-                            true,
-
-                        keys: []
-                    }
-                );
-            }
+            const keys =
+                Array.isArray(
+                    members
+                )
+                    ? members
+                    : [];
 
 
-            const redisKeys =
-                keyNames.map(
-                    key =>
-                        `access:key:${key}`
-                );
-
-
-            const records =
-                await redis([
-                    "MGET",
-                    ...redisKeys
-                ]);
-
-
-            const keys = [];
+            const result =
+                [];
 
 
             for (
-                let i = 0;
-                i < keyNames.length;
-                i++
+                const key of keys
             ) {
 
                 const raw =
-                    records?.[i];
+                    await redis([
+                        "GET",
+                        `access:key:${key}`
+                    ]);
 
 
                 if (!raw) {
+
                     continue;
+
                 }
 
 
@@ -788,50 +805,60 @@ export default async function handler(
                             : raw;
 
 
-                    keys.push({
+                    result.push({
 
                         key:
-                            keyNames[i],
+                            record.key ||
+                            key,
 
                         status:
                             record.status ||
                             "unused",
 
                         durationValue:
-                            record.durationValue ||
+                            record.durationValue ??
                             null,
 
                         durationUnit:
-                            record.durationUnit ||
+                            record.durationUnit ??
                             null,
 
                         durationMs:
-                            record.durationMs ||
+                            record.durationMs ??
                             null,
 
                         createdAt:
-                            record.createdAt ||
+                            record.createdAt ??
                             null,
 
                         usedAt:
-                            record.usedAt ||
+                            record.usedAt ??
                             null,
 
                         expiresAt:
-                            record.expiresAt ||
+                            record.expiresAt ??
                             null,
 
                         revokedAt:
-                            record.revokedAt ||
+                            record.revokedAt ??
                             null
+
                     });
 
-                } catch (_) {}
+                } catch (_) {
+
+                    // Ignore malformed records.
+
+                }
+
             }
 
 
-            keys.sort(
-                (a, b) =>
+            result.sort(
+                (
+                    a,
+                    b
+                ) =>
                     String(
                         b.createdAt || ""
                     ).localeCompare(
@@ -846,19 +873,17 @@ export default async function handler(
                 res,
                 200,
                 {
-                    success:
-                        true,
-
-                    keys
+                    success: true,
+                    keys:
+                        result
                 }
             );
+
         }
 
 
         /*
-         * -------------------------------------------------
-         * REVOKE KEY
-         * -------------------------------------------------
+         * REVOKE
          */
 
         if (
@@ -879,10 +904,12 @@ export default async function handler(
                     res,
                     400,
                     {
+                        success: false,
                         error:
-                            "Key is required."
+                            "Missing key."
                     }
                 );
+
             }
 
 
@@ -903,34 +930,19 @@ export default async function handler(
                     res,
                     404,
                     {
+                        success: false,
                         error:
                             "Key not found."
                     }
                 );
+
             }
 
 
-            let record;
-
-
-            try {
-
-                record =
-                    typeof raw === "string"
-                        ? JSON.parse(raw)
-                        : raw;
-
-            } catch (_) {
-
-                return json(
-                    res,
-                    500,
-                    {
-                        error:
-                            "Invalid key record."
-                    }
-                );
-            }
+            const record =
+                typeof raw === "string"
+                    ? JSON.parse(raw)
+                    : raw;
 
 
             if (
@@ -940,17 +952,18 @@ export default async function handler(
 
                 return json(
                     res,
-                    400,
+                    200,
                     {
-                        error:
-                            "Key is already revoked."
+                        success: true
                     }
                 );
+
             }
 
 
             record.status =
                 "revoked";
+
 
             record.revokedAt =
                 new Date()
@@ -959,12 +972,8 @@ export default async function handler(
 
             await redis([
                 "SET",
-
                 redisKey,
-
-                JSON.stringify(
-                    record
-                )
+                JSON.stringify(record)
             ]);
 
 
@@ -972,41 +981,166 @@ export default async function handler(
                 res,
                 200,
                 {
-                    success:
-                        true,
-
-                    key,
-
-                    status:
-                        "revoked"
+                    success: true
                 }
             );
+
         }
 
 
         /*
-         * -------------------------------------------------
-         * LOGOUT
-         * -------------------------------------------------
+         * REMOVE
+         *
+         * Permanently deletes an EXPIRED
+         * or REVOKED key.
          */
 
         if (
-            action === "logout"
+            action === "remove"
         ) {
 
-            clearSessionCookie(
-                res
-            );
+            const key =
+                String(
+                    body.key || ""
+                )
+                .trim()
+                .toUpperCase();
+
+
+            if (!key) {
+
+                return json(
+                    res,
+                    400,
+                    {
+                        success: false,
+                        error:
+                            "Missing key."
+                    }
+                );
+
+            }
+
+
+            const redisKey =
+                `access:key:${key}`;
+
+
+            const raw =
+                await redis([
+                    "GET",
+                    redisKey
+                ]);
+
+
+            if (!raw) {
+
+                /*
+                 * Clean up the set too,
+                 * just in case.
+                 */
+
+                await redis([
+                    "SREM",
+                    "access:keys",
+                    key
+                ]);
+
+
+                return json(
+                    res,
+                    200,
+                    {
+                        success: true
+                    }
+                );
+
+            }
+
+
+            const record =
+                typeof raw === "string"
+                    ? JSON.parse(raw)
+                    : raw;
+
+
+            const now =
+                Date.now();
+
+
+            const expiresAt =
+                Number(
+                    record.expiresAt
+                );
+
+
+            const isExpired =
+                Number.isFinite(
+                    expiresAt
+                ) &&
+                expiresAt <= now;
+
+
+            const isRevoked =
+                record.status ===
+                "revoked";
+
+
+            /*
+             * Only allow removing:
+             *
+             * EXPIRED
+             * or
+             * REVOKED
+             */
+
+            if (
+                !isExpired &&
+                !isRevoked
+            ) {
+
+                return json(
+                    res,
+                    400,
+                    {
+                        success: false,
+                        error:
+                            "Only expired or revoked keys can be removed."
+                    }
+                );
+
+            }
+
+
+            /*
+             * Delete the actual key.
+             */
+
+            await redis([
+                "DEL",
+                redisKey
+            ]);
+
+
+            /*
+             * Remove it from the key list.
+             */
+
+            await redis([
+                "SREM",
+                "access:keys",
+                key
+            ]);
 
 
             return json(
                 res,
                 200,
                 {
-                    success:
-                        true
+                    success: true
                 }
             );
+
         }
 
 
@@ -1014,8 +1148,9 @@ export default async function handler(
             res,
             400,
             {
+                success: false,
                 error:
-                    "Invalid action."
+                    "Unknown action."
             }
         );
 
@@ -1032,9 +1167,12 @@ export default async function handler(
             res,
             500,
             {
+                success: false,
                 error:
-                    "Request failed."
+                    "Server error."
             }
         );
+
     }
+
 }

@@ -668,16 +668,27 @@ const overlay = document.getElementById("overlay");
 const openSend = document.getElementById("openSend");
 const closeSend = document.getElementById("closeSend");
 
-function openModal(){
-    overlay.classList.add("show");
+function resetSendFlow(){
+    selectedUser = null;
+    clearTimeout(searchTimer);
+
     document.getElementById("usernameInput").value="";
     document.getElementById("results").innerHTML="";
     document.getElementById("searchStatus").textContent="";
+
     document.getElementById("searchStep").style.display="block";
     document.getElementById("selectedStep").classList.remove("show");
     document.getElementById("confirmStep").classList.remove("show");
+    document.getElementById("sendSuccessOverlay").classList.remove("show");
+
     document.getElementById("amountInput").value="0";
+    document.querySelectorAll(".quick-amounts button").forEach(b=>b.classList.remove("active"));
     document.getElementById("backSend").style.visibility="hidden";
+}
+
+function openModal(){
+    resetSendFlow();
+    overlay.classList.add("show");
     setTimeout(()=>document.getElementById("usernameInput").focus(),100);
 }
 
@@ -1107,8 +1118,14 @@ document.getElementById("finalSend").addEventListener("click",()=>{
 function closeSendSuccess(){
     document.getElementById("sendSuccessOverlay").classList.remove("show");
     closeModal();
+    resetSendFlow();
 }
 
+/*
+   Fake refresh only.
+   We intentionally DO NOT reload the whole page.
+   This keeps the demo balance and avoids restarting the Roblox API flow.
+*/
 function fakeRefreshPage(){
     document.getElementById("sendSuccessOverlay").classList.remove("show");
     closeModal();
@@ -1116,7 +1133,15 @@ function fakeRefreshPage(){
     document.body.classList.add("page-refreshing");
 
     setTimeout(()=>{
-        window.location.reload();
+        document.body.classList.remove("page-refreshing");
+        resetSendFlow();
+        updateBalance();
+
+        showToast("Ready for another demo transaction.");
+
+        setTimeout(()=>{
+            openModal();
+        },250);
     },750);
 }
 

@@ -30,35 +30,30 @@ const SESSION_SECONDS =
 async function redis(command) {
 
     if (!REDIS_URL || !REDIS_TOKEN) {
-
         throw new Error(
             "Redis environment variables are missing."
         );
     }
 
-    const response =
-        await fetch(
-            REDIS_URL,
-            {
-                method: "POST",
+    const response = await fetch(
+        REDIS_URL,
+        {
+            method: "POST",
 
-                headers: {
-                    "Authorization":
-                        `Bearer ${REDIS_TOKEN}`,
+            headers: {
+                "Authorization":
+                    `Bearer ${REDIS_TOKEN}`,
 
-                    "Content-Type":
-                        "application/json"
-                },
+                "Content-Type":
+                    "application/json"
+            },
 
-                body:
-                    JSON.stringify(command)
-            }
-        );
+            body: JSON.stringify(command)
+        }
+    );
 
     const data =
-        await response
-            .json()
-            .catch(() => null);
+        await response.json().catch(() => null);
 
     if (!response.ok) {
 
@@ -109,17 +104,13 @@ function verifySession(session) {
         !session ||
         !SESSION_SECRET
     ) {
-
         return false;
     }
 
     const parts =
         session.split(".");
 
-    if (
-        parts.length !== 2
-    ) {
-
+    if (parts.length !== 2) {
         return false;
     }
 
@@ -136,7 +127,6 @@ function verifySession(session) {
         signature.length !==
         expected.length
     ) {
-
         return false;
     }
 
@@ -148,7 +138,6 @@ function verifySession(session) {
                 Buffer.from(expected)
             )
         ) {
-
             return false;
         }
 
@@ -176,10 +165,7 @@ function verifySession(session) {
  * ---------------------------------------------------------
  */
 
-function getCookie(
-    req,
-    name
-) {
+function getCookie(req, name) {
 
     const cookieHeader =
         req.headers.cookie || "";
@@ -187,38 +173,24 @@ function getCookie(
     const cookies =
         cookieHeader
             .split(";")
-            .map(
-                x => x.trim()
-            );
+            .map(x => x.trim());
 
-    for (
-        const cookie of cookies
-    ) {
+    for (const cookie of cookies) {
 
         const index =
             cookie.indexOf("=");
 
-        if (
-            index === -1
-        ) {
-
+        if (index === -1) {
             continue;
         }
 
         const key =
-            cookie.slice(
-                0,
-                index
-            );
+            cookie.slice(0, index);
 
         const value =
-            cookie.slice(
-                index + 1
-            );
+            cookie.slice(index + 1);
 
-        if (
-            key === name
-        ) {
+        if (key === name) {
 
             return decodeURIComponent(
                 value
@@ -243,9 +215,7 @@ function setSessionCookie(
 }
 
 
-function clearSessionCookie(
-    res
-) {
+function clearSessionCookie(res) {
 
     res.setHeader(
         "Set-Cookie",
@@ -350,33 +320,67 @@ function generateKey() {
 
 /*
  * ---------------------------------------------------------
- * Allowed access durations
- *
- * These are stored in milliseconds.
- * The timer starts ONLY when the key is redeemed.
+ * Duration conversion
  * ---------------------------------------------------------
  */
 
-const ALLOWED_DURATIONS = {
+function getDurationMs(
+    value,
+    unit
+) {
 
-    "1h":
-        60 * 60 * 1000,
+    const number =
+        Number(value);
 
-    "6h":
-        6 * 60 * 60 * 1000,
+    if (
+        !Number.isFinite(number) ||
+        number <= 0
+    ) {
+        return null;
+    }
 
-    "1d":
-        24 * 60 * 60 * 1000,
+    const units = {
 
-    "3d":
-        3 * 24 * 60 * 60 * 1000,
+        minutes:
+            60 * 1000,
 
-    "7d":
-        7 * 24 * 60 * 60 * 1000,
+        hours:
+            60 * 60 * 1000,
 
-    "30d":
-        30 * 24 * 60 * 60 * 1000
-};
+        days:
+            24 * 60 * 60 * 1000,
+
+        weeks:
+            7 * 24 * 60 * 60 * 1000
+    };
+
+    if (!units[unit]) {
+        return null;
+    }
+
+    const durationMs =
+        number * units[unit];
+
+    /*
+     * Maximum duration:
+     * 365 days
+     */
+
+    const maximum =
+        365 *
+        24 *
+        60 *
+        60 *
+        1000;
+
+    if (
+        durationMs > maximum
+    ) {
+        return null;
+    }
+
+    return durationMs;
+}
 
 
 /*
@@ -412,9 +416,7 @@ export default async function handler(
                 ? JSON.parse(
                     req.body || "{}"
                 )
-                : (
-                    req.body || {}
-                );
+                : (req.body || {});
 
 
         const action =
@@ -431,9 +433,7 @@ export default async function handler(
             action === "login"
         ) {
 
-            if (
-                !ADMIN_KEY
-            ) {
+            if (!ADMIN_KEY) {
 
                 return json(
                     res,
@@ -446,9 +446,7 @@ export default async function handler(
             }
 
 
-            if (
-                !SESSION_SECRET
-            ) {
+            if (!SESSION_SECRET) {
 
                 return json(
                     res,
@@ -494,7 +492,6 @@ export default async function handler(
                         Buffer.from(
                             suppliedKey
                         ),
-
                         Buffer.from(
                             ADMIN_KEY
                         )
@@ -533,8 +530,7 @@ export default async function handler(
                 res,
                 200,
                 {
-                    success:
-                        true
+                    success: true
                 }
             );
         }
@@ -542,18 +538,13 @@ export default async function handler(
 
         /*
          * -------------------------------------------------
-         * EVERYTHING BELOW HERE
-         * REQUIRES ADMIN LOGIN
+         * Everything below requires admin login
          * -------------------------------------------------
          */
 
-        if (
-            !isAdmin(req)
-        ) {
+        if (!isAdmin(req)) {
 
-            clearSessionCookie(
-                res
-            );
+            clearSessionCookie(res);
 
             return json(
                 res,
@@ -576,21 +567,26 @@ export default async function handler(
             action === "generate"
         ) {
 
-            const duration =
+            const durationValue =
+                Number(
+                    body.durationValue
+                );
+
+            const durationUnit =
                 String(
-                    body.duration || "7d"
-                )
-                .trim()
-                .toLowerCase();
+                    body.durationUnit ||
+                    "days"
+                ).toLowerCase();
 
 
-            if (
-                !Object.prototype
-                    .hasOwnProperty.call(
-                        ALLOWED_DURATIONS,
-                        duration
-                    )
-            ) {
+            const durationMs =
+                getDurationMs(
+                    durationValue,
+                    durationUnit
+                );
+
+
+            if (!durationMs) {
 
                 return json(
                     res,
@@ -624,13 +620,14 @@ export default async function handler(
                     status:
                         "unused",
 
-                    duration:
-                        duration,
+                    durationValue:
+                        durationValue,
+
+                    durationUnit:
+                        durationUnit,
 
                     durationMs:
-                        ALLOWED_DURATIONS[
-                            duration
-                        ],
+                        durationMs,
 
                     createdAt:
                         new Date()
@@ -704,7 +701,11 @@ export default async function handler(
 
                     key,
 
-                    duration
+                    durationValue,
+
+                    durationUnit,
+
+                    durationMs
                 }
             );
         }
@@ -738,6 +739,9 @@ export default async function handler(
                     res,
                     200,
                     {
+                        success:
+                            true,
+
                         keys: []
                     }
                 );
@@ -772,7 +776,6 @@ export default async function handler(
 
 
                 if (!raw) {
-
                     continue;
                 }
 
@@ -794,9 +797,13 @@ export default async function handler(
                             record.status ||
                             "unused",
 
-                        duration:
-                            record.duration ||
-                            "7d",
+                        durationValue:
+                            record.durationValue ||
+                            null,
+
+                        durationUnit:
+                            record.durationUnit ||
+                            null,
 
                         durationMs:
                             record.durationMs ||
@@ -824,10 +831,7 @@ export default async function handler(
 
 
             keys.sort(
-                (
-                    a,
-                    b
-                ) =>
+                (a, b) =>
                     String(
                         b.createdAt || ""
                     ).localeCompare(
@@ -842,6 +846,9 @@ export default async function handler(
                 res,
                 200,
                 {
+                    success:
+                        true,
+
                     keys
                 }
             );

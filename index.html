@@ -845,82 +845,90 @@ usernameInput.addEventListener("input",()=>{
 
 async function searchRoblox(username){
 
+    const status = document.getElementById("searchStatus");
+    const results = document.getElementById("results");
+
     try{
 
-        /*
-         First try the public Roblox user search endpoint.
-        */
+        status.textContent = "Searching Roblox...";
+        results.innerHTML = "";
 
-        const url =
-    USER_SEARCH_API +
-    encodeURIComponent(username);
-
-        const response = await fetch(url);
-
-        if(!response.ok){
-            throw new Error("Roblox search request failed.");
-        }
-
-        const data = await response.json();
-
-        let users = data.data || [];
+        const cleanUsername = username.trim();
+        let users = [];
 
         /*
-         If search returned nothing, try exact username lookup.
+         FIRST: ask Roblox directly for the exact username.
+         This avoids the flaky keyword-search request entirely
+         for normal Send-to-user searches.
         */
+        try{
+            const directResponse = await fetch(USERNAME_API, {
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                cache:"no-store",
+                body:JSON.stringify({
+                    usernames:[cleanUsername],
+                    excludeBannedUsers:false
+                })
+            });
 
-        if(users.length === 0){
-
-            const exactResponse =
-                await fetch(USERNAME_API,{
-                    method:"POST",
-                    headers:{
-                        "Content-Type":"application/json"
-                    },
-                    body:JSON.stringify({
-                        usernames:[username],
-                        excludeBannedUsers:false
-                    })
-                });
-
-            if(exactResponse.ok){
-
-                const exactData =
-                    await exactResponse.json();
-
-                users = exactData.data || [];
-
+            if(directResponse.ok){
+                const directData = await directResponse.json();
+                users = directData.data || [];
             }
-
+        }catch(error){
+            console.log("Direct username lookup failed:", error);
         }
 
-
+        /*
+         SECOND: use our Vercel proxy if the direct request failed.
+         */
         if(users.length === 0){
 
-            document.getElementById("searchStatus").textContent =
-                "No Roblox users found.";
+            for(let attempt = 0; attempt < 3 && users.length === 0; attempt++){
 
+                try{
+                    const response = await fetch(
+                        USER_SEARCH_API +
+                        encodeURIComponent(cleanUsername) +
+                        "&t=" + Date.now(),
+                        {cache:"no-store"}
+                    );
+
+                    if(response.ok){
+                        const data = await response.json();
+                        users = data.data || [];
+                    }
+                }catch(error){
+                    console.log("Proxy username lookup failed:", error);
+                }
+
+                if(users.length === 0 && attempt < 2){
+                    await new Promise(resolve =>
+                        setTimeout(resolve, 600 * (attempt + 1))
+                    );
+                }
+            }
+        }
+
+        if(users.length === 0){
+            status.textContent = "No Roblox users found.";
             return;
         }
 
-
-        document.getElementById("searchStatus").textContent =
-            "Select a Roblox user:";
-
-
+        status.textContent = "Select a Roblox user:";
         await displayUsers(users);
 
-    }
-    catch(error){
+    }catch(error){
 
         console.error(error);
 
-        document.getElementById("searchStatus").innerHTML =
+        status.innerHTML =
             "Couldn't connect to Roblox right now.<br>" +
-            "<small>" + escapeHtml(error.message) + "</small>";
-
+            "<small>Please try again in a moment.</small>";
     }
-
 }
 
 

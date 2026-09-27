@@ -1625,11 +1625,16 @@ document.addEventListener("keydown",(e)=>{
 </script>
 
 <!-- =========================================================
-     BACKGROUND COLOR SETTING
-     Paste immediately before </body>
+     ROBUX STORE - BLACK / WHITE THEME
+     COMPLETE BACKGROUND COLOR SETTING
      ========================================================= -->
 
 <style>
+
+/* =========================================================
+   BACKGROUND SETTING INSIDE PROFILE SETTINGS
+   ========================================================= */
+
 .background-setting{
     margin-top:18px;
     padding-top:16px;
@@ -1692,16 +1697,26 @@ document.addEventListener("keydown",(e)=>{
 }
 
 
-/* ================= WHITE MODE ================= */
+/* =========================================================
+   WHITE MODE
+   ========================================================= */
 
 body.white-background{
-    background:#fff !important;
+    background:#ffffff !important;
     color:#191b1f !important;
 }
 
-body.white-background .main,
+
+/* =========================================================
+   MAIN WEBSITE
+   ========================================================= */
+
+body.white-background .main{
+    background:#ffffff !important;
+}
+
 body.white-background .page{
-    background:#fff !important;
+    background:#ffffff !important;
 }
 
 body.white-background .page::before{
@@ -1709,77 +1724,479 @@ body.white-background .page::before{
 }
 
 
-/* Main content */
+/* =========================================================
+   BALANCE AREA
+   ========================================================= */
 
-body.white-background .packages-heading,
-body.white-background .bonus-title,
+body.white-background .balance-pill{
+    background:#ffffff !important;
+    border-color:#e1e3e6 !important;
+    box-shadow:0 4px 14px rgba(0,0,0,.08) !important;
+}
+
+body.white-background .balance-number{
+    color:#191b1f !important;
+}
+
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+body.white-background .hero{
+    background:#ffffff !important;
+    border-color:#e1e3e6 !important;
+    box-shadow:0 8px 25px rgba(0,0,0,.07) !important;
+}
+
+body.white-background .hero:before{
+    opacity:.15 !important;
+}
+
+body.white-background .hero h1{
+    color:#191b1f !important;
+}
+
+
+/* =========================================================
+   BONUS SECTION
+   ========================================================= */
+
+body.white-background .bonus-title{
+    color:#191b1f !important;
+}
+
+body.white-background .banner{
+    background:#f7f7f8 !important;
+    border-color:#e1e3e6 !important;
+}
+
+body.white-background .banner-text{
+    color:#191b1f !important;
+}
+
+body.white-background .banner-text div{
+    color:#666b73 !important;
+}
+
+
+/* =========================================================
+   PACKAGE BOX
+   ========================================================= */
+
+body.white-background .package-box{
+    background:#ffffff !important;
+    border-color:#e1e3e6 !important;
+    box-shadow:0 8px 25px rgba(0,0,0,.06) !important;
+}
+
+
+/* Individual package rows */
+
+body.white-background .package{
+    border-bottom-color:#e5e6e8 !important;
+}
+
+
+/* Robux amount */
+
+body.white-background .amount{
+    color:#191b1f !important;
+}
+
+body.white-background .amount .old{
+    color:#8a8f97 !important;
+}
+
+
+/* Bonus labels */
+
+body.white-background .bonus-label,
+body.white-background .for-you{
+    background:#f0f1f3 !important;
+    color:#454a52 !important;
+}
+
+
+/* Price buttons */
+
+body.white-background .price{
+    background:#ffffff !important;
+    color:#191b1f !important;
+    border-color:#d5d8dc !important;
+}
+
+body.white-background .price:hover{
+    background:#f1f2f4 !important;
+}
+
+body.white-background .price.highlight{
+    background:#3d6cff !important;
+    border-color:#3d6cff !important;
+    color:#ffffff !important;
+}
+
+body.white-background .price.highlight:hover{
+    background:#4d78ff !important;
+}
+
+
+/* =========================================================
+   PACKAGES HEADING
+   ========================================================= */
+
+body.white-background .packages-heading{
+    color:#191b1f !important;
+}
+
+
+/* =========================================================
+   SIMPLE PACKAGES
+   ========================================================= */
+
+body.white-background .simple-packages{
+    background:#ffffff !important;
+    border-color:#e1e3e6 !important;
+    box-shadow:0 5px 20px rgba(0,0,0,.05) !important;
+}
+
+body.white-background .simple-row{
+    border-bottom-color:#e5e6e8 !important;
+}
+
+body.white-background .simple-amount{
+    color:#191b1f !important;
+}
+
+body.white-background .simple-old{
+    color:#8a8f97 !important;
+}
+
+
+/* =========================================================
+   NEW SECTION
+   ========================================================= */
+
 body.white-background .section-title h2{
     color:#191b1f !important;
 }
 
 body.white-background .learn{
+    color:#666b73 !important;
+}
+
+
+/* =========================================================
+   NEW CARDS
+   ========================================================= */
+
+body.white-background .new-card{
+    background:#ffffff !important;
+    border-color:#e1e3e6 !important;
+    box-shadow:0 5px 18px rgba(0,0,0,.05) !important;
+}
+
+body.white-background .new-card:before{
+    opacity:.25 !important;
+}
+
+body.white-background .new-card h3{
+    color:#191b1f !important;
+}
+
+body.white-background .new-card ul{
+    color:#666b73 !important;
+}
+
+body.white-background .new-card li:before{
     color:#555b65 !important;
 }
 
 
-/* Common cards */
+/* New card buttons */
 
-body.white-background .card,
-body.white-background .package,
-body.white-background .package-card,
-body.white-background .bonus-card,
-body.white-background .panel,
-body.white-background .content-card{
-    background:#fff !important;
+body.white-background .card-buy{
+    background:#ffffff !important;
+    border-color:#d5d8dc !important;
+    color:#191b1f !important;
+}
+
+body.white-background .card-buy:hover{
+    background:#f1f2f4 !important;
+}
+
+
+/* =========================================================
+   INFORMATION BOXES
+   ========================================================= */
+
+body.white-background .info-box{
+    background:#ffffff !important;
+    border-color:#e1e3e6 !important;
+    color:#666b73 !important;
+}
+
+body.white-background .info-box strong{
+    color:#191b1f !important;
+}
+
+
+/* =========================================================
+   CHAT
+   ========================================================= */
+
+body.white-background .chat{
+    background:#ffffff !important;
+    border-color:#e1e3e6 !important;
+    color:#191b1f !important;
+    box-shadow:0 -4px 18px rgba(0,0,0,.08) !important;
+}
+
+
+/* =========================================================
+   SEND MODAL
+   ========================================================= */
+
+body.white-background .send-modal,
+body.white-background .purchase-modal{
+    background:#ffffff !important;
     color:#191b1f !important;
     border-color:#e1e3e6 !important;
+    box-shadow:0 25px 80px rgba(0,0,0,.18) !important;
 }
 
-
-/* Buttons */
-
-body.white-background .package button,
-body.white-background .package-card button,
-body.white-background .buy-button,
-body.white-background .purchase-button{
-    background:#fff !important;
+body.white-background .modal-header{
     color:#191b1f !important;
-    border-color:#d7d9dd !important;
+    border-bottom-color:#e5e6e8 !important;
 }
 
-body.white-background .package button:hover,
-body.white-background .package-card button:hover,
-body.white-background .buy-button:hover,
-body.white-background .purchase-button:hover{
+body.white-background .modal-header .close{
+    color:#777c84 !important;
+}
+
+body.white-background .modal-header .close:hover{
+    color:#191b1f !important;
+}
+
+body.white-background .demo-warning{
+    background:#f1f5ff !important;
+    border-color:#d5def8 !important;
+    color:#4c5c80 !important;
+}
+
+
+/* =========================================================
+   SEND INPUTS
+   ========================================================= */
+
+body.white-background .user-search,
+body.white-background .amount-input{
+    background:#ffffff !important;
+    color:#191b1f !important;
+    border-color:#d5d8dc !important;
+}
+
+body.white-background .user-search::placeholder,
+body.white-background .amount-input::placeholder{
+    color:#8a8f97 !important;
+}
+
+body.white-background .search-status{
+    color:#737880 !important;
+}
+
+
+/* Search results */
+
+body.white-background .result{
+    color:#191b1f !important;
+}
+
+body.white-background .result:hover{
     background:#f2f3f5 !important;
 }
 
-
-/* Inputs */
-
-body.white-background input,
-body.white-background select,
-body.white-background textarea{
-    background:#fff !important;
+body.white-background .result-name{
     color:#191b1f !important;
-    border-color:#d7d9dd !important;
 }
 
-body.white-background input::placeholder,
-body.white-background textarea::placeholder{
-    color:#8a8f98 !important;
+body.white-background .result-user{
+    color:#777c84 !important;
 }
 
 
-/* Profile modal */
+/* =========================================================
+   MODERN SEND SCREEN
+   ========================================================= */
+
+body.white-background .send-modern{
+    background:#ffffff !important;
+    color:#191b1f !important;
+    border-color:#e1e3e6 !important;
+    box-shadow:0 25px 80px rgba(0,0,0,.18) !important;
+}
+
+body.white-background .send-modern-header{
+    background:#ffffff !important;
+    border-bottom-color:#e5e6e8 !important;
+}
+
+body.white-background .send-back,
+body.white-background .send-close{
+    color:#777c84 !important;
+}
+
+body.white-background .send-back:hover,
+body.white-background .send-close:hover{
+    background:#f1f2f4 !important;
+    color:#191b1f !important;
+}
+
+body.white-background .send-title-wrap{
+    color:#191b1f !important;
+}
+
+body.white-background .send-modern-balance{
+    color:#191b1f !important;
+}
+
+body.white-background .recipient-search-title{
+    color:#191b1f !important;
+}
+
+
+/* Modern search */
+
+body.white-background .send-search{
+    background:#ffffff !important;
+    color:#191b1f !important;
+    border-color:#d5d8dc !important;
+}
+
+
+/* Selected user */
+
+body.white-background .modern-selected-user .display{
+    color:#191b1f !important;
+}
+
+
+/* Amount */
+
+body.white-background .modern-amount-input{
+    color:#191b1f !important;
+}
+
+body.white-background .modern-amount-input::placeholder{
+    color:#777c84 !important;
+}
+
+
+/* Quick amounts */
+
+body.white-background .quick-amounts button{
+    background:#ffffff !important;
+    color:#191b1f !important;
+    border-color:#d5d8dc !important;
+    box-shadow:none !important;
+}
+
+body.white-background .quick-amounts button:hover,
+body.white-background .quick-amounts button.active{
+    background:#f1f2f4 !important;
+    border-color:#c9cdd2 !important;
+}
+
+
+/* Modern note */
+
+body.white-background .modern-note{
+    color:#777c84 !important;
+}
+
+
+/* =========================================================
+   CONFIRM SCREEN
+   ========================================================= */
+
+body.white-background .confirm-title{
+    color:#191b1f !important;
+}
+
+body.white-background .confirm-subtitle{
+    color:#777c84 !important;
+}
+
+body.white-background .confirm-summary{
+    color:#777c84 !important;
+}
+
+body.white-background .confirm-summary strong{
+    color:#191b1f !important;
+}
+
+body.white-background .confirm-amount{
+    color:#191b1f !important;
+}
+
+body.white-background .confirm-message{
+    color:#666b73 !important;
+}
+
+body.white-background .confirm-message strong{
+    color:#191b1f !important;
+}
+
+body.white-background .confirm-remaining{
+    color:#777c84 !important;
+}
+
+body.white-background .confirm-back{
+    background:#f1f2f4 !important;
+    color:#191b1f !important;
+}
+
+body.white-background .confirm-back:hover{
+    background:#e6e7e9 !important;
+}
+
+
+/* =========================================================
+   PURCHASE MODAL
+   ========================================================= */
+
+body.white-background .purchase-amount{
+    color:#191b1f !important;
+}
+
+body.white-background .purchase-price{
+    color:#777c84 !important;
+}
+
+body.white-background .cancel-buy{
+    background:#f1f2f4 !important;
+    color:#191b1f !important;
+}
+
+
+/* =========================================================
+   PROFILE SETTINGS
+   ========================================================= */
 
 body.white-background .profile-modal{
-    background:#fff !important;
+    background:#ffffff !important;
+    color:#191b1f !important;
+    border-color:#e1e3e6 !important;
+    box-shadow:0 25px 80px rgba(0,0,0,.18) !important;
+}
+
+body.white-background .profile-modal-body{
     color:#191b1f !important;
 }
 
 body.white-background .profile-preview{
     background:#f6f7f8 !important;
+    border-color:#e1e3e6 !important;
 }
 
 body.white-background .profile-preview-name{
@@ -1787,73 +2204,118 @@ body.white-background .profile-preview-name{
 }
 
 body.white-background .profile-preview-user{
-    color:#70757d !important;
+    color:#777c84 !important;
 }
 
 body.white-background .profile-label{
-    color:#44484f !important;
+    color:#555a62 !important;
 }
 
 body.white-background .profile-input{
-    background:#fff !important;
+    background:#ffffff !important;
     color:#191b1f !important;
-    border-color:#d7d9dd !important;
+    border-color:#d5d8dc !important;
+}
+
+body.white-background .profile-status{
+    color:#777c84 !important;
 }
 
 body.white-background .profile-note{
-    color:#70757d !important;
+    color:#777c84 !important;
 }
 
 body.white-background .profile-cancel{
-    background:#fff !important;
+    background:#f1f2f4 !important;
     color:#191b1f !important;
-    border-color:#d7d9dd !important;
 }
 
+body.white-background .profile-cancel:hover{
+    background:#e6e7e9 !important;
+}
+
+
+/* =========================================================
+   BACKGROUND SETTING IN LIGHT MODE
+   ========================================================= */
+
 body.white-background .background-setting{
-    border-color:#e1e3e6;
+    border-top-color:#e1e3e6 !important;
 }
 
 body.white-background .background-setting-title{
-    color:#555b65;
+    color:#555a62 !important;
 }
 
 body.white-background .background-option{
-    background:#fff;
-    color:#191b1f;
-    border-color:#d7d9dd;
+    background:#ffffff !important;
+    color:#191b1f !important;
+    border-color:#d5d8dc !important;
+}
+
+body.white-background .background-option:hover{
+    background:#f1f2f4 !important;
 }
 
 body.white-background .background-option.active{
-    background:#eef2ff;
-    color:#191b1f;
-    border-color:#3d6cff;
+    background:#eef2ff !important;
+    color:#191b1f !important;
+    border-color:#3d6cff !important;
 }
+
+
+/* =========================================================
+   TOAST
+   ========================================================= */
+
+body.white-background .toast{
+    background:#ffffff !important;
+    color:#191b1f !important;
+    border-color:#dfe1e4 !important;
+    box-shadow:0 8px 30px rgba(0,0,0,.15) !important;
+}
+
 </style>
 
 
 <script>
+
+/* =========================================================
+   BACKGROUND COLOR SETTING
+   ========================================================= */
+
 (function(){
 
-    const STORAGE_KEY = "robuxBackgroundColor";
+    const STORAGE_KEY =
+        "robuxBackgroundColor";
 
+
+    /* -----------------------------------------------------
+       Get saved color
+       ----------------------------------------------------- */
 
     function getSavedColor(){
 
         try{
 
-            return localStorage.getItem(STORAGE_KEY) === "white"
-                ? "white"
-                : "black";
+            const saved =
+                localStorage.getItem(
+                    STORAGE_KEY
+                );
 
-        }catch(error){
+            if(saved === "white"){
+                return "white";
+            }
 
-            return "black";
+        }catch(error){}
 
-        }
-
+        return "black";
     }
 
+
+    /* -----------------------------------------------------
+       Apply color
+       ----------------------------------------------------- */
 
     function applyColor(color){
 
@@ -1880,7 +2342,9 @@ body.white-background .background-option.active{
 
 
         document
-            .querySelectorAll(".background-option")
+            .querySelectorAll(
+                ".background-option"
+            )
             .forEach(function(button){
 
                 button.classList.toggle(
@@ -1893,11 +2357,11 @@ body.white-background .background-option.active{
     }
 
 
-    function addBackgroundSetting(){
+    /* -----------------------------------------------------
+       Create setting
+       ----------------------------------------------------- */
 
-        /*
-         * Find your existing profile settings.
-         */
+    function createSetting(){
 
         const profileBody =
             document.querySelector(
@@ -1907,24 +2371,15 @@ body.white-background .background-option.active{
 
         if(!profileBody){
 
-            /*
-             * Try again shortly if the profile
-             * is created later by the page.
-             */
-
             setTimeout(
-                addBackgroundSetting,
-                500
+                createSetting,
+                300
             );
 
             return;
 
         }
 
-
-        /*
-         * Don't add it twice.
-         */
 
         if(
             document.getElementById(
@@ -1937,12 +2392,10 @@ body.white-background .background-option.active{
         }
 
 
-        /*
-         * Create the setting.
-         */
-
         const setting =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
 
         setting.id =
@@ -1985,8 +2438,8 @@ body.white-background .background-option.active{
 
 
         /*
-         * Put it at the bottom of the
-         * profile settings.
+         * Put the setting at the bottom
+         * of your existing profile settings.
          */
 
         profileBody.appendChild(
@@ -1995,7 +2448,7 @@ body.white-background .background-option.active{
 
 
         /*
-         * Add button actions.
+         * Button events.
          */
 
         setting
@@ -2019,7 +2472,7 @@ body.white-background .background-option.active{
 
 
         /*
-         * Apply saved choice.
+         * Apply saved setting.
          */
 
         applyColor(
@@ -2029,9 +2482,18 @@ body.white-background .background-option.active{
     }
 
 
-    /*
-     * Wait until the entire page is loaded.
-     */
+    /* -----------------------------------------------------
+       Apply saved theme immediately
+       ----------------------------------------------------- */
+
+    applyColor(
+        getSavedColor()
+    );
+
+
+    /* -----------------------------------------------------
+       Wait for page
+       ----------------------------------------------------- */
 
     if(
         document.readyState === "loading"
@@ -2039,25 +2501,17 @@ body.white-background .background-option.active{
 
         document.addEventListener(
             "DOMContentLoaded",
-            addBackgroundSetting
+            createSetting
         );
 
     }else{
 
-        addBackgroundSetting();
+        createSetting();
 
     }
 
-
-    /*
-     * Apply saved color immediately.
-     */
-
-    applyColor(
-        getSavedColor()
-    );
-
 })();
+
 </script>
 
 </body>

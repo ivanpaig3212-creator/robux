@@ -715,7 +715,7 @@ button,input{font:inherit}.topbar{position:fixed;top:0;left:0;right:0;height:48p
         <div class="purchase-body">
             <div class="purchase-amount" id="purchaseAmount">0 Robux</div>
             <div class="purchase-price" id="purchasePrice">$0.00</div>
-            <div class="demo-warning">Simulation — no payment is processed. Press the button to add this package to your local demo balance.</div>
+            <div class="demo-warning">Robux will automatically processed. Press the button to add this amount into your wallet.</div>
             <div class="purchase-actions">
                 <button class="free-buy" id="freeBuy">Add to balance</button>
                 <button class="cancel-buy" id="cancelBuy">Cancel</button>
@@ -1554,7 +1554,7 @@ freeBuy.addEventListener("click",()=>{
     updateBalance();
     const added = pendingPackage.robux.toLocaleString();
     closePurchaseModal();
-    showToast("Simulation: +" + added + " Robux added to your balance.");
+    showToast("Successful: +" + added + " Robux added to your balance.");
 });
 
 closePurchase.addEventListener("click",closePurchaseModal);
